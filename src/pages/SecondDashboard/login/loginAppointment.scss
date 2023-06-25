@@ -1,0 +1,112 @@
+.App {
+  background-color: gray;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background-color: white;
+  animation-name: slideUp;
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  border-radius: 12vw 12vw 0 0;
+}
+
+.overlay.show {
+  animation-name: slideDown;
+}
+
+@keyframes slideUp {
+  from {
+    height: 65vh;
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: 75vh;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+.cross-button {
+  position: absolute;
+  top: 7vw;
+  right: 7vw;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: red;
+  font-size: 5vw;
+}
+
+#suggestionsBox {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 5vw 0;
+  border-radius: 20px;
+  border: 2px solid #016e82;
+
+  h2 {
+    margin-bottom: 6vw;
+    font-family: Camaro;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 41px;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  input {
+    margin: 0 83px;
+    width: 458px;
+    height: 49px;
+    padding: 1vw;
+    background: #ffffff;
+    border: 1px solid #9e9e9e;
+    box-shadow: 1px 1px 2px 1px rgba(116, 116, 116, 0.25);
+    border-radius: 5px;
+    margin-bottom: 2vw;
+  }
+  button {
+    width: 458px;
+    height: 49px;
+    margin: auto;
+    background: #016e82;
+    border-radius: 174px;
+    margin: 1vw auto;
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 23px;
+    align-items: center;
+    color: #ffffff;
+    cursor: pointer;
+  }
+}

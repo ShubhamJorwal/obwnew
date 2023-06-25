@@ -1,0 +1,28 @@
+*,
+html {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  // overflow-x: hidden
+}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
+body {
+  font-family: Nunito;
+  a {
+    text-decoration: none;
+  }
+}
+
+.my-css-class {
+  background-color: rgba(0, 0, 0, 0.233);
+  opacity: 0.9;
+}
+::-webkit-scrollbar {
+  width: 7px;
+  // background: rgb(56, 56, 56);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #016f823d;
+  border-radius: 25px;
+}

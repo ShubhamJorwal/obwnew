@@ -1,0 +1,133 @@
+#dashboard {
+  width: 666px;
+  height: 156px;
+  top: 68px;
+  left: 39px;
+  border-radius: 23px;
+  border: 2px solid #18959e;
+  display: flex;
+  margin: 5vw auto;
+
+  #topmegamenu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+
+    .megamenuLinks {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #10bbca;
+      font-weight: 900;
+      font-size: 20px;
+      p {
+        margin-left: 2vw;
+      }
+      svg {
+        font-size: 29px;
+      }
+    }
+    #Option1 {
+      border: none;
+      background-color: #18959e;
+      border-radius: 20px 0 0 0;
+      p {
+        color: white !important;
+      }
+      svg {
+        color: yellow !important;
+      }
+    }
+    #Option2 {
+      border-top: none;
+      border-bottom: none;
+    }
+    #Option3 {
+      border: none;
+    }
+    #Option4 {
+      border: none;
+      border-top: 2px solid #18959e;
+    }
+    #Option5 {
+      border: none;
+      border-left: 2px solid #18959e;
+      border-top: 2px solid #18959e;
+      border-right: 2px solid #18959e;
+    }
+    #Option6 {
+      border: none;
+      border-top: 2px solid #18959e;
+    }
+  }
+}
+
+// calender
+.calendar {
+  width: 100%;
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  background: #f1f1f1;
+}
+
+.month-navigation button {
+  background: none;
+  border: none;
+  svg {
+    cursor: pointer;
+    font-size: 32px;
+    font-weight: bold;
+    color: #18959e;
+    margin: 2vw;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#tableforcalender {
+  padding: 3vw 10vw !important;
+}
+
+table th,
+table td {
+  padding: 10px;
+  text-align: center;
+}
+
+table th {
+  font-weight: bold;
+  width: 75px;
+  height: 63px;
+  background: #18959e;
+  color: white;
+  font-size:20px;
+}
+
+table td {
+  cursor: pointer;
+  width: 75px;
+  height: 63px;
+  background: gray;
+  padding: 2vw;
+  box-sizing: unset;
+  color: white;
+  font-size:20px;
+  border: 1px solid rgb(187, 187, 187);
+}
+
+#lastbtnfordashboard {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 5vw;
+
+}
