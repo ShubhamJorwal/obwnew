@@ -3,6 +3,7 @@ import thunk from 'redux-thunk';
 import customerReducer from '../redux/Reducers/CustomerReducer';
 import servicesReducer from '../redux/Reducers/ServicesReducer'; // Import the services reducer
 
+
 // Combine multiple reducers into a single root reducer
 const rootReducer = combineReducers({
   customers: customerReducer,

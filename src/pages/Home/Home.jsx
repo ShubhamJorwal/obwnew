@@ -55,34 +55,44 @@ const Home = () => {
   };
 
   const handleSubmit = () => {
-    const BookingData = {
-      first_name: selectedValue,
-      last_name: selectedValue,
-      contact_no: selectedValue, // Assuming the contact number is the same as the selected value
-    };
-
-    // Retrieve existing data from localStorage
-    const existingData = localStorage.getItem("BookingData");
-
-    if (existingData) {
-      // Parse the existing data as an array
-      const dataArray = JSON.parse(existingData);
-
-      // Push the new user data to the array
-      dataArray.push(BookingData);
-
-      // Save the updated array back to localStorage
-      localStorage.setItem("BookingData", JSON.stringify(dataArray));
-    } else {
-      // Create a new array with the user data
-      const dataArray = [BookingData];
-
-      // Save the array to localStorage
-      localStorage.setItem("BookingData", JSON.stringify(dataArray));
+    const selectedCustomer = customers.find(
+      (customer) =>
+        customer.first_name + customer.last_name === selectedValue ||
+        customer.contact_no === selectedValue
+    );
+  
+    if (selectedCustomer) {
+      // Retrieve existing data from localStorage
+      const existingData = localStorage.getItem("BookingData");
+  
+      const bookingData = {
+        first_name: selectedCustomer.first_name,
+        last_name: selectedCustomer.last_name,
+        contact_no: selectedCustomer.contact_no,
+        // Add other fields of the customer object here
+      };
+  
+      if (existingData) {
+        // Parse the existing data as an array
+        const dataArray = JSON.parse(existingData);
+  
+        // Push the new user data to the array
+        dataArray.push(bookingData);
+  
+        // Save the updated array back to localStorage
+        localStorage.setItem("BookingData", JSON.stringify(dataArray));
+      } else {
+        // Create a new array with the user data
+        const dataArray = [bookingData];
+  
+        // Save the array to localStorage
+        localStorage.setItem("BookingData", JSON.stringify(dataArray));
+      }
     }
-
+  
     Navigate("/services/women");
   };
+  
 
   useEffect(() => {
     if (error) {

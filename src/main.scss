@@ -6,23 +6,25 @@ html {
   // overflow-x: hidden
 }
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap');
+
 body {
-  font-family: Nunito;
+  font-family: Inter;
   a {
     text-decoration: none;
   }
 }
 
 .my-css-class {
-  background-color: rgba(0, 0, 0, 0.233);
-  opacity: 0.9;
+  background-color: rgba(0, 0, 0, 0.404) !important;
+
 }
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 4px;
   // background: rgb(56, 56, 56);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #016f823d;
+  background-color: #016f821a;
   border-radius: 25px;
 }

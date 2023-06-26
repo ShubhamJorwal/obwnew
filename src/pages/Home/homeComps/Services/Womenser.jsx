@@ -7,21 +7,49 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchServices } from "../../../../redux/Actions/ServicesAction";
 import { ToastContainer, toast } from "react-toastify";
 import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
-import { FiX } from "react-icons/fi";
 
 const Womenservices = () => {
+  const [selectedSubServices, setSelectedSubServices] = useState([]);
+
   const dispatch = useDispatch();
   const services = useSelector((state) => state.services.services);
   const loading = useSelector((state) => state.services.loading);
   const error = useSelector((state) => state.services.error);
   const [showDiv, setShowDiv] = useState(false);
-  const [addClass, setAddClass] = useState(false);
   const [isSliderVisible, setIsSliderVisible] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
 
+  // const handleServiceClick = (service) => {
+  //   setSelectedService(service);
+  //   setIsButtonClicked(true); // for background opacity
+  //   setIsSliderVisible(true);
+  // };
+  const handleSubServiceClick = (subService) => {
+    // Check if the sub-service is already selected
+    const isSubServiceSelected = selectedSubServices.find(
+      (service) => service.id === subService.id
+    );
+
+    if (isSubServiceSelected) {
+      // If the sub-service is already selected, remove it from the selected sub-services
+      setSelectedSubServices((prevSelectedSubServices) =>
+        prevSelectedSubServices.filter(
+          (service) => service.id !== subService.id
+        )
+      );
+    } else {
+      // If the sub-service is not selected, add it to the selected sub-services
+      setSelectedSubServices((prevSelectedSubServices) => [
+        ...prevSelectedSubServices,
+        subService,
+      ]);
+    }
+  };
+
   const handleServiceClick = (service) => {
     setSelectedService(service);
+    setSelectedSubServices([]);
     setIsButtonClicked(true); // for background opacity
     setIsSliderVisible(true);
   };
@@ -30,10 +58,6 @@ const Womenservices = () => {
     setIsButtonClicked(false);
     setSelectedService(null);
     setIsSliderVisible(false);
-  };
-
-  const handleClick = () => {
-    setAddClass(true);
   };
 
   useEffect(() => {
@@ -95,8 +119,15 @@ const Womenservices = () => {
             </div>
           </div>
 
-          <h3 style={{ textAlign: "center", margin: "1rem", fontSize: "24px" }}>
-            Select Customer type
+          <h3
+            style={{
+              textAlign: "center",
+              margin: "1rem",
+              fontSize: "24px",
+              fontWeight: "500",
+            }}
+          >
+            Select a Service
           </h3>
           <div id="servicesoptions">
             {services.map((service) => (
@@ -116,7 +147,16 @@ const Womenservices = () => {
             <div className="content">
               <div className="service-details">
                 <div id="topLayerForSerBook">
-                  <img style={{width: "10vw",height: "10vw",objectFit: "cover",borderRadius: "2vw",}}src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt=""/>
+                  <img
+                    style={{
+                      width: "10vw",
+                      height: "10vw",
+                      objectFit: "cover",
+                      borderRadius: "2vw",
+                    }}
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    alt=""
+                  />
                   <div id="middledataforserbook">
                     <h3 style={{ color: "gray" }}>{selectedService.type}</h3>
                     <h2>{selectedService.service_name}</h2>
@@ -128,17 +168,92 @@ const Womenservices = () => {
 
                 {/* Self-coded */}
                 <div id="middleFetchedData">
-                {services.map((service) => (
+                  {/* {services.map((service) => (
                   <div key={service.id} id="servicesList">
                     <p>{service.service_name}<span style={{color: "gray",fontSize: "1.7vw",marginLeft: "1.2vw",}}>{service.duration}min</span></p>
                     <p><span style={{color: "#18959E",fontSize: "unset",marginRight: "3vw",}}>{service.category}</span>
                       <span onClick={handleClick}className={addClass ? "pricetag" : ""}>${service.price_including_gst}</span></p>
                   </div>
-                ))}
+                ))} */}
+                  {services.map((service) => (
+                    <div
+                      onClick={() => handleSubServiceClick(service)}
+                      key={service.id}
+                      id="servicesList"
+                      className={`pricetag ${
+                        selectedSubServices.find(
+                          (subService) => subService.id === service.id
+                        )
+                          ? "selected"
+                          : ""
+                      }`}
+                    >
+                      <p>
+                        {service.service_name}
+                        <span
+                          style={{
+                            color: "gray",
+                            fontSize: "1.7vw",
+                            marginLeft: "1.2vw",
+                          }}
+                        >
+                          {service.duration}min
+                        </span>
+                      </p>
+                      <p>
+                        <span
+                          style={{
+                            color: "#18959E",
+                            fontSize: "unset",
+                            marginRight: "3vw",
+                          }}
+                        >
+                          {service.category}
+                        </span>
+                        <span>${service.price_including_gst}</span>
+                      </p>
+                    </div>
+                  ))}
                 </div>
                 {/* End of self-coded section */}
-                
-                <Link to="/checkout" className="book-button">
+
+                <Link
+                  to="/checkout"
+                  className="book-button"
+                  onClick={() => {
+                    // Combine the selected service and sub-services into an object
+                    const selectedData = {
+                      service: selectedService,
+                      subServices: selectedSubServices,
+                    };
+
+                    // Retrieve existing data from localStorage
+                    const existingData = localStorage.getItem("SelectedData");
+
+                    if (existingData) {
+                      // Parse the existing data as an array
+                      const dataArray = JSON.parse(existingData);
+
+                      // Push the new selected data to the array
+                      dataArray.push(selectedData);
+
+                      // Save the updated array back to localStorage
+                      localStorage.setItem(
+                        "SelectedData",
+                        JSON.stringify(dataArray)
+                      );
+                    } else {
+                      // Create a new array with the selected data
+                      const dataArray = [selectedData];
+
+                      // Save the array to localStorage
+                      localStorage.setItem(
+                        "SelectedData",
+                        JSON.stringify(dataArray)
+                      );
+                    }
+                  }}
+                >
                   Add Services
                 </Link>
               </div>

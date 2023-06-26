@@ -9,6 +9,7 @@ import Stylist from "../pages/Home/homeComps/PaymentsSer/Stylist";
 import Login from "../pages/SecondDashboard/login/Login";
 import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
 import Test from "../pages/test/Test";
+import StylistList from "../pages/Home/homeComps/PaymentsSer/StylistSlider";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/01",
-    element: <Test />,
+    element: <StylistList />,
   },
   // {
   //   path: "/asdf",
