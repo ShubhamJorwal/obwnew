@@ -1,0 +1,254 @@
+#bookingspage {
+  width: 666px;
+  height: 156px;
+  border-radius: 23px;
+  border: 1px solid #18959e;
+  display: flex;
+  margin: 5vw auto;
+  box-shadow: 1px 2px 4px 1px #00000040;
+
+  #topmegamenu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+
+    .megamenuLinks {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #10bbca;
+      font-weight: 900;
+      font-size: 20px;
+
+      p {
+        margin-left: 1rem;
+        font-family: Inter;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 24px;
+      }
+      svg {
+        font-size: 29px;
+      }
+    }
+    #Option1 {
+      border: none;
+      svg {
+        color: #10bbca;
+      }
+    }
+    #Option2 {
+      border-top: none;
+      border-bottom: none;
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
+
+      background-color: #18959e;
+      p {
+        color: white !important;
+      }
+      svg {
+        color: #e0d610 !important;
+      }
+    }
+    #Option3 {
+      border: none;
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
+    }
+    #Option4 {
+      border: none;
+      border-top: 2px solid #18959e;
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
+    }
+    #Option5 {
+      border: none;
+      border-left: 2px solid #18959e;
+      border-top: 2px solid #18959e;
+      border-right: 2px solid #18959e;
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
+    }
+    #Option6 {
+      border: none;
+      border-top: 2px solid #18959e;
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
+    }
+  }
+}
+#FourCatofbookp {
+  display: flex;
+  width: 666px;
+  margin: auto;
+  justify-content: space-around;
+  margin-bottom: 2.5rem;
+  .singbtnBp {
+    width: 146px;
+    height: 76px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px 1px #00000038;
+    border: 2px solid #18959e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+  .activebtnbk {
+    background: red;
+  }
+
+}
+
+#aptbookings {
+  margin: auto;
+  width: 666px;
+  #headboks {
+    display: flex;
+    justify-content: space-between;
+    p {
+      font-family: Inter;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 24px;
+    }
+
+    #f1heboks {
+      flex-basis: 27%;
+    }
+    #f2heboks {
+      flex-basis: 27%;
+    }
+    #f3heboks {
+      flex-basis: 19%;
+    }
+    #f4heboks {
+      flex-basis: 27%;
+    }
+  }
+}
+
+#ListOfApts {
+  margin: 1rem 0;
+  width: 666px;
+  height: 75px;
+  border-radius: 10px;
+  border: 1px solid #048aa3;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  p {
+    font-family: Inter;
+    font-weight: 500;
+    line-height: 29px;
+  }
+  #Loaptsf1 {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 29px;
+  }
+  #Loaptsf2 {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 29px;
+  }
+  #Loaptsf3 {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+  #Loaptsf4 {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+}
+
+
+//
+#Csbookingbks {
+  margin: auto;
+  width: 666px;
+  #headboks {
+    display: flex;
+    justify-content: space-between;
+    p {
+      font-family: Inter;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 24px;
+    }
+
+    #f1heboks {
+      flex-basis: 27%;
+    }
+    #f2heboks {
+      flex-basis: 27%;
+    }
+    #f3heboks {
+      flex-basis: 19%;
+    }
+    #f4heboks {
+      flex-basis: 27%;
+    }
+  }
+}
+
+
+#dataofCsbooks {
+  margin: 1rem 0;
+  width: 666px;
+  height: 75px;
+  border-radius: 10px;
+  border: 1px solid #048aa3;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  p {
+    font-family: Inter;
+    font-weight: 500;
+    line-height: 29px;
+  }
+  #Loaptsf1 {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 29px;
+  }
+  #Loaptsf2 {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 29px;
+  }
+  #Loaptsf3 {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+  #Loaptsf4 {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+}

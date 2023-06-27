@@ -9,17 +9,21 @@ import Stylist from "../pages/Home/homeComps/PaymentsSer/Stylist";
 import Login from "../pages/SecondDashboard/login/Login";
 import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
 import Test from "../pages/test/Test";
-import StylistList from "../pages/Home/homeComps/PaymentsSer/StylistSlider";
+import Bookings from "../pages/SecondDashboard/pagesForDashboard/bookings/Bookings";
+import Bills from "../pages/SecondDashboard/pagesForDashboard/bills/Bills";
+import Products from "../pages/SecondDashboard/pagesForDashboard/products/Products";
+import Customers from "../pages/SecondDashboard/pagesForDashboard/customers/Customers";
+import StylistList from "../pages/SecondDashboard/pagesForDashboard/Stylists/StylistList";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home/>,
   },
-  {
-    path: "/01",
-    element: <StylistList />,
-  },
+  // {
+  //   path: "/01",
+  //   element: <StylistList />,
+  // },
   // {
   //   path: "/asdf",
   //   element: <Test/>,
@@ -53,6 +57,26 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: "/bookings",
+    element: <Bookings />,
+  },
+  {
+    path: "/bills",
+    element: <Bills />,
+  },
+  {
+    path: "/products",
+    element: <Products />,
+  },
+  {
+    path: "/customers",
+    element: <Customers />,
+  },
+  {
+    path: "/stylist",
+    element: <StylistList />,
   },
   
 ]);
