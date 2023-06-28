@@ -250,6 +250,7 @@
       width: 272px;
       padding: 0.5rem;
       background-color: #ebebeb;
+      margin-bottom: 8rem !important;
 
       #totalwithgstF1 {
         display: flex;
@@ -354,70 +355,81 @@
   }
 }
 
-#secondCheck > .overlay > .content > .service-details {
-  #topLayerForSerBook {
-    h1 {
-      color: #18959e;
-      font-family: Inter;
-      font-size: 30px;
-      font-weight: 600;
-      line-height: 36px;
+#secondCheck {
+  position: absolute;
+  z-index: 1;
+  .overlay > .content > .service-details {
+    #topLayerForSerBook {
+      h1 {
+        color: #18959e;
+        font-family: Inter;
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 36px;
+      }
     }
-  }
-  #middleFetchedData {
-    display: flex;
-    flex-direction: column;
-
-    #newmidfddiv {
-      width: 620px;
-      border-radius: 5px;
-      border: 1px solid #9a9a9a;
+    #middleFetchedData {
       display: flex;
-      margin: 0.6rem;
-      align-items: center;
-      justify-content: space-between;
-      #f1midfd {
-        display: flex;
+      flex-direction: column;
+      
 
-        img {
-          width: 109px;
-          height: 112px;
-          border-radius: 5px;
-          object-fit: cover;
-          margin-right: 1.2rem;
-        }
-        #s1midfd {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-
-          p {
-            font-family: Inter;
-            font-size: 24px;
-            font-weight: 600;
-            line-height: 29px;
-            margin: 0.4rem 0;
-          }
-          span {
-            font-family: Inter;
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 22px;
-            letter-spacing: 0em;
-            text-align: left;
-            margin: 0.4rem 0;
-          }
-        }
+      .selectedProduct {
+        transform: scale(1.01);
+        background-color: rgba(1, 111, 130, 0.1764705882);
+        color: black;
       }
 
-      #f2midfd {
-        font-family: Inter;
-        font-size: 18px;
-        font-weight: 500;
-        line-height: 22px;
-        letter-spacing: 0em;
+      #newmidfddiv {
+        width: 620px;
+        border-radius: 5px;
+        border: 1px solid #9a9a9a;
+        display: flex;
+        margin: 0.6rem;
+        align-items: center;
+        justify-content: space-between;
+        #f1midfd {
+          display: flex;
 
-        margin-right: 1rem;
+          img {
+            width: 109px;
+            height: 112px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 1.2rem;
+          }
+          #s1midfd {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            p {
+              font-family: Inter;
+              font-size: 24px;
+              font-weight: 600;
+              line-height: 29px;
+              margin: 0.4rem 0;
+            }
+            span {
+              font-family: Inter;
+              font-size: 18px;
+              font-weight: 500;
+              line-height: 22px;
+              letter-spacing: 0em;
+              text-align: left;
+              margin: 0.4rem 0;
+            }
+          }
+        }
+
+        #f2midfd {
+          font-family: Inter;
+          font-size: 18px;
+          font-weight: 500;
+          line-height: 22px;
+          letter-spacing: 0em;
+
+          margin-right: 1rem;
+        }
       }
     }
   }
@@ -440,10 +452,9 @@
 
   h3 {
     font-family: Inter;
-font-size: 20px;
-font-weight: 600;
-line-height: 20px;
-
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 20px;
   }
   #divscf2 {
     width: 83px;
@@ -465,4 +476,19 @@ line-height: 20px;
       }
     }
   }
+}
+
+#searchbarforproducts {
+  input {
+    width: 644px;
+    border-radius: 100px;
+    border: 0.7px solid #929292;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+  }
+}
+
+
+.selectedProduct {
+  background: skyblue;
 }

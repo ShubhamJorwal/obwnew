@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./services.scss";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RxCross2 } from "react-icons/rx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServices } from "../../../../redux/Actions/ServicesAction";
+import { fetchServicesForWomen } from "../../../../redux/Actions/ServicesAction";
 import { ToastContainer, toast } from "react-toastify";
 import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
 
 const Womenservices = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
+
+  const Navigate = useNavigate();
+
 
   const dispatch = useDispatch();
   const services = useSelector((state) => state.services.services);
@@ -61,7 +64,7 @@ const Womenservices = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchServices());
+    dispatch(fetchServicesForWomen());
     setShowDiv(true);
   }, [dispatch]);
 
@@ -73,6 +76,9 @@ const Womenservices = () => {
     return toast("Something went wrong");
   }
 
+  const goToPreviousPage = () => {
+    Navigate("/home");
+  };
   return (
     <>
       <div
@@ -80,7 +86,7 @@ const Womenservices = () => {
         id="servicesForSal"
       >
         <div id="TopHeader">
-          <div>
+          <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
           <h1>SERVICES</h1>
@@ -136,7 +142,7 @@ const Womenservices = () => {
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
                   alt=""
                 />
-                <p> {service.service_name}</p>
+                <p> {service.category}</p>
               </div>
             ))}
           </div>
@@ -158,8 +164,8 @@ const Womenservices = () => {
                     alt=""
                   />
                   <div id="middledataforserbook">
-                    <h3 style={{ color: "gray" }}>{selectedService.type}</h3>
-                    <h2>{selectedService.service_name}</h2>
+                    <h3 style={{ color: "gray" }}>Women</h3>
+                    <h2>{selectedService.category}</h2>
                   </div>
                   <div className="back-button" onClick={handleCrossClick}>
                     <RxCross2 />
@@ -189,7 +195,7 @@ const Womenservices = () => {
                       }`}
                     >
                       <p>
-                        {service.service_name}
+                        {service.sub_category}
                         <span
                           style={{
                             color: "gray",
@@ -208,15 +214,15 @@ const Womenservices = () => {
                             marginRight: "3vw",
                           }}
                         >
-                          {service.category}
+                          {service.label}
                         </span>
-                        <span>${service.price_including_gst}</span>
+                        <span>₹{service.price_including_gst}</span>
                       </p>
                     </div>
                   ))}
                 </div>
                 {/* End of self-coded section */}
-
+                <div id="lastbtnofserviceadd">
                 <Link
                   to="/checkout"
                   className="book-button"
@@ -257,6 +263,7 @@ const Womenservices = () => {
                   Add Services
                 </Link>
               </div>
+            </div>
             </div>
           </div>
         )}

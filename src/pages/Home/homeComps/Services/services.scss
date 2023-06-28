@@ -181,7 +181,7 @@
   transition: transform 0.3s ease-in-out;
   border-radius: 10% 10% 0 0;
   position: fixed;
-  bottom: 0;
+  top: 14vh;
 
   #topLayerForSerBook {
     margin-bottom: 2rem;
@@ -228,7 +228,6 @@
       font-weight: 500;
       line-height: 29px;
 
-
       // .pricetag {
       //   border: 2px solid #18959e;
       //   padding: 0 1vw;
@@ -249,16 +248,26 @@
 //   cursor: pointer;
 // }
 
+#lastbtnofserviceadd {
+background-color: white;
+width: 100%;
+padding: 2rem;
+display: flex;
+justify-content: center;
+align-items: center;
+position: fixed;
+bottom: 0;
+
+}
 .book-button {
-  background-color: #016e82;
+  background-color: #18959E;
   color: #ffffff;
   padding: 18px 116px;
   border-radius: 12px;
   text-decoration: none;
-  margin-top: 16px;
-  width: 90%;
+  width: 644px;
   text-align: center;
-  margin-top: 2rem;
+  border: none;
 }
 
 @keyframes slideIn {

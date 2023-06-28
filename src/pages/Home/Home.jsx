@@ -20,6 +20,8 @@ const Home = () => {
   const [searchInput, setSearchInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
 
   useEffect(() => {
     dispatch(fetchCustomers());
@@ -55,6 +57,19 @@ const Home = () => {
   };
 
   const handleSubmit = () => {
+
+    if (!selectedValue) {
+      // Display an alert if the selected value is empty
+      toast("Please fill the Name or Phone Number first");
+      return;
+    }
+
+
+    localStorage.removeItem("BookingData");
+    localStorage.removeItem("SelectedData");
+    localStorage.removeItem("selectedProducts");
+
+    setSubmitting(true);
     const selectedCustomer = customers.find(
       (customer) =>
         customer.first_name + customer.last_name === selectedValue ||
@@ -87,6 +102,7 @@ const Home = () => {
   
         // Save the array to localStorage
         localStorage.setItem("BookingData", JSON.stringify(dataArray));
+        
       }
     }
   

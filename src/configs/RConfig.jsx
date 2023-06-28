@@ -4,7 +4,7 @@ import Womenservices from "../pages/Home/homeComps/Services/Womenser";
 import Mensservices from "../pages/Home/homeComps/Services/Menservices";
 import Childservices from "../pages/Home/homeComps/Services/Chilservices";
 
-import PaymentSec from "../pages/Home/homeComps/PaymentsSer/Checkout"
+import PaymentSec from "../pages/Home/homeComps/PaymentsSer/Checkout";
 import Stylist from "../pages/Home/homeComps/PaymentsSer/Stylist";
 import Login from "../pages/SecondDashboard/login/Login";
 import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
@@ -14,31 +14,34 @@ import Bills from "../pages/SecondDashboard/pagesForDashboard/bills/Bills";
 import Products from "../pages/SecondDashboard/pagesForDashboard/products/Products";
 import Customers from "../pages/SecondDashboard/pagesForDashboard/customers/Customers";
 import StylistList from "../pages/SecondDashboard/pagesForDashboard/Stylists/StylistList";
+import MainLogin from "../pages/Login/Main-Login";
+import CreateApt from "../pages/SecondDashboard/creates/CreateApt/CreateApt";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Home/>,
+    path: "/01",
+    element: <StylistList />,
   },
-  // {
-  //   path: "/01",
-  //   element: <StylistList />,
-  // },
-  // {
-  //   path: "/asdf",
-  //   element: <Test/>,
-  // },
+  {
+    path: "/",
+    element: <MainLogin />,
+  },
+  {
+    path: "/home",
+    element: <Home />,
+  },
+
   {
     path: "/services/women",
-    element: <Womenservices/>,
+    element: <Womenservices />,
   },
   {
     path: "/services/men",
-    element: <Mensservices/>,
+    element: <Mensservices />,
   },
   {
     path: "/services/child",
-    element: <Childservices/>,
+    element: <Childservices />,
   },
   {
     path: "/checkout",
@@ -48,7 +51,7 @@ const router = createBrowserRouter([
     path: "/checkout/1",
     element: <Stylist />,
   },
-  
+
   // Second Dashboard
   {
     path: "/appointment",
@@ -78,7 +81,10 @@ const router = createBrowserRouter([
     path: "/stylist",
     element: <StylistList />,
   },
-  
+  {
+    path: "/create/appointment",
+    element: <CreateApt />,
+  },
 ]);
 
 export default router;

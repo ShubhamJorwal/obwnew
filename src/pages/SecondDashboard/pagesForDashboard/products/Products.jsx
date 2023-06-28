@@ -29,7 +29,7 @@ const Products = () => {
     <>
       <div id="ProductsOfDash">
         <div id="topmegamenu">
-          <Link to={"/appointment"} className="megamenuLinks" id="Option1">
+          <Link to={"/dashboard"} className="megamenuLinks" id="Option1">
             <CiCalendarDate />
             <p>Appointments</p>
           </Link>

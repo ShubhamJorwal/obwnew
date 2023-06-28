@@ -1,4 +1,3 @@
-// actions.js
 import axios from 'axios';
 import {
   FETCH_CUSTOMERS_REQUEST,
@@ -10,8 +9,15 @@ import {
 export const fetchCustomers = () => {
   return (dispatch) => {
     dispatch(fetchCustomersRequest());
+
+    const token = localStorage.getItem('token');
+
     axios
-      .get('https://admin.obwsalon.com/api/customers')
+      .get('https://admin.obwsalon.com/api/customers', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         // Dispatch success action with the fetched data
         dispatch(fetchCustomersSuccess(response.data));

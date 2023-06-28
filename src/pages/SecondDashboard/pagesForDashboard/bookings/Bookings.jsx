@@ -19,9 +19,15 @@ const Appointment = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.get(
-          "https://admin.obwsalon.com/api/appointments"
-        );
+          "https://admin.obwsalon.com/api/appointments",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );console.log(response.data);
         setAppointments(response.data);
       } catch (error) {
         console.log(error);
@@ -64,8 +70,14 @@ const CsBooking = () => {
 
     const fetchBookings = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.get(
-          "https://admin.obwsalon.com/api/bookings"
+          "https://admin.obwsalon.com/api/bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setBookings(response.data);
       } catch (error) {
@@ -131,7 +143,7 @@ const Bookings = () => {
     <>
       <div id="bookingspage">
         <div id="topmegamenu">
-          <Link to={"/appointment"} className="megamenuLinks" id="Option1">
+          <Link to={"/dashboard"} className="megamenuLinks" id="Option1">
             <CiCalendarDate />
             <p>Appointments</p>
           </Link>

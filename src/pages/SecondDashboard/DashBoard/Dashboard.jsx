@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./dashboard.scss";
 import { CiCalendarDate } from "react-icons/ci";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
@@ -9,6 +9,7 @@ import { MdOutlineContentCut } from "react-icons/md";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import SecondBtn from "../../../components/Buttons/SecondBtn";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Dashboard = () => {
   const months = [
@@ -29,6 +30,8 @@ const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const currentYear = new Date().getFullYear();
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
@@ -40,6 +43,11 @@ const Dashboard = () => {
 
   const handleNextMonth = () => {
     setCurrentMonth((prevMonth) => prevMonth + 1);
+  };
+
+  const handleDateClick = (day) => {
+    setSelectedDate(day);
+    handleSubmit();
   };
 
   const renderCalendar = () => {
@@ -61,7 +69,7 @@ const Dashboard = () => {
           week.push(
             <td
               key={`${i}-${j}`}
-              onClick={() => setSelectedDate(dayCounter)}
+              onClick={() => handleDateClick(dayCounter)}
               className={selectedDate === dayCounter ? "selected" : ""}
             >
               {dayCounter}
@@ -77,15 +85,82 @@ const Dashboard = () => {
     return calendar;
   };
 
-  const handleSubmit = () => {
-    Navigate("/dashboard");
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch all customers
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "https://admin.obwsalon.com/api/customers",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const customers = response.data;
+
+      // Filter appointments based on selected date
+      const filteredAppointments = appointments.filter((appointment) => {
+        const appointmentDate = new Date(appointment.appointment_date);
+        return (
+          appointmentDate.getDate() === selectedDate &&
+          appointmentDate.getMonth() === currentMonth &&
+          appointmentDate.getFullYear() === currentYear
+        );
+      });
+
+      // Display customer names for the filtered appointments
+      const customerNames = filteredAppointments.map((appointment) => {
+        const customer = customers.find(
+          (customer) => customer.id === appointment.customer_id
+        );
+        return customer ? customer.name : "";
+      });
+
+      console.log("Appointments for selected date:", customerNames);
+
+      setLoading(false);
+    } catch (error) {
+      console.log("Error fetching appointments:", error);
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    // Fetch appointments data (replace with your own API endpoint)
+    const fetchAppointments = async () => {
+      try {
+        setLoading(true);
+
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "https://admin.obwsalon.com/api/appointments",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setAppointments(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.log("Error fetching appointments:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
 
   return (
     <>
       <div id="dashboard">
         <div id="topmegamenu">
-          <Link to={"/appointment"} className="megamenuLinks" id="Option1">
+          <Link to={"/dashboard"} className="megamenuLinks" id="Option1">
             <CiCalendarDate />
             <p>Appointments</p>
           </Link>
@@ -137,12 +212,11 @@ const Dashboard = () => {
           </thead>
           <tbody>{renderCalendar()}</tbody>
         </table>
-        {/* <div>
-        Selected Date: {selectedDate || 'None'}
-      </div> */}
       </div>
       <div id="lastbtnfordashboard">
-        <SecondBtn title={"Create Appointment"} />
+        <Link to={"/create/appointment"}>
+          <SecondBtn title={"Create Appointment"} onClick={handleSubmit} />
+        </Link>
       </div>
     </>
   );

@@ -4,7 +4,7 @@ import './loaderFirst.scss'
 const LoaderFirst = () => {
   return (
     <>
-      <span id="loading01"></span>
+      {/* <span id="loading01"></span> */}
     </>
   )
 }

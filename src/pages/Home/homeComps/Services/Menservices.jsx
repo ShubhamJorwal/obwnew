@@ -1,183 +1,276 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./services.scss";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { RxCross2 } from "react-icons/rx";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchServicesForMen } from "../../../../redux/Actions/ServicesAction";
+import { ToastContainer, toast } from "react-toastify";
+import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
 
-const Mensservices = () => {
+const Womenservices = () => {
+
+  const Navigate = useNavigate();
+  const goToPreviousPage = () => {
+    Navigate("/home");
+  };
+  const [selectedSubServices, setSelectedSubServices] = useState([]);
+
+  const dispatch = useDispatch();
+  const services = useSelector((state) => state.services.services);
+  const loading = useSelector((state) => state.services.loading);
+  const error = useSelector((state) => state.services.error);
+  const [showDiv, setShowDiv] = useState(false);
+  const [isSliderVisible, setIsSliderVisible] = useState(false);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+
+  // const handleServiceClick = (service) => {
+  //   setSelectedService(service);
+  //   setIsButtonClicked(true); // for background opacity
+  //   setIsSliderVisible(true);
+  // };
+  const handleSubServiceClick = (subService) => {
+    // Check if the sub-service is already selected
+    const isSubServiceSelected = selectedSubServices.find(
+      (service) => service.id === subService.id
+    );
+
+    if (isSubServiceSelected) {
+      // If the sub-service is already selected, remove it from the selected sub-services
+      setSelectedSubServices((prevSelectedSubServices) =>
+        prevSelectedSubServices.filter(
+          (service) => service.id !== subService.id
+        )
+      );
+    } else {
+      // If the sub-service is not selected, add it to the selected sub-services
+      setSelectedSubServices((prevSelectedSubServices) => [
+        ...prevSelectedSubServices,
+        subService,
+      ]);
+    }
+  };
+
+  const handleServiceClick = (service) => {
+    setSelectedService(service);
+    setSelectedSubServices([]);
+    setIsButtonClicked(true); // for background opacity
+    setIsSliderVisible(true);
+  };
+
+  const handleCrossClick = () => {
+    setIsButtonClicked(false);
+    setSelectedService(null);
+    setIsSliderVisible(false);
+  };
+
+  useEffect(() => {
+    dispatch(fetchServicesForMen());
+    setShowDiv(true);
+  }, [dispatch]);
+
+  if (loading) {
+    return <LoaderFirst />;
+  }
+
+  if (error) {
+    return toast("Something went wrong");
+  }
+
   return (
     <>
-
-<div id="servicesForSal">
+      <div
+        className={isButtonClicked ? "my-css-class" : ""}
+        id="servicesForSal"
+      >
         <div id="TopHeader">
-          <div>
+        <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
           <h1>SERVICES</h1>
           <div id="lastRes"></div>
         </div>
-        <div id="midcomp">
-          <h3>Select Customer type</h3>
-          <div id="SecCompForServices">
-            <Link to={"/services/women"}>
-            <div id="FeMaleService---------">
-              <span>
-                <svg
-                  id="secondsvgforservices"
-                  width="18"
-                  height="24"
-                  viewBox="0 0 18 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16.4006 19.5527V7.38312C16.4006 -2.43823 1.59953 -2.48382 1.59953 7.38312V17.6454C1.59953 17.8664 1.77876 18.0457 1.99982 18.0457C2.22088 18.0457 2.40011 17.8664 2.40011 17.6454V7.38312C2.40011 -1.4182 15.6 -1.39408 15.6 7.38312V19.0822C15.4573 19.0235 15.599 19.0752 13.1179 18.2215C12.2001 17.9057 11.5559 17.0876 11.4501 16.1381C13.4847 15.2591 14.6991 13.4085 14.6975 10.9724V7.37011C14.6975 6.84052 13.8969 6.84052 13.8969 7.37011V7.96894C13.7455 8.13986 13.5358 8.24714 13.3061 8.26686C12.1474 8.36663 12.3366 7.98545 11.6241 7.30906C11.3811 7.0785 10.9781 7.23161 10.9497 7.5654C10.908 8.055 10.502 8.43167 10.0052 8.44158C8.24529 8.47666 6.46285 8.41821 4.70753 8.26761C4.47386 8.24754 4.26101 8.13936 4.10784 7.96709V7.37006C4.10784 6.84047 3.30727 6.84047 3.30727 7.37006V10.9721C3.30572 13.4474 4.55452 15.2721 6.55026 16.1361C6.44513 17.0864 5.80077 17.9053 4.88226 18.2214L2.58139 19.0131C1.25178 19.4707 0.357834 20.7224 0.356934 22.128V23.5996C0.356934 23.8207 0.536163 23.9999 0.757223 23.9999C0.978283 23.9999 1.15751 23.8207 1.15751 23.5996V22.1283C1.15821 21.0643 1.8351 20.1166 2.84188 19.7701C5.31472 18.9192 5.28595 18.9412 5.56885 18.7968C6.94365 19.771 8.02207 21.3935 8.61876 23.396C8.66934 23.5657 8.82535 23.682 9.00238 23.682C9.17941 23.682 9.33542 23.5657 9.38601 23.3959C9.82488 21.923 10.5334 20.6361 11.4348 19.6742C11.586 19.5129 11.5777 19.2596 11.4165 19.1084C11.2551 18.9572 11.0018 18.9654 10.8507 19.1268C10.71 19.2768 10.5738 19.4339 10.4421 19.5975C9.54733 20.0307 8.45989 20.0318 7.56419 19.6007C7.17056 19.1114 6.73609 18.6808 6.26716 18.3178C6.81885 17.8237 7.19543 17.1516 7.32052 16.4079C8.38213 16.7025 9.56184 16.7185 10.6797 16.4091C10.878 17.5847 11.7043 18.5817 12.8574 18.9785C14.88 19.6745 16.8412 19.9384 16.8426 22.1281V23.5997C16.8426 23.8208 17.0218 24 17.2428 24C17.4639 24 17.6431 23.8208 17.6431 23.5997V22.1278C17.6425 21.106 17.1695 20.1659 16.4006 19.5527ZM9.70029 20.6702C9.43905 21.1099 9.20538 21.5805 9.00253 22.0766C8.79944 21.5795 8.56602 21.1096 8.30533 20.6712C8.75601 20.7483 9.22394 20.7524 9.70029 20.6702ZM4.10784 10.9724V8.93184C4.27442 9.00354 4.4533 9.04937 4.63913 9.06533C6.38614 9.21519 8.19695 9.27849 10.0212 9.24206C10.6498 9.2295 11.199 8.89386 11.5026 8.38999C11.8893 8.86524 12.2739 9.1591 13.3747 9.06448C13.5572 9.04877 13.7329 9.00379 13.8969 8.93354V10.9727C13.901 17.4571 4.10374 17.4671 4.10784 10.9724Z"
-                    fill="#048AA3"
-                  />
-                </svg>
-              </span>
-              <p>Women</p>
+        <div>
+          <div id="midcomp">
+            <h3>Select Customer type</h3>
+            <div id="SecCompForServices">
+              <Link to={"/services/women"}>
+                <div id="MaleService">
+                  <span>
+                    <img id="centerIconOnser" src="/icons/01.png" alt="" />
+                  </span>
+                  <p>Women</p>
+                </div>
+              </Link>
+              
+              <Link to={"/services/men"}>
+                <div id="FeMaleService">
+                  <span>
+                    <img id="centerIconOnser" src="/icons/01.png" alt="" />
+                  </span>
+                  <p>Men</p>
+                </div>
+              </Link>
+
+              <Link to={"/services/child"}>
+                <div id="ChildService">
+                  <span>
+                    <img id="centerIconOnser" src="/icons/01.png" alt="" />
+                  </span>
+                  <p>Child</p>
+                </div>
+              </Link>
             </div>
-            </Link>
-            
-            <Link to={"/services/men"}>
-            <div id="FeMaleService">
-              <span>
-                <svg
-                  width="24"
-                  height="30"
-                  viewBox="0 0 24 30"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M20.645 20.7303L14.5 19.1153V17.4703C15.2462 17.1421 15.9245 16.6775 16.5 16.1003C17.4886 15.109 18.1499 13.8387 18.395 12.4603C18.9729 12.369 19.5004 12.0775 19.8852 11.6368C20.27 11.1961 20.4877 10.6341 20.5002 10.0492C20.5127 9.46422 20.3192 8.89349 19.9536 8.43671C19.588 7.97994 19.0735 7.66618 18.5 7.55027V6.49527C18.5002 6.41891 18.5179 6.34361 18.5517 6.27514C18.5855 6.20667 18.6345 6.14685 18.695 6.10027C19.2543 5.68118 19.7085 5.13778 20.0218 4.51301C20.335 3.88823 20.4988 3.19918 20.5 2.50027V0.500272C20.5006 0.409638 20.4762 0.320588 20.4295 0.242946C20.3827 0.165304 20.3154 0.102087 20.235 0.0602718C20.1562 0.016204 20.0666 -0.00481952 19.9764 -0.000398975C19.8862 0.00402157 19.7991 0.0337081 19.725 0.0852719L17.5 1.56527V0.500272C17.5007 0.412767 17.4779 0.326681 17.4339 0.25103C17.3899 0.175379 17.3264 0.112947 17.25 0.0702719C17.1745 0.0253304 17.0885 0.00119137 17.0007 0.000313063C16.9128 -0.00056524 16.8263 0.0218485 16.75 0.0652719L14.27 1.48527L14.485 0.620272C14.5029 0.546416 14.5041 0.469493 14.4886 0.395106C14.473 0.32072 14.441 0.250743 14.395 0.190272C14.3479 0.130682 14.2879 0.0826024 14.2194 0.0496812C14.151 0.01676 14.0759 -0.000137293 14 0.000271816H10C8.80709 0.00212313 7.66358 0.476823 6.82006 1.32034C5.97655 2.16385 5.50185 3.30737 5.5 4.50027V7.55027C4.93077 7.66844 4.42052 7.9813 4.05704 8.43503C3.69356 8.88875 3.49957 9.45497 3.50845 10.0363C3.51733 10.6176 3.72852 11.1776 4.10569 11.62C4.48286 12.0624 5.00243 12.3595 5.575 12.4603C5.73666 13.569 6.18334 14.6167 6.87134 15.501C7.55933 16.3854 8.46509 17.076 9.5 17.5053V19.1153L3.35 20.7303C2.39031 20.9866 1.54194 21.5522 0.936297 22.3395C0.330658 23.1269 0.00156447 24.092 0 25.0853V29.5003C0 29.6329 0.0526785 29.7601 0.146447 29.8538C0.240215 29.9476 0.367392 30.0003 0.5 30.0003H23.5C23.6326 30.0003 23.7598 29.9476 23.8536 29.8538C23.9473 29.7601 24 29.6329 24 29.5003V25.0853C23.9983 24.0913 23.6686 23.1256 23.0619 22.3381C22.4553 21.5507 21.6057 20.9855 20.645 20.7303ZM5.5 11.4103C5.29132 11.3356 5.10057 11.2181 4.94 11.0653C4.76079 10.8861 4.62987 10.6645 4.55946 10.4211C4.48906 10.1777 4.48146 9.92046 4.53738 9.67332C4.59329 9.42618 4.71091 9.19724 4.87924 9.00785C5.04757 8.81846 5.26113 8.6748 5.5 8.59027V11.4103ZM19.5 10.0003C19.501 10.3972 19.3446 10.7784 19.065 11.0603C18.9023 11.2165 18.7079 11.3359 18.495 11.4103C18.495 11.3803 18.5 11.3553 18.5 11.3253V8.59027C18.7914 8.69405 19.0437 8.88509 19.2226 9.13738C19.4016 9.38968 19.4984 9.69097 19.5 10.0003ZM6.5 4.50027C6.50106 3.57234 6.87015 2.68272 7.5263 2.02657C8.18244 1.37042 9.07207 1.00133 10 1.00027H13.36L13.015 2.38027C12.991 2.47556 12.9956 2.57579 13.0283 2.66847C13.0609 2.76114 13.1202 2.84214 13.1986 2.90135C13.277 2.96056 13.3711 2.99536 13.4692 3.00139C13.5672 3.00742 13.6649 2.98443 13.75 2.93527L16.5 1.36027V2.50027C16.4994 2.59091 16.5238 2.67996 16.5705 2.7576C16.6173 2.83524 16.6846 2.89846 16.765 2.94027C16.8438 2.98434 16.9334 3.00536 17.0236 3.00094C17.1138 2.99652 17.2009 2.96684 17.275 2.91527L19.5 1.43527V2.50027C19.4991 3.04347 19.3722 3.57904 19.1292 4.06489C18.8863 4.55074 18.534 4.97361 18.1 5.30027C17.9142 5.4393 17.7632 5.61963 17.6591 5.82703C17.555 6.03443 17.5005 6.2632 17.5 6.49527V7.50027H16.5C16.4988 7.10281 16.3404 6.72197 16.0593 6.44092C15.7783 6.15987 15.3975 6.00146 15 6.00027H9C8.60254 6.00146 8.2217 6.15987 7.94065 6.44092C7.6596 6.72197 7.50119 7.10281 7.5 7.50027H6.5V4.50027ZM8.11 15.3903C7.5971 14.881 7.19062 14.2748 6.91422 13.607C6.63782 12.9392 6.49701 12.223 6.5 11.5003V8.50027H7.5C7.76497 8.49948 8.01887 8.39387 8.20623 8.2065C8.3936 8.01914 8.49921 7.76524 8.5 7.50027C8.5 7.36766 8.55268 7.24049 8.64645 7.14672C8.74021 7.05295 8.86739 7.00027 9 7.00027H15C15.1326 7.00027 15.2598 7.05295 15.3536 7.14672C15.4473 7.24049 15.5 7.36766 15.5 7.50027C15.5008 7.76524 15.6064 8.01914 15.7938 8.2065C15.9811 8.39387 16.235 8.49948 16.5 8.50027H17.5V11.3253C17.4902 12.8521 16.8774 14.3133 15.795 15.3903C15.3002 15.896 14.71 16.2987 14.0586 16.5751C13.4072 16.8514 12.7076 16.9959 12 17.0003H11.99C11.2691 17.0008 10.5552 16.8588 9.8893 16.5825C9.22343 16.3062 8.61875 15.9011 8.11 15.3903ZM11.5 29.0003H1V25.0853C1.00038 24.3128 1.256 23.5621 1.7271 22.95C2.19821 22.3378 2.8584 21.8985 3.605 21.7003L9.5 20.1503V20.5003C9.50147 21.0762 9.70107 21.634 10.0653 22.0802C10.4294 22.5263 10.9361 22.8335 11.5 22.9503V29.0003ZM10.5 20.5003V17.8203C10.9862 17.9382 11.4847 17.9986 11.985 18.0003H12C12.5062 17.9983 13.0101 17.9328 13.5 17.8053V20.5003C13.5 20.8981 13.342 21.2796 13.0607 21.5609C12.7794 21.8422 12.3978 22.0003 12 22.0003C11.6022 22.0003 11.2206 21.8422 10.9393 21.5609C10.658 21.2796 10.5 20.8981 10.5 20.5003ZM23 29.0003H12.5V22.9503C13.0639 22.8335 13.5706 22.5263 13.9347 22.0802C14.2989 21.634 14.4985 21.0762 14.5 20.5003V20.1503L20.39 21.7003C21.1376 21.8974 21.799 22.3363 22.2711 22.9486C22.7432 23.5608 22.9995 24.3121 23 25.0853V29.0003Z"
-                    fill="#048AA3"
-                  />
-                </svg>
-              </span>
-              <p>Men</p>
-            </div></Link>
-            
-            <Link to={"/services/child"}>
-            <div id="ChildService">
-              <span>
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clip-path="url(#clip0_66_1010)">
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M13.0825 11.9528C13.3033 12.0879 13.3728 12.3765 13.2376 12.5973C12.9794 13.0192 12.4687 13.2213 11.9926 13.2213C11.5309 13.2213 11.0397 13.0322 10.7735 12.6375C10.6288 12.4229 10.6854 12.1315 10.9001 11.9868C11.1147 11.8421 11.406 11.8987 11.5508 12.1133C11.5961 12.1805 11.749 12.2838 11.9926 12.2838C12.247 12.2838 12.3984 12.1726 12.438 12.1079C12.5731 11.8871 12.8617 11.8176 13.0825 11.9528Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M15.9665 10.8607C16.1815 11.1841 16.0937 11.6205 15.7703 11.8356L15.77 11.8357C15.4467 12.0508 15.0102 11.9629 14.7952 11.6396C14.5802 11.3162 14.668 10.8798 14.9914 10.6648L14.9916 10.6646C15.315 10.4496 15.7514 10.5374 15.9665 10.8607Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M9.20428 10.86C9.41968 11.1832 9.33237 11.6197 9.00927 11.8351L9.00899 11.8353C8.68588 12.0507 8.24934 11.9634 8.03393 11.6403C7.81853 11.3172 7.90584 10.8806 8.22895 10.6652L8.22923 10.665C8.55233 10.4496 8.98888 10.5369 9.20428 10.86Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M7.98082 15.7602C8.15643 15.9504 8.14458 16.2469 7.95436 16.4226C6.76754 17.5182 6.02344 19.0823 6.02344 20.8106V23.0625H17.9765V20.8106C17.9765 19.0823 17.2324 17.5182 16.0456 16.4226C15.8554 16.2469 15.8435 15.9504 16.0191 15.7602C16.1947 15.5699 16.4913 15.5581 16.6815 15.7337C18.0507 16.9977 18.914 18.8074 18.914 20.8106V23.5312C18.914 23.7901 18.7041 24 18.4453 24H5.55469C5.2958 24 5.08594 23.7901 5.08594 23.5312V20.8106C5.08594 18.8075 5.94927 16.9977 7.31844 15.7337C7.50866 15.5581 7.80522 15.5699 7.98082 15.7602Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M8.25 19.8643C8.50888 19.8643 8.71875 20.0741 8.71875 20.333V23.5316C8.71875 23.7905 8.50888 24.0003 8.25 24.0003C7.99112 24.0003 7.78125 23.7905 7.78125 23.5316V20.333C7.78125 20.0741 7.99112 19.8643 8.25 19.8643Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M15.75 19.8643C16.0089 19.8643 16.2188 20.0741 16.2188 20.333V23.2972C16.2188 23.5561 16.0089 23.7659 15.75 23.7659C15.4911 23.7659 15.2812 23.5561 15.2812 23.2972V20.333C15.2812 20.0741 15.4911 19.8643 15.75 19.8643Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M5.32031 21.4219C5.32031 21.163 5.53018 20.9531 5.78906 20.9531H8.01563C8.27451 20.9531 8.48438 21.163 8.48438 21.4219C8.48438 21.6808 8.27451 21.8906 8.01563 21.8906H5.78906C5.53018 21.8906 5.32031 21.6808 5.32031 21.4219Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M15.5156 21.4219C15.5156 21.163 15.7255 20.9531 15.9844 20.9531H18.211C18.4699 20.9531 18.6797 21.163 18.6797 21.4219C18.6797 21.6808 18.4699 21.8906 18.211 21.8906H15.9844C15.7255 21.8906 15.5156 21.6808 15.5156 21.4219Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M4.38281 8.55469C4.6417 8.55469 4.85156 8.76455 4.85156 9.02344V10.4297C4.85156 13.8919 8.00216 16.784 12 16.784C15.9978 16.784 19.1484 13.8919 19.1484 10.4297L19.1483 9.02345C19.1483 8.76457 19.3582 8.5547 19.6171 8.55469C19.8759 8.55468 20.0858 8.76454 20.0858 9.02342L20.0859 10.4297C20.0859 14.504 16.4158 17.7215 12 17.7215C7.58412 17.7215 3.91406 14.504 3.91406 10.4297V9.02344C3.91406 8.76455 4.12393 8.55469 4.38281 8.55469Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M10.1484 16.835C10.4073 16.835 10.6172 17.0448 10.6172 17.3037V17.3506C10.6172 18.11 11.2406 18.7334 12 18.7334H12C12.7595 18.7334 13.3829 18.1101 13.3829 17.3506V17.3037C13.3829 17.0448 13.5927 16.835 13.8516 16.835C14.1105 16.835 14.3204 17.0448 14.3204 17.3037V17.3506C14.3204 18.6278 13.2773 19.6709 12 19.6709H12C10.7228 19.6709 9.67969 18.6278 9.67969 17.3506V17.3037C9.67969 17.0448 9.88955 16.835 10.1484 16.835Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M15.0665 5.97656C15.3254 5.97656 15.5353 6.18643 15.5353 6.44531C15.5353 6.84136 15.833 7.30204 16.5322 7.69093C17.2145 8.07043 18.1867 8.3203 19.2805 8.3203H20.4926C21.7565 8.3203 22.7811 9.3449 22.7811 10.6088C22.7811 11.8728 21.7565 12.8974 20.4926 12.8974H19.2933C19.0344 12.8974 18.8246 12.6875 18.8246 12.4286C18.8246 12.1697 19.0344 11.9599 19.2933 11.9599H20.4926C21.2388 11.9599 21.8436 11.355 21.8436 10.6088C21.8436 9.86267 21.2388 9.2578 20.4926 9.2578H19.2805C18.0565 9.2578 16.9218 8.98033 16.0765 8.51023C15.6827 8.2912 15.3291 8.01555 15.0665 7.69067C14.8039 8.01556 14.4503 8.2912 14.0565 8.51023C13.2112 8.98033 12.0765 9.2578 10.8525 9.2578H3.50727C2.76112 9.2578 2.15625 9.86267 2.15625 10.6088C2.15625 11.355 2.76112 11.9599 3.50727 11.9599H4.70661C4.9655 11.9599 5.17536 12.1697 5.17536 12.4286C5.17536 12.6875 4.9655 12.8974 4.70661 12.8974H3.50727C2.24335 12.8974 1.21875 11.8728 1.21875 10.6088C1.21875 9.3449 2.24335 8.3203 3.50727 8.3203H10.8525C11.9462 8.3203 12.9185 8.07043 13.6008 7.69093C14.3 7.30204 14.5978 6.84136 14.5978 6.44531C14.5978 6.18643 14.8076 5.97656 15.0665 5.97656Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M5.33677 1.93253C6.72946 0.730578 8.54211 0 10.5175 0H13.4826C17.8546 0 21.4302 3.57538 21.4302 7.94763V8.68122C21.4302 8.9401 21.2203 9.14997 20.9614 9.14997C20.7026 9.14997 20.4927 8.9401 20.4927 8.68122V7.94763C20.4927 4.09316 17.3369 0.937501 13.4826 0.937501H10.5175C8.77731 0.937501 7.17972 1.58035 5.9493 2.64226C5.75331 2.81141 5.45731 2.78965 5.28817 2.59366C5.11902 2.39768 5.14078 2.10168 5.33677 1.93253ZM3.47914 5.38306C3.7273 5.45678 3.86872 5.71772 3.79499 5.96589C3.60817 6.59478 3.50733 7.25976 3.50733 7.94763V8.68122C3.50733 8.9401 3.29746 9.14997 3.03857 9.14997C2.77969 9.14997 2.56982 8.9401 2.56982 8.68122V7.94763C2.56982 7.16765 2.68423 6.4128 2.89631 5.69891C2.97003 5.45075 3.23098 5.30934 3.47914 5.38306Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M10.3594 21.3203C10.3594 21.0614 10.5692 20.8516 10.8281 20.8516H13.1719C13.4308 20.8516 13.6406 21.0614 13.6406 21.3203C13.6406 21.5792 13.4308 21.7891 13.1719 21.7891H10.8281C10.5692 21.7891 10.3594 21.5792 10.3594 21.3203Z"
-                      fill="#048AA3"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M3.7627 3.9082C3.7627 3.64932 3.97256 3.43945 4.23144 3.43945H4.23177C4.49065 3.43945 4.70051 3.64932 4.70051 3.9082C4.70051 4.16708 4.49065 4.37694 4.23177 4.37694H4.23144C3.97256 4.37694 3.7627 4.16708 3.7627 3.9082Z"
-                      fill="#048AA3"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_66_1010">
-                      <rect width="24" height="24" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </span>
-              <p>Child</p>
-            </div></Link>
+          </div>
+
+          <h3
+            style={{
+              textAlign: "center",
+              margin: "1rem",
+              fontSize: "24px",
+              fontWeight: "500",
+            }}
+          >
+            Select a Service
+          </h3>
+          <div id="servicesoptions">
+            {services.map((service) => (
+              <div key={service.id} onClick={() => handleServiceClick(service)}>
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                  alt=""
+                />
+                <p> {service.service_name}</p>
+              </div>
+            ))}
           </div>
         </div>
-        
-        <h3 style={{textAlign:"center", margin:"2vw"}}>Select Customer type</h3>
-        <div id="servicesoptions">
-            <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt="" /><p>Hair Service</p></div>
-            <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt="" /><p>Body Treatment</p></div>
-            <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt="" /><p>Facials</p></div>
-            <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt="" /><p>Nail Extension</p></div>
-            <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt="" /><p>Threading</p></div>
-            <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU" alt="" /><p>Makeup</p></div>
-        </div>
+        {selectedService && isSliderVisible && (
+          <div className={`overlay ${showDiv ? "show" : ""}`}>
+            {/* Slider content */}
+            <div className="content">
+              <div className="service-details">
+                <div id="topLayerForSerBook">
+                  <img
+                    style={{
+                      width: "10vw",
+                      height: "10vw",
+                      objectFit: "cover",
+                      borderRadius: "2vw",
+                    }}
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    alt=""
+                  />
+                  <div id="middledataforserbook">
+                    <h3 style={{ color: "gray" }}>Men</h3>
+                    <h2>{selectedService.service_name}</h2>
+                  </div>
+                  <div className="back-button" onClick={handleCrossClick}>
+                    <RxCross2 />
+                  </div>
+                </div>
+
+                {/* Self-coded */}
+                <div id="middleFetchedData">
+                  {/* {services.map((service) => (
+                  <div key={service.id} id="servicesList">
+                    <p>{service.service_name}<span style={{color: "gray",fontSize: "1.7vw",marginLeft: "1.2vw",}}>{service.duration}min</span></p>
+                    <p><span style={{color: "#18959E",fontSize: "unset",marginRight: "3vw",}}>{service.category}</span>
+                      <span onClick={handleClick}className={addClass ? "pricetag" : ""}>${service.price_including_gst}</span></p>
+                  </div>
+                ))} */}
+                  {services.map((service) => (
+                    <div
+                      onClick={() => handleSubServiceClick(service)}
+                      key={service.id}
+                      id="servicesList"
+                      className={`pricetag ${
+                        selectedSubServices.find(
+                          (subService) => subService.id === service.id
+                        )
+                          ? "selected"
+                          : ""
+                      }`}
+                    >
+                      <p>
+                        {service.service_name}
+                        <span
+                          style={{
+                            color: "gray",
+                            fontSize: "1.7vw",
+                            marginLeft: "1.2vw",
+                          }}
+                        >
+                          {service.duration}min
+                        </span>
+                      </p>
+                      <p>
+                        <span
+                          style={{
+                            color: "#18959E",
+                            fontSize: "unset",
+                            marginRight: "3vw",
+                          }}
+                        >
+                          {service.label}
+                        </span>
+                        <span>₹{service.price_including_gst}</span>
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {/* End of self-coded section */}
+                <div id="lastbtnofserviceadd">
+                <Link
+                  to="/checkout"
+                  className="book-button"
+                  onClick={() => {
+                    // Combine the selected service and sub-services into an object
+                    const selectedData = {
+                      service: selectedService,
+                      subServices: selectedSubServices,
+                    };
+
+                    // Retrieve existing data from localStorage
+                    const existingData = localStorage.getItem("SelectedData");
+
+                    if (existingData) {
+                      // Parse the existing data as an array
+                      const dataArray = JSON.parse(existingData);
+
+                      // Push the new selected data to the array
+                      dataArray.push(selectedData);
+
+                      // Save the updated array back to localStorage
+                      localStorage.setItem(
+                        "SelectedData",
+                        JSON.stringify(dataArray)
+                      );
+                    } else {
+                      // Create a new array with the selected data
+                      const dataArray = [selectedData];
+
+                      // Save the array to localStorage
+                      localStorage.setItem(
+                        "SelectedData",
+                        JSON.stringify(dataArray)
+                      );
+                    }
+                  }}
+                >
+                  Add Services
+                </Link>
+              </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      <ToastContainer position="bottom-right" />
     </>
   );
 };
 
-export default Mensservices;
+export default Womenservices;
