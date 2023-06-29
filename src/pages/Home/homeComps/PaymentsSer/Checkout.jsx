@@ -37,12 +37,12 @@ const Checkout = () => {
     // Fetch data from localStorage
     const storedData = localStorage.getItem("SelectedData");
     const bookingData = localStorage.getItem("BookingData");
-  
+
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
       // const parsedBookingData = JSON.parse(bookingData);
       const { first_name, last_name, contact_no } = JSON.parse(bookingData)[0];
-  
+
       // Update state with fetched data
       // setName(parsedBookingData.map(data => `${data.first_name} ${data.last_name}`));
       // setContactNo(parsedBookingData.map(data => data.contact_no.toString()));
@@ -51,42 +51,39 @@ const Checkout = () => {
       setContactNo(contact_no);
 
       setSubServices(
-        parsedData.map(({ subServices }) =>
-          subServices.map(subService => ({ ...subService, quantity: 1 }))
-        ).flat()
+        parsedData
+          .map(({ subServices }) =>
+            subServices.map((subService) => ({ ...subService, quantity: 1 }))
+          )
+          .flat()
       );
       setLoading(false);
     } else {
       setLoading(false);
     }
   }, []);
-  
+
   // data for products
 
-  const [selectedProductsOS, setSelectedProductsOS] = useState([]);
+  //   // Retrieve the data from local storage
+  // const data = localStorage.getItem("selectedProducts");
 
-  useEffect(() => {
-    // Fetch data from localStorage
-    const selectedProductsData = localStorage.getItem("selectedProducts");
+  // // Parse the JSON data into an object
+  // const selectedProduct = JSON.parse(data);
 
-    if (selectedProductsData) {
-      const parsedSelectedProductsData = JSON.parse(selectedProductsData);
-      setSelectedProducts(parsedSelectedProductsData);
-    }
-  }, []);
+  // // Access specific properties within the selectedProduct object
+  // console.log(selectedProduct.property1);
+  // console.log(selectedProduct.property2);
+  // // ...
 
-//
+  // // You can also loop through the object properties
+  // for (let key in selectedProduct) {
+  //   if (selectedProduct.hasOwnProperty(key)) {
+  //     console.log(key + ": " + selectedProduct[key]);
+  //   }
+  // }
 
-
-  useEffect(() => {
-    // Calculate the total price
-    const priceSum = subServices.reduce(
-      (sum, subService) =>
-        sum + parseFloat(subService.price_including_gst) * subService.quantity,
-      0
-    );
-    setTotalPrice(priceSum);
-  }, [subServices]);
+  //
 
   const handleAddSubService = (subServiceId) => {
     const updatedSubServices = subServices.map((subService) => {
@@ -113,13 +110,13 @@ const Checkout = () => {
       (subService) => subService.id !== subServiceId
     );
     setSubServices(updatedSubServices);
-  
+
     // Get the stored SelectedData from localStorage
     const storedData = localStorage.getItem("SelectedData");
     if (storedData) {
       // Parse the stored data into an array
       const parsedData = JSON.parse(storedData);
-  
+
       // Find the object containing the subServiceId
       const updatedData = parsedData.map((data) => {
         const updatedSubServices = data.subServices.filter(
@@ -130,12 +127,14 @@ const Checkout = () => {
           subServices: updatedSubServices,
         };
       });
-  
+
       // Update the SelectedData in localStorage with the updated data
       localStorage.setItem("SelectedData", JSON.stringify(updatedData));
     }
+    
+    window.location.reload();
   };
-  
+
   function deleteService(index) {
     selectedData.splice(index, 1);
     localStorage.setItem("selectedData", JSON.stringify(selectedData));
@@ -160,25 +159,24 @@ const Checkout = () => {
     setIsButtonClicked(true);
     setIsSliderVisible(true);
   };
-
   const handleAddStylist2O = () => {
-    if (selectedStylist) {
-      localStorage.setItem("SelectedStylist", JSON.stringify(selectedStylist));
-    }
-    setIsSliderVisible(false);
-    setIsButtonClicked(false);
-    setShowStylistSlider(false);
-    setshowProductsSlider(false);
-
     const selectedStylist = stylists.find(
       (stylist) => stylist.id === selectedStylistId
     );
 
-    // Save the stylist in localStorage
-    localStorage.setItem("selectedStylist", JSON.stringify(selectedStylist));
-    // };
+    if (selectedStylist) {
+      localStorage.setItem("selectedStylist", JSON.stringify(selectedStylist));
+    }
+
+    setIsSliderVisible(false);
+    setIsButtonClicked(false);
+    setShowStylistSlider(false);
+    setshowProductsSlider(false);
   };
+
   const handleAddProducts = () => {
+
+    
     setshowProductsSlider(true);
     setIsButtonClicked(true);
 
@@ -230,7 +228,7 @@ const Checkout = () => {
             },
           }
         );
-        console.log(response.data)
+        console.log(response.data);
         setProducts(response.data);
       } catch (error) {
         console.log(error);
@@ -247,6 +245,8 @@ const Checkout = () => {
     setIsButtonClicked(false);
     setShowStylistSlider(false);
     setshowProductsSlider(false);
+    
+    window.location.reload();
   };
   const handleClick = (stylistId) => {
     setSelectedStylistId(stylistId);
@@ -301,42 +301,136 @@ const Checkout = () => {
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   };
 
+  // products data
 
-  // products data 
   const [selectedDivs, setSelectedDivs] = useState([]);
+  const handleDivSelection = (product) => {
+    setSelectedProducts((prevSelectedProducts) => {
+      const updatedSelectedProducts = prevSelectedProducts.some(
+        (selectedProduct) => selectedProduct.id === product.id
+      )
+        ? prevSelectedProducts.filter(
+            (selectedProduct) => selectedProduct.id !== product.id
+          )
+        : [...prevSelectedProducts, product];
 
-  const handleDivSelection = (divId) => {
-    setSelectedDivs((prevSelectedDivs) => {
-      if (prevSelectedDivs.includes(divId)) {
-        return prevSelectedDivs.filter((id) => id !== divId);
-      } else {
-        return [...prevSelectedDivs, divId];
-      }
+      localStorage.setItem(
+        "selectedProducts",
+        JSON.stringify(updatedSelectedProducts)
+      );
+
+      return updatedSelectedProducts;
     });
   };
 
+  // Fetch the previously selected products from localStorage on component mount
   useEffect(() => {
-    localStorage.setItem("selectedProducts", JSON.stringify(filteredProducts.filter(product => selectedDivs.includes(product.id))));
-  }, [selectedDivs, filteredProducts]);
+    const storedSelectedProducts = localStorage.getItem("selectedProducts");
+    if (storedSelectedProducts) {
+      setSelectedProducts(JSON.parse(storedSelectedProducts));
+    }
+  }, []);
 
+  // useEffect(() => {
+  //   localStorage.setItem("selectedProducts", JSON.stringify(filteredProducts.filter(product => selectedDivs.includes(product.id))));
+
+  // }, [selectedDivs, filteredProducts]);
+
+  //  code for new products purchase
+
+  // const [selectedProducts, setSelectedProducts] = useState([]);
+
+  useEffect(() => {
+    const storedSelectedProducts = localStorage.getItem("selectedProducts");
+    if (storedSelectedProducts) {
+      setSelectedProducts(JSON.parse(storedSelectedProducts));
+    }
+  }, []);
+
+  const handleDeleteProduct = (productId) => {
+    const updatedProducts = selectedProducts.filter(
+      (product) => product.id !== productId
+    );
+    setSelectedProducts(updatedProducts);
+
+    localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
+    
+    window.location.reload();
+  };
+
+  const handleAddProduct = (productId) => {
+    const updatedProducts = selectedProducts.map((product) => {
+      if (product.id === productId) {
+        return { ...product, quantity: product.quantity + 1 };
+      }
+      return product;
+    });
+    setSelectedProducts(updatedProducts);
+
+    localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
+  };
+
+  const handleRemoveProduct = (productId) => {
+    const updatedProducts = selectedProducts.map((product) => {
+      if (product.id === productId && product.quantity > 1) {
+        return { ...product, quantity: product.quantity - 1 };
+      }
+      return product;
+    });
+    setSelectedProducts(updatedProducts);
+
+    localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
+  };
+
+  useEffect(() => {
+    // Calculate the total price
+    const priceSum = subServices.reduce(
+      (sum, subService) =>
+        sum + parseFloat(subService.price_including_gst) * subService.quantity,
+      0
+    );
+    setTotalPrice(priceSum);
+  }, [subServices]);
+
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+    selectedProducts.forEach((product) => {
+      const productTotal = product.amount_with_gst * product.quantity;
+      totalPrice += productTotal;
+    });
+    return totalPrice.toFixed(2);
+  };
+
+  //
+
+  useEffect(() => {
+    const selectedStylist = localStorage.getItem("selectedStylist");
+    if (selectedStylist) {
+      const stylist = JSON.parse(selectedStylist);
+      setStylistName(stylist.first_name + " " + stylist.last_name);
+    }
+  }, []);
+  //
 
   if (loading) {
     return <div>Loading...</div>; // Render a loader while fetching data
   }
 
-  if (subServices.length === 0) {
+  if (subServices.length === 0 && selectedProducts.length === 0) {
     return (
       <>
-        <div id="TopHeader">
-          <div>
-            <AiOutlineArrowLeft />
+        <div id="checkoutsec">
+          <div id="TopHeader">
+            <div onClick={goToPreviousPage}>
+              <AiOutlineArrowLeft />
+            </div>
+            <h1>CHECKOUT</h1>
+            <div id="lastRes"></div>
           </div>
-          <h1>CHECKOUT</h1>
-          <div id="lastRes"></div>
-        </div>
-        <div>
-          You have not chosen any services, or there may be an error. Please go
-          back and attempt to select services once more.
+          <div id="distextchecko">
+            You have not chosen any services, or there may be an error. Please
+            go back and attempt to select services once more.
+          </div>
         </div>
       </>
     ); // Display a message if no services are selected
@@ -361,7 +455,9 @@ const Checkout = () => {
         </div>
 
         <div id="buttonsforcheckout">
-          <Link to={"/services/women"}><button>Add Service</button></Link>
+          <Link to={"/services/women"}>
+            <button>Add Service</button>
+          </Link>
           <button onClick={handleAddProducts}>Add Product</button>
         </div>
 
@@ -384,15 +480,15 @@ const Checkout = () => {
                   <div id="incdec">
                     <div>
                       <button
-                        onClick={() => handleAddSubService(subService.id)}
-                      >
-                        +
-                      </button>
-                      <span>{subService.quantity}</span>
-                      <button
                         onClick={() => handleRemoveSubService(subService.id)}
                       >
                         -
+                      </button>
+                      <span>{subService.quantity}</span>
+                      <button
+                        onClick={() => handleAddSubService(subService.id)}
+                      >
+                        +
                       </button>
                     </div>
                   </div>
@@ -422,64 +518,56 @@ const Checkout = () => {
                 </div>
               </div>
             ))}
-{/* new fetching  */}
 
+            {/* new fetching  */}
 
-{selectedProductsOS.map((product, index) => (
-
-              <div key={index} id="OrderCHeck">
+            {selectedProducts.map((product) => (
+              <div key={product.id} id="OrderCHeck">
                 <div id="firstrowCheck">
                   <p>{product.product_name}</p>
                   <div id="incdec">
-                    <div>
-                      <button
-                        onClick={() => handleAddSubService(subService.id)}
-                      >
-                        +
-                      </button>
-                      <span>{subService.quantity}</span>
-                      <button
-                        onClick={() => handleRemoveSubService(subService.id)}
-                      >
+                    <div style={{ justifyContent: "center" }}>
+                      <button onClick={() => handleRemoveProduct(product.id)}>
                         -
+                      </button>
+                      <span>{product.quantity}</span>
+                      <button onClick={() => handleAddProduct(product.id)}>
+                        +
                       </button>
                     </div>
                   </div>
                   <div id="rdPrice">
-                    <p>{subService.price_including_gst}/-</p>
+                    <p>{product.amount_with_gst}/-</p>
                   </div>
                   <div id="thtotalprice">
                     <p>
-                      {(
-                        subService.price_including_gst * subService.quantity
-                      ).toFixed(2)}
+                      {(product.amount_with_gst * product.quantity).toFixed(2)}
                       /-
                     </p>
                   </div>
                   <div
                     id="deletesubserv"
-                    onClick={() => handleDeleteSubService(subService.id)}
+                    onClick={() => handleDeleteProduct(product.id)}
                   >
                     <MdDelete />
                   </div>
                 </div>
-                <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>
-                    Stylist :{stylistName ? stylistName : "No stylist selected"}
-                  </span>
-                </div>
               </div>
             ))}
 
-
-{/* new fetching closed */}
+            {/* new fetching closed */}
 
             <div id="totalwithgst">
               <div id="totalwithgstF1">
                 <div>
                   <p>Sub Total</p>
-                  <p>{totalPrice.toFixed(2)}/-</p>
+                  <p>
+                    {" "}
+                    {(
+                      parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
+                    ).toFixed(2)}
+                    /-
+                  </p>
                 </div>
                 <div>
                   {/* <p>Gst</p> */}
@@ -493,7 +581,11 @@ const Checkout = () => {
               </div>
               <div id="totalwithgstF2">
                 <span id="fspanoftgst"> Total:</span>{" "}
-                <span id="sspanoftgst">{totalPrice.toFixed(2)}/-</span>
+                <span id="sspanoftgst">
+                  {(
+                    parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
+                  ).toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
@@ -544,13 +636,13 @@ const Checkout = () => {
                   ))}
                 </div>
                 <div id="lastbtnofserviceadd">
-                  <Link
+                  <a
                     className="book-button"
-                    to="/checkout"
+                    href="/checkout"
                     onClick={handleAddStylist2O}
                   >
                     Add Stylist
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>
@@ -560,71 +652,76 @@ const Checkout = () => {
 
       {/* new data */}
       <div id="secondCheck">
-      {showProductsSlider && (
-        <div className={`overlay ${showDiv2nd ? "show" : ""}`}>
-          {/* Slider content */}
-          <div className="content">
-            <div
-              className="service-details"
-              style={{
-                height: "inherit",
-              }}
-            >
-              <div id="searchbarforproducts">
-                <input
-                  type="text"
-                  placeholder="Search for products & brands"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-              </div>
-              <div id="topLayerForSerBook">
-                <div id="middledataforserbook"></div>
-                <h1>Product List</h1>
-                <div className="back-button" onClick={handleCrossClick}>
-                  <RxCross2 />
+        {showProductsSlider && (
+          <div className={`overlay ${showDiv2nd ? "show" : ""}`}>
+            {/* Slider content */}
+            <div className="content">
+              <div
+                className="service-details"
+                style={{
+                  height: "inherit",
+                }}
+              >
+                <div id="searchbarforproducts">
+                  <input
+                    type="text"
+                    placeholder="Search for products & brands"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
                 </div>
-              </div>
-
-              {/* Self-coded */}
-              <div id="middleFetchedData">
-                {filteredProducts.map((product, index) => (
-                  <div
-                    id="productDIvSC"
-                    key={`${product.id}-${index}`}
-                    className={`product-div ${
-                      selectedDivs.includes(product.id) ? "selectedProduct" : ""
-                    }`}
-                    onClick={() => handleDivSelection(product.id)}
-                  >
-                    <div id="divscf1">
-                      <h3>{product.product_name}</h3>{" "}
-                      <div id="childofdivsc">
-                        <p>{product.sku}</p>
-                        <p style={{ color: "#0B8F00" }}>
-                          {product.Quantity} Stocks left
-                        </p>
-                        <p>L'Oreal</p>
-                      </div>
-                    </div>
-                    <div id="divscf2">{product.amount_with_gst}</div>
+                <div id="topLayerForSerBook">
+                  <div id="middledataforserbook"></div>
+                  <h1>Product List</h1>
+                  <div className="back-button" onClick={handleCrossClick}>
+                    <RxCross2 />
                   </div>
-                ))}
-              </div>
-              <div id="lastbtnofserviceadd">
-                <Link
-                  className="book-button"
-                  to="/checkout"
-                  // onClick={handleAddItem}
-                  onClick={handleCrossClick}
-                >
-                  Add Stylist
-                </Link>
+                </div>
+
+                {/* Self-coded */}
+                <div id="middleFetchedData">
+                  {filteredProducts.map((product, index) => (
+                    <div
+                      id="productDIvSC"
+                      key={`${product.id}-${index}`}
+                      className={`product-div ${
+                        selectedProducts.some(
+                          (selectedProduct) => selectedProduct.id === product.id
+                        )
+                          ? "selectedProduct"
+                          : ""
+                      }`}
+                      onClick={() => handleDivSelection(product)}
+                    >
+                      <div id="divscf1">
+                        <h3>{product.product_name}</h3>{" "}
+                        <div id="childofdivsc">
+                          <p>{product.sku}</p>
+                          <p style={{ color: "#0B8F00" }}>
+                            {product.Quantity} Stocks left
+                          </p>
+                          <p>L'Oreal</p>
+                        </div>
+                      </div>
+                      <div id="divscf2">{product.amount_with_gst}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div id="lastbtnofserviceadd">
+                  <Link
+                    className="book-button"
+                    to="/checkout"
+                    // onClick={handleAddItem}
+                    onClick={handleCrossClick}
+                  >
+                    Add Product
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
 
       {/* new data */}

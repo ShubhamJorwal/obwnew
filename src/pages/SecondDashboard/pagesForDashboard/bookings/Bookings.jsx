@@ -27,7 +27,7 @@ const Appointment = () => {
               Authorization: `Bearer ${token}`,
             },
           }
-        );console.log(response.data);
+        );
         setAppointments(response.data);
       } catch (error) {
         console.log(error);
@@ -79,6 +79,7 @@ const CsBooking = () => {
             },
           }
         );
+        console.log(response.data);
         setBookings(response.data);
       } catch (error) {
         console.log(error);

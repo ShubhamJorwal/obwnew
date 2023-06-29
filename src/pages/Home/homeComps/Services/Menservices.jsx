@@ -9,7 +9,6 @@ import { ToastContainer, toast } from "react-toastify";
 import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
 
 const Womenservices = () => {
-
   const Navigate = useNavigate();
   const goToPreviousPage = () => {
     Navigate("/home");
@@ -85,7 +84,7 @@ const Womenservices = () => {
         id="servicesForSal"
       >
         <div id="TopHeader">
-        <div id="backbtn" onClick={goToPreviousPage}>
+          <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
           <h1>SERVICES</h1>
@@ -103,7 +102,7 @@ const Womenservices = () => {
                   <p>Women</p>
                 </div>
               </Link>
-              
+
               <Link to={"/services/men"}>
                 <div id="FeMaleService">
                   <span>
@@ -222,46 +221,46 @@ const Womenservices = () => {
                 </div>
                 {/* End of self-coded section */}
                 <div id="lastbtnofserviceadd">
-                <Link
-                  to="/checkout"
-                  className="book-button"
-                  onClick={() => {
-                    // Combine the selected service and sub-services into an object
-                    const selectedData = {
-                      service: selectedService,
-                      subServices: selectedSubServices,
-                    };
+                  <Link
+                    to="/checkout"
+                    className="book-button"
+                    onClick={() => {
+                      // Combine the selected service and sub-services into an object
+                      const selectedData = {
+                        service: selectedService,
+                        subServices: selectedSubServices,
+                      };
 
-                    // Retrieve existing data from localStorage
-                    const existingData = localStorage.getItem("SelectedData");
+                      // Retrieve existing data from localStorage
+                      const existingData = localStorage.getItem("SelectedData");
 
-                    if (existingData) {
-                      // Parse the existing data as an array
-                      const dataArray = JSON.parse(existingData);
+                      if (existingData) {
+                        // Parse the existing data as an array
+                        const dataArray = JSON.parse(existingData);
 
-                      // Push the new selected data to the array
-                      dataArray.push(selectedData);
+                        // Push the new selected data to the array
+                        dataArray.push(selectedData);
 
-                      // Save the updated array back to localStorage
-                      localStorage.setItem(
-                        "SelectedData",
-                        JSON.stringify(dataArray)
-                      );
-                    } else {
-                      // Create a new array with the selected data
-                      const dataArray = [selectedData];
+                        // Save the updated array back to localStorage
+                        localStorage.setItem(
+                          "SelectedData",
+                          JSON.stringify(dataArray)
+                        );
+                      } else {
+                        // Create a new array with the selected data
+                        const dataArray = [selectedData];
 
-                      // Save the array to localStorage
-                      localStorage.setItem(
-                        "SelectedData",
-                        JSON.stringify(dataArray)
-                      );
-                    }
-                  }}
-                >
-                  Add Services
-                </Link>
-              </div>
+                        // Save the array to localStorage
+                        localStorage.setItem(
+                          "SelectedData",
+                          JSON.stringify(dataArray)
+                        );
+                      }
+                    }}
+                  >
+                    Add Services
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

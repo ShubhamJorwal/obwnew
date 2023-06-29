@@ -42,12 +42,13 @@
       margin: 0 83px;
       width: 458px;
       height: 49px;
-      padding: 1vw;
+      padding: 1rem;
       background: #ffffff;
       border: 1px solid #9e9e9e;
       box-shadow: 1px 1px 2px 1px rgba(116, 116, 116, 0.25);
       border-radius: 5px;
       margin-bottom: 1rem;
+      font-size: 1rem;
     }
 
     button {
@@ -97,11 +98,15 @@
   margin: 0.1vw auto;
   li {
     border-bottom: 1px solid #cccccc;
-    padding: 0.8vw;
+    padding: 0.8rem;
     display: flex;
     justify-content: space-between;
     padding-right: 30%;
     padding-left: 5%;
+
+    &:hover {
+      background: #016f821c;
+    }
   }
 }
 

@@ -492,3 +492,13 @@
 .selectedProduct {
   background: skyblue;
 }
+
+#distextchecko {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 5rem;
+  font-size: 2em;
+  font-family: Inter;
+}

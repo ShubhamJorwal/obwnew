@@ -18,10 +18,10 @@ import MainLogin from "../pages/Login/Main-Login";
 import CreateApt from "../pages/SecondDashboard/creates/CreateApt/CreateApt";
 
 const router = createBrowserRouter([
-  {
-    path: "/01",
-    element: <StylistList />,
-  },
+  // {
+  //   path: "/01",
+  //   element: <FetchSelectedProd />,
+  // },
   {
     path: "/",
     element: <MainLogin />,
