@@ -41,7 +41,7 @@ const Checkout = () => {
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
       // const parsedBookingData = JSON.parse(bookingData);
-      const { first_name, last_name, contact_no } = JSON.parse(bookingData)[0];
+      const { first_name, last_name, contact_no } = JSON.parse(bookingData);
 
       // Update state with fetched data
       // setName(parsedBookingData.map(data => `${data.first_name} ${data.last_name}`));
@@ -131,7 +131,7 @@ const Checkout = () => {
       // Update the SelectedData in localStorage with the updated data
       localStorage.setItem("SelectedData", JSON.stringify(updatedData));
     }
-    
+
     window.location.reload();
   };
 
@@ -175,8 +175,6 @@ const Checkout = () => {
   };
 
   const handleAddProducts = () => {
-
-    
     setshowProductsSlider(true);
     setIsButtonClicked(true);
 
@@ -245,7 +243,7 @@ const Checkout = () => {
     setIsButtonClicked(false);
     setShowStylistSlider(false);
     setshowProductsSlider(false);
-    
+
     window.location.reload();
   };
   const handleClick = (stylistId) => {
@@ -305,6 +303,12 @@ const Checkout = () => {
 
   const [selectedDivs, setSelectedDivs] = useState([]);
   const handleDivSelection = (product) => {
+    if (product.quantity === 0) {
+      return; // Do nothing if the product is out of stock
+    }
+
+    const updatedProduct = { ...product, selectedQuantity: 1 };
+
     setSelectedProducts((prevSelectedProducts) => {
       const updatedSelectedProducts = prevSelectedProducts.some(
         (selectedProduct) => selectedProduct.id === product.id
@@ -312,7 +316,7 @@ const Checkout = () => {
         ? prevSelectedProducts.filter(
             (selectedProduct) => selectedProduct.id !== product.id
           )
-        : [...prevSelectedProducts, product];
+        : [...prevSelectedProducts, updatedProduct];
 
       localStorage.setItem(
         "selectedProducts",
@@ -354,14 +358,13 @@ const Checkout = () => {
     setSelectedProducts(updatedProducts);
 
     localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
-    
+
     window.location.reload();
   };
-
   const handleAddProduct = (productId) => {
     const updatedProducts = selectedProducts.map((product) => {
       if (product.id === productId) {
-        return { ...product, quantity: product.quantity + 1 };
+        return { ...product, selectedQuantity: product.selectedQuantity + 1 };
       }
       return product;
     });
@@ -372,8 +375,8 @@ const Checkout = () => {
 
   const handleRemoveProduct = (productId) => {
     const updatedProducts = selectedProducts.map((product) => {
-      if (product.id === productId && product.quantity > 1) {
-        return { ...product, quantity: product.quantity - 1 };
+      if (product.id === productId && product.selectedQuantity > 1) {
+        return { ...product, selectedQuantity: product.selectedQuantity - 1 };
       }
       return product;
     });
@@ -395,7 +398,7 @@ const Checkout = () => {
   const calculateTotalPrice = () => {
     let totalPrice = 0;
     selectedProducts.forEach((product) => {
-      const productTotal = product.amount_with_gst * product.quantity;
+      const productTotal = product.amount_with_gst * product.selectedQuantity;
       totalPrice += productTotal;
     });
     return totalPrice.toFixed(2);
@@ -412,29 +415,9 @@ const Checkout = () => {
   }, []);
   //
 
-  if (loading) {
-    return <div>Loading...</div>; // Render a loader while fetching data
-  }
-
-  if (subServices.length === 0 && selectedProducts.length === 0) {
-    return (
-      <>
-        <div id="checkoutsec">
-          <div id="TopHeader">
-            <div onClick={goToPreviousPage}>
-              <AiOutlineArrowLeft />
-            </div>
-            <h1>CHECKOUT</h1>
-            <div id="lastRes"></div>
-          </div>
-          <div id="distextchecko">
-            You have not chosen any services, or there may be an error. Please
-            go back and attempt to select services once more.
-          </div>
-        </div>
-      </>
-    ); // Display a message if no services are selected
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>; // Render a loader while fetching data
+  // }
 
   return (
     <>
@@ -515,7 +498,25 @@ const Checkout = () => {
                   <span>
                     Stylist :{stylistName ? stylistName : "No stylist selected"}
                   </span>
+                  <div id="thtotalprice02">
+                  {/* <p>
+                    {(
+                      subService.price_including_gst * subService.quantity
+                    ).toFixed(2)}
+                    /-
+                  </p> */}
+                  <p>
+                    GST {subService.gst}% ={" "}
+                    {(
+                      subService.price_including_gst *
+                      subService.quantity *
+                      (subService.gst / 100)
+                    ).toFixed(2)}
+                    /-
+                  </p>
                 </div>
+                </div>
+                
               </div>
             ))}
 
@@ -530,7 +531,7 @@ const Checkout = () => {
                       <button onClick={() => handleRemoveProduct(product.id)}>
                         -
                       </button>
-                      <span>{product.quantity}</span>
+                      <span>{product.selectedQuantity}</span>
                       <button onClick={() => handleAddProduct(product.id)}>
                         +
                       </button>
@@ -541,7 +542,9 @@ const Checkout = () => {
                   </div>
                   <div id="thtotalprice">
                     <p>
-                      {(product.amount_with_gst * product.quantity).toFixed(2)}
+                      {(
+                        product.amount_with_gst * product.selectedQuantity
+                      ).toFixed(2)}
                       /-
                     </p>
                   </div>
@@ -552,6 +555,30 @@ const Checkout = () => {
                     <MdDelete />
                   </div>
                 </div>
+                <div id="belowFirstrowCheck">
+                  <button onClick={handleAddStylist}>Add Stylist</button>
+                  <span>
+                    Stylist :{stylistName ? stylistName : "No stylist selected"}
+                  </span>
+                  <div id="thtotalprice02">
+                  {/* <p>
+                    {(
+                      product.amount_with_gst * product.selectedQuantity
+                    ).toFixed(2)}
+                    /-
+                  </p> */}
+                  <p>
+                    GST:{product.gst}% = {" "}
+                    {(
+                      product.amount_with_gst *
+                      product.selectedQuantity *
+                      (product.gst / 100)
+                    ).toFixed(2)}
+                    /-
+                  </p>
+                </div>
+                </div>
+
               </div>
             ))}
 
@@ -562,25 +589,84 @@ const Checkout = () => {
                 <div>
                   <p>Sub Total</p>
                   <p>
-                    {" "}
                     {(
                       parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
-                    ).toFixed(2)}
+                    ).toFixed(2) -                       (
+                      selectedProducts.reduce(
+                        (total, product) =>
+                          total +
+                          product.amount_with_gst *
+                            product.selectedQuantity *
+                            (product.gst / 100),
+                        0
+                      ) +
+                      subServices.reduce(
+                        (total, subService) =>
+                          total +
+                          subService.price_including_gst *
+                            subService.quantity *
+                            (subService.gst / 100),
+                        0
+                      )
+                    ).toFixed(2)} 
                     /-
                   </p>
                 </div>
-                <div>
-                  {/* <p>Gst</p> */}
-                  <p>Gst included</p>
-                </div>
-                <div>
-                  <p>Discount : </p>
-                  {/* <input style={{width:"2.5rem" , height:"2rem"}} type="text" /> */}
-                  <p>------</p>
+                <div id="gstmanipulation">
+                  {/* {selectedProducts.map((product) => (
+    <p key={product.id}>
+      <span>GST {product.gst}%:</span>
+      <span>
+        {(
+          product.amount_with_gst *
+          product.selectedQuantity *
+          (product.gst / 100)
+        ).toFixed(2)}
+        /-
+      </span>
+    </p>
+  ))}
+  {subServices.map((subService) => (
+    <p key={subService.id}>
+      <span>GST {subService.gst}%:</span>
+      <span>
+        {(
+          subService.price_including_gst *
+          subService.quantity *
+          (subService.gst / 100)
+        ).toFixed(2)}
+        /-
+      </span>
+    </p>
+  ))} */}
+                  <p>
+                    <span>Total GST:</span>
+                    <span>
+                      {(
+                        selectedProducts.reduce(
+                          (total, product) =>
+                            total +
+                            product.amount_with_gst *
+                              product.selectedQuantity *
+                              (product.gst / 100),
+                          0
+                        ) +
+                        subServices.reduce(
+                          (total, subService) =>
+                            total +
+                            subService.price_including_gst *
+                              subService.quantity *
+                              (subService.gst / 100),
+                          0
+                        )
+                      ).toFixed(2)}
+                      /-
+                    </span>
+                  </p>
                 </div>
               </div>
               <div id="totalwithgstF2">
-                <span id="fspanoftgst"> Total:</span>{" "}
+                <span id="fspanoftgst">Total:</span>{" "}
                 <span id="sspanoftgst">
                   {(
                     parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
@@ -662,14 +748,6 @@ const Checkout = () => {
                   height: "inherit",
                 }}
               >
-                <div id="searchbarforproducts">
-                  <input
-                    type="text"
-                    placeholder="Search for products & brands"
-                    value={searchTerm}
-                    onChange={handleSearch}
-                  />
-                </div>
                 <div id="topLayerForSerBook">
                   <div id="middledataforserbook"></div>
                   <h1>Product List</h1>
@@ -677,7 +755,14 @@ const Checkout = () => {
                     <RxCross2 />
                   </div>
                 </div>
-
+                <div style={{ margin: "1rem 0" }} id="searchbarforproducts">
+                  <input
+                    type="text"
+                    placeholder="Search for products & brands"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                </div>
                 {/* Self-coded */}
                 <div id="middleFetchedData">
                   {filteredProducts.map((product, index) => (
@@ -698,12 +783,18 @@ const Checkout = () => {
                         <div id="childofdivsc">
                           <p>{product.sku}</p>
                           <p style={{ color: "#0B8F00" }}>
-                            {product.Quantity} Stocks left
+                            {product.quantity === 0 ? (
+                              <p className="out-of-stock">Out of Stock</p>
+                            ) : (
+                              <p>{product.quantity} Stocks left</p>
+                            )}
                           </p>
                           <p>L'Oreal</p>
                         </div>
                       </div>
-                      <div id="divscf2">{product.amount_with_gst}</div>
+                      <div style={{ border: "none" }} id="divscf2">
+                        {product.amount_with_gst}
+                      </div>
                     </div>
                   ))}
                 </div>
