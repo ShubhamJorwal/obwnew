@@ -4,11 +4,11 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RxCross2 } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServicesForChild } from "../../../../redux/Actions/ServicesAction";
+import { fetchServicesForWomen } from "../../../../../redux/Actions/ServicesAction";
 import { ToastContainer, toast } from "react-toastify";
-import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
+import LoaderFirst from "../../../../../components/Loaders/LoaderFirst";
 
-const Womenservices = () => {
+const WomenservicesApt = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
 
   const Navigate = useNavigate();
@@ -55,7 +55,7 @@ const Womenservices = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchServicesForChild());
+    dispatch(fetchServicesForWomen());
     setShowDiv(true);
   }, [dispatch]);
 
@@ -68,7 +68,7 @@ const Womenservices = () => {
   }
 
   const goToPreviousPage = () => {
-    Navigate("/");
+    Navigate("/dashboard");
   };
 
   // Get unique subcategories from services
@@ -78,9 +78,8 @@ const Womenservices = () => {
 
   const handleAddServices2O = () => {
     const selectedData = {
-      // service: selectedService,
-      subServices: selectedSubServices.map(subService => ({ ...subService, stylist_id: 1 , quantity: 1})),
-      
+      service: selectedService,
+      subServices: selectedSubServices.map(subService => ({ ...subService, stylist: "No stylist selected" })),
     };
   
     const existingData = localStorage.getItem("SelectedData");
@@ -103,6 +102,7 @@ const Womenservices = () => {
       localStorage.setItem("SelectedData", JSON.stringify(dataArray));
     }
   };
+  
 
   return (
     <>
@@ -120,8 +120,8 @@ const Womenservices = () => {
         <div id="midcomp">
           <h3>Select Customer type</h3>
           <div id="SecCompForServices">
-            <Link to={"/services/women"}>
-              <div id="MaleService">
+            <Link to={"/appointment/services/women"}>
+              <div id="FeMaleService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
                   <svg
@@ -153,7 +153,7 @@ const Womenservices = () => {
               </div>
             </Link>
 
-            <Link to={"/services/men"}>
+            <Link to={"/appointment/services/men"}>
               <div id="MaleService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
@@ -190,8 +190,8 @@ const Womenservices = () => {
               </div>
             </Link>
 
-            <Link to={"/services/child"}>
-              <div id="FeMaleService">
+            <Link to={"/appointment/services/child"}>
+              <div id="ChildService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
                   <svg
@@ -348,74 +348,104 @@ const Womenservices = () => {
                   </div>
                 </div>
                 <div id="middleFetchedData">
-  {uniqueSubcategories.map((subcategory) => {
-    const filteredServices = services.filter(
-      (service) =>
-        service.sub_category === subcategory &&
-        service.category === selectedService.category
-    );
+                  {uniqueSubcategories.map((subcategory) => {
+                    const filteredServices = services.filter(
+                      (service) =>
+                        service.sub_category === subcategory &&
+                        service.category === selectedService.category
+                    );
 
-    if (filteredServices.length === 0) {
-      return null; // Skip rendering the heading if there are no services
-    }
+                    if (filteredServices.length === 0) {
+                      return null; // Skip rendering the heading if there are no services
+                    }
 
-    return (
-      <div key={subcategory}>
-        <h2 id="HeadingForSubcateg">{subcategory}</h2>
-        {filteredServices.map((service) => (
-          <div
-            onClick={() => handleSubServiceClick(service)}
-            key={service.id}
-            id="servicesList"
-            className={`pricetag ${
-              selectedSubServices.find(
-                (subService) => subService.id === service.id
-              )
-                ? "selected"
-                : ""
-            }`}
-          >
-            <p>
-              {service.service_name}
-              <span
-                style={{
-                  color: "gray",
-                  fontSize: "1.7vw",
-                  marginLeft: "1.2vw",
-                }}
-              >
-                {service.duration}min
-              </span>
-            </p>
-            <p>
-              <span
-                style={{
-                  color: "#18959E",
-                  fontSize: "unset",
-                  marginRight: "3vw",
-                }}
-              >
-                {service.label}
-              </span>
-              <span>₹{service.price_including_gst}</span>
-            </p>
-          </div>
-        ))}
-      </div>
-    );
-  })}
-</div>
-
+                    return (
+                      <div key={subcategory}>
+                        <h2 id="HeadingForSubcateg">{subcategory}</h2>
+                        {filteredServices.map((service) => (
+                          <div
+                            onClick={() => handleSubServiceClick(service)}
+                            key={service.id}
+                            id="servicesList"
+                            className={`pricetag ${
+                              selectedSubServices.find(
+                                (subService) => subService.id === service.id
+                              )
+                                ? "selected"
+                                : ""
+                            }`}
+                          >
+                            <p>
+                              {service.service_name}
+                              <span
+                                style={{
+                                  color: "gray",
+                                  fontSize: "1.7vw",
+                                  marginLeft: "1.2vw",
+                                }}
+                              >
+                                {service.duration}min
+                              </span>
+                            </p>
+                            <p>
+                              <span
+                                style={{
+                                  color: "#18959E",
+                                  fontSize: "unset",
+                                  marginRight: "3vw",
+                                }}
+                              >
+                                {service.label}
+                              </span>
+                              <span>₹{service.price_including_gst}</span>
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
 
                 <div id="lastbtnofserviceadd">
-                <Link
-  to="/home"
-  className="book-button"
-  onClick={handleAddServices2O}
->
-  Add Services
-</Link>
+                  <Link
+                    to="/appointment"
+                    className="book-button"
+                    onClick={handleAddServices2O}
+                  >
+                    Add Services
+                  </Link>
+                  {/* <Link
+                    to="/home"
+                    className="book-button"
+                    onClick={() => {
+                      const selectedData = {
+                        service: selectedService,
+                        subServices: selectedSubServices.map((subService) => ({
+                          ...subService,
+                          stylist: "No stylist selected",
+                        })),
+                      };
 
+                      const existingData = localStorage.getItem("SelectedData");
+
+                      if (existingData) {
+                        const dataArray = JSON.parse(existingData);
+                        dataArray.push(selectedData);
+                        localStorage.setItem(
+                          "SelectedData",
+                          JSON.stringify(dataArray)
+                        );
+                      } else {
+                        const dataArray = [selectedData];
+                        localStorage.setItem(
+                          "SelectedData",
+                          JSON.stringify(dataArray)
+                        );
+                      }
+                    }}
+                  >
+                    Add Services
+                  </Link> */}
                 </div>
               </div>
             </div>
@@ -428,4 +458,4 @@ const Womenservices = () => {
   );
 };
 
-export default Womenservices;
+export default WomenservicesApt;

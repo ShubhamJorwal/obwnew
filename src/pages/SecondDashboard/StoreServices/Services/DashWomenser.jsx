@@ -4,11 +4,11 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RxCross2 } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServicesForChild } from "../../../../redux/Actions/ServicesAction";
+import { fetchServicesForWomen } from "../../../../redux/Actions/ServicesAction";
 import { ToastContainer, toast } from "react-toastify";
 import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
 
-const Womenservices = () => {
+const DashWomenser = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
 
   const Navigate = useNavigate();
@@ -55,7 +55,7 @@ const Womenservices = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchServicesForChild());
+    dispatch(fetchServicesForWomen());
     setShowDiv(true);
   }, [dispatch]);
 
@@ -68,41 +68,13 @@ const Womenservices = () => {
   }
 
   const goToPreviousPage = () => {
-    Navigate("/");
+    Navigate("/dashboard");
   };
 
   // Get unique subcategories from services
   const uniqueSubcategories = [
     ...new Set(services.map((service) => service.sub_category)),
   ];
-
-  const handleAddServices2O = () => {
-    const selectedData = {
-      // service: selectedService,
-      subServices: selectedSubServices.map(subService => ({ ...subService, stylist_id: 1 , quantity: 1})),
-      
-    };
-  
-    const existingData = localStorage.getItem("SelectedData");
-  
-    if (existingData) {
-      const dataArray = JSON.parse(existingData);
-      const filteredDataArray = dataArray.filter((item) => {
-        const isDuplicate = item.subServices.some((sub) => {
-          return selectedData.subServices.some((selectedSub) => {
-            return sub.id === selectedSub.id;
-          });
-        });
-        return !isDuplicate;
-      });
-  
-      filteredDataArray.push(selectedData);
-      localStorage.setItem("SelectedData", JSON.stringify(filteredDataArray));
-    } else {
-      const dataArray = [selectedData];
-      localStorage.setItem("SelectedData", JSON.stringify(dataArray));
-    }
-  };
 
   return (
     <>
@@ -121,7 +93,7 @@ const Womenservices = () => {
           <h3>Select Customer type</h3>
           <div id="SecCompForServices">
             <Link to={"/services/women"}>
-              <div id="MaleService">
+              <div id="FeMaleService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
                   <svg
@@ -191,7 +163,7 @@ const Womenservices = () => {
             </Link>
 
             <Link to={"/services/child"}>
-              <div id="FeMaleService">
+              <div id="ChildService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
                   <svg
@@ -348,74 +320,98 @@ const Womenservices = () => {
                   </div>
                 </div>
                 <div id="middleFetchedData">
-  {uniqueSubcategories.map((subcategory) => {
-    const filteredServices = services.filter(
-      (service) =>
-        service.sub_category === subcategory &&
-        service.category === selectedService.category
-    );
+                  {uniqueSubcategories.map((subcategory) => {
+                    const filteredServices = services.filter(
+                      (service) =>
+                        service.sub_category === subcategory &&
+                        service.category === selectedService.category
+                    );
 
-    if (filteredServices.length === 0) {
-      return null; // Skip rendering the heading if there are no services
-    }
+                    if (filteredServices.length === 0) {
+                      return null; // Skip rendering the heading if there are no services
+                    }
 
-    return (
-      <div key={subcategory}>
-        <h2 id="HeadingForSubcateg">{subcategory}</h2>
-        {filteredServices.map((service) => (
-          <div
-            onClick={() => handleSubServiceClick(service)}
-            key={service.id}
-            id="servicesList"
-            className={`pricetag ${
-              selectedSubServices.find(
-                (subService) => subService.id === service.id
-              )
-                ? "selected"
-                : ""
-            }`}
-          >
-            <p>
-              {service.service_name}
-              <span
-                style={{
-                  color: "gray",
-                  fontSize: "1.7vw",
-                  marginLeft: "1.2vw",
-                }}
-              >
-                {service.duration}min
-              </span>
-            </p>
-            <p>
-              <span
-                style={{
-                  color: "#18959E",
-                  fontSize: "unset",
-                  marginRight: "3vw",
-                }}
-              >
-                {service.label}
-              </span>
-              <span>₹{service.price_including_gst}</span>
-            </p>
-          </div>
-        ))}
-      </div>
-    );
-  })}
-</div>
-
+                    return (
+                      <div key={subcategory}>
+                        <h2 id="HeadingForSubcateg">{subcategory}</h2>
+                        {filteredServices.map((service) => (
+                          <div
+                            onClick={() => handleSubServiceClick(service)}
+                            key={service.id}
+                            id="servicesList"
+                            className={`pricetag ${
+                              selectedSubServices.find(
+                                (subService) => subService.id === service.id
+                              )
+                                ? "selected"
+                                : ""
+                            }`}
+                          >
+                            <p>
+                              {service.service_name}
+                              <span
+                                style={{
+                                  color: "gray",
+                                  fontSize: "1.7vw",
+                                  marginLeft: "1.2vw",
+                                }}
+                              >
+                                {service.duration}min
+                              </span>
+                            </p>
+                            <p>
+                              <span
+                                style={{
+                                  color: "#18959E",
+                                  fontSize: "unset",
+                                  marginRight: "3vw",
+                                }}
+                              >
+                                {service.label}
+                              </span>
+                              <span>₹{service.price_including_gst}</span>
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
 
                 <div id="lastbtnofserviceadd">
-                <Link
-  to="/home"
-  className="book-button"
-  onClick={handleAddServices2O}
->
-  Add Services
-</Link>
+                  <Link
+                    to="/save/appointment/"
+                    className="book-button"
+                    onClick={() => {
+                      const selectedData = {
+                        service: selectedService,
+                        subServices: selectedSubServices.map((subService) => ({
+                          ...subService,
+                          stylist: "No stylist selected",
+                        })),
+                      };
 
+                      const existingData =
+                        localStorage.getItem("DashSelectedData");
+
+                      if (existingData) {
+                        const dataArray = JSON.parse(existingData);
+                        dataArray.push(selectedData);
+                        localStorage.setItem(
+                          "DashSelectedData",
+                          JSON.stringify(dataArray)
+                        );
+                      } else {
+                        const dataArray = [selectedData];
+                        localStorage.setItem(
+                          "DashSelectedData",
+                          JSON.stringify(dataArray)
+                        );
+                      }
+                    }}
+                  >
+                    Add Services
+                  </Link>
                 </div>
               </div>
             </div>
@@ -428,4 +424,4 @@ const Womenservices = () => {
   );
 };
 
-export default Womenservices;
+export default DashWomenser;

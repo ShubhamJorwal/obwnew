@@ -28,6 +28,7 @@ const Appointment = () => {
             },
           }
         );
+        console.log(response.data)
         setAppointments(response.data);
       } catch (error) {
         console.log(error);

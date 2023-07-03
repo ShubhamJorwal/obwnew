@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./checkout.scss";
+import "./createbooking.scss";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
@@ -9,7 +9,7 @@ import { BsSearch } from "react-icons/bs";
 import axios from "axios";
 import { TfiAngleRight } from "react-icons/tfi";
 
-const Checkout = () => {
+const CreateBooking = () => {
   const Navigate = useNavigate();
   const goToPreviousPage = () => {
     Navigate("/services/women");
@@ -25,7 +25,6 @@ const Checkout = () => {
   const [selectedStylistId, setSelectedStylistId] = useState(null);
 
   const [showProductsSlider, setshowProductsSlider] = useState(null);
-  
 
   const [isSelected, setIsSelected] = useState(false);
   const [products, setProducts] = useState([]);
@@ -37,7 +36,7 @@ const Checkout = () => {
   useEffect(() => {
     // Fetch data from localStorage
     const storedData = localStorage.getItem("SelectedData");
-    const bookingData = localStorage.getItem("UserBookingData");
+    const bookingData = localStorage.getItem("BookingData");
 
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
@@ -63,6 +62,27 @@ const Checkout = () => {
       setLoading(false);
     }
   }, []);
+
+  // data for products
+
+  //   // Retrieve the data from local storage
+  // const data = localStorage.getItem("selectedProducts");
+
+  // // Parse the JSON data into an object
+  // const selectedProduct = JSON.parse(data);
+
+  // // Access specific properties within the selectedProduct object
+  // console.log(selectedProduct.property1);
+  // console.log(selectedProduct.property2);
+  // // ...
+
+  // // You can also loop through the object properties
+  // for (let key in selectedProduct) {
+  //   if (selectedProduct.hasOwnProperty(key)) {
+  //     console.log(key + ": " + selectedProduct[key]);
+  //   }
+  // }
+
   //
 
   const handleAddSubService = (subServiceId) => {
@@ -410,7 +430,7 @@ const Checkout = () => {
           <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
-          <h1>CHECKOUT</h1>
+          <h1>Appointment</h1>
           <div id="lastRes"></div>
         </div>
         <div id="Cus">
@@ -487,7 +507,7 @@ const Checkout = () => {
                     ).toFixed(2)}
                     /-
                   </p> */}
-                    {/* <p>
+                    <p>
                       GST {subService.gst}% ={" "}
                       {(
                         subService.price_including_gst *
@@ -495,7 +515,7 @@ const Checkout = () => {
                         (subService.gst / 100)
                       ).toFixed(2)}
                       /-
-                    </p> */}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -548,7 +568,15 @@ const Checkout = () => {
                     ).toFixed(2)}
                     /-
                   </p> */}
-                    
+                    <p>
+                      GST:{product.gst}% ={" "}
+                      {(
+                        product.amount_with_gst *
+                        product.selectedQuantity *
+                        (product.gst / 100)
+                      ).toFixed(2)}
+                      /-
+                    </p>
                   </div>
                 </div>
               </div>
@@ -787,4 +815,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default CreateBooking;

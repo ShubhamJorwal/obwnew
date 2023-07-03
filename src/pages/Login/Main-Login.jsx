@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./mainlogin.scss";
 import { useNavigate } from "react-router-dom";
@@ -7,9 +7,41 @@ import { ToastContainer, toast } from "react-toastify";
 const MainLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [option, setOption] = useState(""); // New state for the selected option
+  const [branches, setBranches] = useState([]); // New state for branches
+  const [option, setOption] = useState("");
   const [error, setError] = useState("");
   const Navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch branch data from the API
+    const fetchBranches = async () => {
+      try {
+        // Retrieve token from localStorage
+        const token = localStorage.getItem("token");
+
+        // Send GET request to fetch branches
+        const response = await axios.get(
+          "https://admin.obwsalon.com/api/branch",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Include the token in the request headers
+            },
+          }
+        );
+
+        // Extract the branches from the response
+        const branchesData = response.data;
+
+        // Set the branches state
+        setBranches(branchesData);
+      } catch (error) {
+        // Handle error
+        console.log("Error fetching branches:", error);
+      }
+    };
+
+    fetchBranches();
+  }, []); // Run once on component mount
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,14 +61,13 @@ const MainLogin = () => {
 
       // Store the token in localStorage or any other state management solution of your choice
       localStorage.setItem("token", token);
-      localStorage.setItem("branchName", option); // Store the selected option value
+      localStorage.setItem("branchName", option);
 
       // Clear the form, error message, and option selection
       setEmail("");
       setPassword("");
       setError("");
       setOption("");
-      
 
       Navigate("/services/women");
     } catch (error) {
@@ -48,7 +79,7 @@ const MainLogin = () => {
 
   return (
     <div id="main_login">
-      <div class="circle"></div>
+      <div className="circle"></div>
 
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
@@ -68,16 +99,17 @@ const MainLogin = () => {
           id="inputselection"
           required
           value={option}
-          onChange={(e) => setOption(e.target.value)} // Update the selected option
+          onChange={(e) => setOption(e.target.value)}
         >
           <option value="">Select an option</option>
-          <option value="1">KSIT</option>
-          <option value="2">Kodipalya</option>
-          <option value="3">RR Nagar</option>
+          {branches.map((branch) => (
+            <option key={branch.id} value={branch.id}>
+              {branch.name}
+            </option>
+          ))}
         </select>
         <button type="submit">Login</button>
       </form>
-      {/* {error && <p>{error}</p>} */}
 
       <ToastContainer position="bottom-right" />
     </div>

@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { RiAccountCircleLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
-import { BsSearch } from "react-icons/bs";
 import axios from "axios";
 import { TfiAngleRight } from "react-icons/tfi";
 
@@ -14,42 +13,43 @@ const Checkout = () => {
   const goToPreviousPage = () => {
     Navigate("/services/women");
   };
+  useEffect(() => {
+    const userBookingData = localStorage.getItem("UserBookingData");
+    if (!userBookingData) {
+      Navigate("/services/women");
+    }
+  }, []);
+  const [totalAmount, setTotalAmount] = useState(0);
+
   const [name, setName] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [subServices, setSubServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [selectedStylist, setSelectedStylist] = useState(null);
   const [showStylistSlider, setShowStylistSlider] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedStylistId, setSelectedStylistId] = useState(null);
 
   const [showProductsSlider, setshowProductsSlider] = useState(null);
+  
 
-  const [isSelected, setIsSelected] = useState(false);
   const [products, setProducts] = useState([]);
   const [stylistName, setStylistName] = useState("");
 
-  const [selectedStylistName, setSelectedStylistName] = useState("");
 
   const [showDiv2nd, setShowDiv2nd] = useState(false);
   useEffect(() => {
     // Fetch data from localStorage
     const storedData = localStorage.getItem("SelectedData");
-    const bookingData = localStorage.getItem("BookingData");
-
+    const bookingData = localStorage.getItem("UserBookingData");
+  
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
-      // const parsedBookingData = JSON.parse(bookingData);
-      const { first_name, last_name, contact_no } = JSON.parse(bookingData);
-
-      // Update state with fetched data
-      // setName(parsedBookingData.map(data => `${data.first_name} ${data.last_name}`));
-      // setContactNo(parsedBookingData.map(data => data.contact_no.toString()));
-      // setContactNo(contact_no);
-      setName(`${first_name} ${last_name}`);
+      const { first_name, contact_no } = JSON.parse(bookingData);
+  
+      setName(`${first_name}`);
       setContactNo(contact_no);
-
+  
       setSubServices(
         parsedData
           .map(({ subServices }) =>
@@ -62,47 +62,52 @@ const Checkout = () => {
       setLoading(false);
     }
   }, []);
-
-  // data for products
-
-  //   // Retrieve the data from local storage
-  // const data = localStorage.getItem("selectedProducts");
-
-  // // Parse the JSON data into an object
-  // const selectedProduct = JSON.parse(data);
-
-  // // Access specific properties within the selectedProduct object
-  // console.log(selectedProduct.property1);
-  // console.log(selectedProduct.property2);
-  // // ...
-
-  // // You can also loop through the object properties
-  // for (let key in selectedProduct) {
-  //   if (selectedProduct.hasOwnProperty(key)) {
-  //     console.log(key + ": " + selectedProduct[key]);
-  //   }
-  // }
-
+  
   //
 
   const handleAddSubService = (subServiceId) => {
     const updatedSubServices = subServices.map((subService) => {
       if (subService.id === subServiceId) {
-        return { ...subService, quantity: subService.quantity + 1 };
+        const updatedSubService = { ...subService, quantity: subService.quantity + 1 };
+        updateLocalStorage(subServiceId, updatedSubService);
+        return updatedSubService;
+      }
+      return subService;
+    });
+    setSubServices(updatedSubServices);
+  };
+  
+
+  const handleRemoveSubService = (subServiceId) => {
+    const updatedSubServices = subServices.map((subService) => {
+      if (subService.id === subServiceId && subService.quantity > 0) {
+        const updatedSubService = { ...subService, quantity: subService.quantity - 1 };
+        updateLocalStorage(subServiceId, updatedSubService);
+        return updatedSubService;
       }
       return subService;
     });
     setSubServices(updatedSubServices);
   };
 
-  const handleRemoveSubService = (subServiceId) => {
-    const updatedSubServices = subServices.map((subService) => {
-      if (subService.id === subServiceId && subService.quantity > 0) {
-        return { ...subService, quantity: subService.quantity - 1 };
-      }
-      return subService;
-    });
-    setSubServices(updatedSubServices);
+  const updateLocalStorage = (subServiceId, updatedSubService) => {
+    const storedData = localStorage.getItem("SelectedData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const updatedData = parsedData.map((data) => {
+        const updatedSubServices = data.subServices.map((subService) => {
+          if (subService.id === subServiceId) {
+            return updatedSubService;
+          }
+          return subService;
+        });
+        return {
+          ...data,
+          subServices: updatedSubServices,
+        };
+      });
+      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+    }
   };
 
   const handleDeleteSubService = (subServiceId) => {
@@ -111,13 +116,10 @@ const Checkout = () => {
     );
     setSubServices(updatedSubServices);
 
-    // Get the stored SelectedData from localStorage
     const storedData = localStorage.getItem("SelectedData");
     if (storedData) {
-      // Parse the stored data into an array
       const parsedData = JSON.parse(storedData);
 
-      // Find the object containing the subServiceId
       const updatedData = parsedData.map((data) => {
         const updatedSubServices = data.subServices.filter(
           (subService) => subService.id !== subServiceId
@@ -128,32 +130,14 @@ const Checkout = () => {
         };
       });
 
-      // Update the SelectedData in localStorage with the updated data
       localStorage.setItem("SelectedData", JSON.stringify(updatedData));
     }
 
     window.location.reload();
   };
 
-  function deleteService(index) {
-    selectedData.splice(index, 1);
-    localStorage.setItem("selectedData", JSON.stringify(selectedData));
-
-    // Check if all services are deleted
-    if (selectedData.length === 0) {
-      localStorage.removeItem("selectedData");
-    }
-  }
-
-  const handleStylistClick = (stylist) => {
-    setSelectedStylist(stylist);
-  };
-
   const handleAddStylist = () => {
-    // if (selectedStylist) {
-    //   localStorage.setItem("SelectedStylist", JSON.stringify(selectedStylist));
-    //   setSelectedStylistName(`${selectedStylist.first_name} ${selectedStylist.last_name}`);
-    // }
+
 
     setShowStylistSlider(true);
     setIsButtonClicked(true);
@@ -164,8 +148,9 @@ const Checkout = () => {
       (stylist) => stylist.id === selectedStylistId
     );
 
+
     if (selectedStylist) {
-      localStorage.setItem("selectedStylist", JSON.stringify(selectedStylist));
+      localStorage.setItem("selectedStylist",  JSON.stringify(selectedStylist));
     }
 
     setIsSliderVisible(false);
@@ -188,12 +173,12 @@ const Checkout = () => {
   useEffect(() => {
     const fetchStylists = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token"); 
         const response = await axios.get(
           "https://admin.obwsalon.com/api/stylists",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
@@ -215,23 +200,50 @@ const Checkout = () => {
       setStylistName(stylist.first_name + " " + stylist.last_name);
     }
 
+    // const fetchProducts = async () => {
+    //   try {
+    //     const token = localStorage.getItem("token"); // Get the token from localStorage
+    //     const response = await axios.get(
+    //       "https://admin.obwsalon.com/api/products",
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    //         },
+    //       }
+    //     );
+    //     console.log(response.data);
+    //     setProducts(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token");
+        const branchID = localStorage.getItem("branchName");
+        const num2f = parseInt(branchID);
+
+        console.log(branchID)
         const response = await axios.get(
           "https://admin.obwsalon.com/api/products",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         console.log(response.data);
-        setProducts(response.data);
+        // Filter the products based on branch_id = 1
+        const filteredProducts = response.data.filter(
+          (product) => product.branch_id === num2f
+        );
+        setProducts(filteredProducts);
       } catch (error) {
         console.log(error);
       }
     };
+    
 
     fetchProducts();
     setShowDiv2nd(true);
@@ -279,35 +291,22 @@ const Checkout = () => {
     }
   }, []);
 
-  const handleProductSelection = (product) => {
-    setSelectedProducts((prevSelectedProducts) => {
-      const isSelected = prevSelectedProducts.some(
-        (selectedProduct) => selectedProduct.id === product.id
-      );
+  
 
-      if (isSelected) {
-        return prevSelectedProducts.filter(
-          (selectedProduct) => selectedProduct.id !== product.id
-        );
-      } else {
-        return [...prevSelectedProducts, product];
-      }
-    });
-  };
-
-  const handleAddItem = () => {
-    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-  };
+  
 
   // products data
 
-  const [selectedDivs, setSelectedDivs] = useState([]);
   const handleDivSelection = (product) => {
     if (product.quantity === 0) {
       return; // Do nothing if the product is out of stock
     }
 
-    const updatedProduct = { ...product, selectedQuantity: 1 };
+    const updatedProduct = {
+      ...product,
+      selectedQuantity: 1,
+      selectedStylist: "No stylist selected",
+    };
 
     setSelectedProducts((prevSelectedProducts) => {
       const updatedSelectedProducts = prevSelectedProducts.some(
@@ -327,7 +326,7 @@ const Checkout = () => {
     });
   };
 
-  // Fetch the previously selected products from localStorage on component mount
+ 
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
     if (storedSelectedProducts) {
@@ -335,14 +334,6 @@ const Checkout = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   localStorage.setItem("selectedProducts", JSON.stringify(filteredProducts.filter(product => selectedDivs.includes(product.id))));
-
-  // }, [selectedDivs, filteredProducts]);
-
-  //  code for new products purchase
-
-  // const [selectedProducts, setSelectedProducts] = useState([]);
 
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -393,6 +384,8 @@ const Checkout = () => {
       0
     );
     setTotalPrice(priceSum);
+    
+    localStorage.setItem("TotalAmountBookOFser", priceSum);
   }, [subServices]);
 
   const calculateTotalPrice = () => {
@@ -401,7 +394,14 @@ const Checkout = () => {
       const productTotal = product.amount_with_gst * product.selectedQuantity;
       totalPrice += productTotal;
     });
+    localStorage.setItem("TotalAmountBook", totalPrice);
     return totalPrice.toFixed(2);
+
+    
+    // const totalAmount = (
+    //   parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
+    // ).toFixed(2)
+  
   };
 
   //
@@ -413,11 +413,11 @@ const Checkout = () => {
       setStylistName(stylist.first_name + " " + stylist.last_name);
     }
   }, []);
-  //
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // Render a loader while fetching data
-  // }
+
+  // .
+
+
 
   return (
     <>
@@ -495,28 +495,25 @@ const Checkout = () => {
                 </div>
                 <div id="belowFirstrowCheck">
                   <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>
-                    Stylist :{stylistName ? stylistName : "No stylist selected"}
-                  </span>
+                  <span>Stylist : {subService.stylist}  Rohan</span>
                   <div id="thtotalprice02">
-                  {/* <p>
+                    {/* <p>
                     {(
                       subService.price_including_gst * subService.quantity
                     ).toFixed(2)}
                     /-
                   </p> */}
-                  <p>
-                    GST {subService.gst}% ={" "}
-                    {(
-                      subService.price_including_gst *
-                      subService.quantity *
-                      (subService.gst / 100)
-                    ).toFixed(2)}
-                    /-
-                  </p>
+                    {/* <p>
+                      GST {subService.gst}% ={" "}
+                      {(
+                        subService.price_including_gst *
+                        subService.quantity *
+                        (subService.gst / 100)
+                      ).toFixed(2)}
+                      /-
+                    </p> */}
+                  </div>
                 </div>
-                </div>
-                
               </div>
             ))}
 
@@ -561,24 +558,15 @@ const Checkout = () => {
                     Stylist :{stylistName ? stylistName : "No stylist selected"}
                   </span>
                   <div id="thtotalprice02">
-                  {/* <p>
+                    {/* <p>
                     {(
                       product.amount_with_gst * product.selectedQuantity
                     ).toFixed(2)}
                     /-
                   </p> */}
-                  <p>
-                    GST:{product.gst}% = {" "}
-                    {(
-                      product.amount_with_gst *
-                      product.selectedQuantity *
-                      (product.gst / 100)
-                    ).toFixed(2)}
-                    /-
-                  </p>
+                    
+                  </div>
                 </div>
-                </div>
-
               </div>
             ))}
 
@@ -589,56 +577,38 @@ const Checkout = () => {
                 <div>
                   <p>Sub Total</p>
                   <p>
-                    {(
-                      parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
-                    ).toFixed(2) -                       (
-                      selectedProducts.reduce(
-                        (total, product) =>
-                          total +
-                          product.amount_with_gst *
-                            product.selectedQuantity *
-                            (product.gst / 100),
-                        0
-                      ) +
-                      subServices.reduce(
-                        (total, subService) =>
-                          total +
-                          subService.price_including_gst *
-                            subService.quantity *
-                            (subService.gst / 100),
-                        0
-                      )
-                    ).toFixed(2)} 
+                    {(Math.round(
+                      (parseFloat(calculateTotalPrice()) +
+                        parseFloat(totalPrice)) *
+                        100
+                    ) -
+                      Math.round(
+                        selectedProducts.reduce(
+                          (total, product) =>
+                            total +
+                            product.amount_with_gst *
+                              product.selectedQuantity *
+                              (product.gst / 100) *
+                              100,
+                          0
+                        ) +
+                          subServices.reduce(
+                            (total, subService) =>
+                              total +
+                              subService.price_including_gst *
+                                subService.quantity *
+                                (subService.gst / 100) *
+                                100,
+                            0
+                          )
+                      )) /
+                      100}
                     /-
                   </p>
+                  {/* </div> */}
                 </div>
+
                 <div id="gstmanipulation">
-                  {/* {selectedProducts.map((product) => (
-    <p key={product.id}>
-      <span>GST {product.gst}%:</span>
-      <span>
-        {(
-          product.amount_with_gst *
-          product.selectedQuantity *
-          (product.gst / 100)
-        ).toFixed(2)}
-        /-
-      </span>
-    </p>
-  ))}
-  {subServices.map((subService) => (
-    <p key={subService.id}>
-      <span>GST {subService.gst}%:</span>
-      <span>
-        {(
-          subService.price_including_gst *
-          subService.quantity *
-          (subService.gst / 100)
-        ).toFixed(2)}
-        /-
-      </span>
-    </p>
-  ))} */}
                   <p>
                     <span>Total GST:</span>
                     <span>
@@ -789,7 +759,7 @@ const Checkout = () => {
                               <p>{product.quantity} Stocks left</p>
                             )}
                           </p>
-                          <p>L'Oreal</p>
+                          <p>{product.brand}</p>
                         </div>
                       </div>
                       <div style={{ border: "none" }} id="divscf2">
@@ -818,8 +788,8 @@ const Checkout = () => {
       {/* new data */}
 
       <div>
-        <div id="lastbtnscheck">
-          <Link to={"/home"}>
+        <div  id="lastbtnscheck">
+          <Link to={"/checkout/booking/processing"}>
             <button
               style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
               id="firstbtn"

@@ -19,6 +19,7 @@ export const fetchCustomers = () => {
         },
       })
       .then((response) => {
+        console.log(response.data)
         // Dispatch success action with the fetched data
         dispatch(fetchCustomersSuccess(response.data));
       })

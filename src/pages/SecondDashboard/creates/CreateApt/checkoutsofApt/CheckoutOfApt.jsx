@@ -1,54 +1,44 @@
 import React, { useEffect, useState } from "react";
-import "./checkout.scss";
+// import "./checkout.scss";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { RiAccountCircleLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
-import { BsSearch } from "react-icons/bs";
 import axios from "axios";
 import { TfiAngleRight } from "react-icons/tfi";
 
-const Checkout = () => {
+const CheckoutOfApt = () => {
   const Navigate = useNavigate();
   const goToPreviousPage = () => {
-    Navigate("/services/women");
+    Navigate("/appointment");
   };
+
   const [name, setName] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [subServices, setSubServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [selectedStylist, setSelectedStylist] = useState(null);
   const [showStylistSlider, setShowStylistSlider] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedStylistId, setSelectedStylistId] = useState(null);
 
   const [showProductsSlider, setshowProductsSlider] = useState(null);
-  
 
-  const [isSelected, setIsSelected] = useState(false);
   const [products, setProducts] = useState([]);
   const [stylistName, setStylistName] = useState("");
-
-  const [selectedStylistName, setSelectedStylistName] = useState("");
 
   const [showDiv2nd, setShowDiv2nd] = useState(false);
   useEffect(() => {
     // Fetch data from localStorage
     const storedData = localStorage.getItem("SelectedData");
-    const bookingData = localStorage.getItem("UserBookingData");
+    const bookingData = localStorage.getItem("UserAppointmentData");
 
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
-      // const parsedBookingData = JSON.parse(bookingData);
-      const { first_name, last_name, contact_no } = JSON.parse(bookingData);
+      const { first_name, contact_no } = JSON.parse(bookingData);
 
-      // Update state with fetched data
-      // setName(parsedBookingData.map(data => `${data.first_name} ${data.last_name}`));
-      // setContactNo(parsedBookingData.map(data => data.contact_no.toString()));
-      // setContactNo(contact_no);
-      setName(`${first_name} ${last_name}`);
+      setName(`${first_name}`);
       setContactNo(contact_no);
 
       setSubServices(
@@ -91,13 +81,10 @@ const Checkout = () => {
     );
     setSubServices(updatedSubServices);
 
-    // Get the stored SelectedData from localStorage
-    const storedData = localStorage.getItem("SelectedData");
+    const storedData = localStorage.getItem("UserAppointmentData");
     if (storedData) {
-      // Parse the stored data into an array
       const parsedData = JSON.parse(storedData);
 
-      // Find the object containing the subServiceId
       const updatedData = parsedData.map((data) => {
         const updatedSubServices = data.subServices.filter(
           (subService) => subService.id !== subServiceId
@@ -108,33 +95,13 @@ const Checkout = () => {
         };
       });
 
-      // Update the SelectedData in localStorage with the updated data
-      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+      localStorage.setItem("UserAppointmentData", JSON.stringify(updatedData));
     }
 
     window.location.reload();
   };
 
-  function deleteService(index) {
-    selectedData.splice(index, 1);
-    localStorage.setItem("selectedData", JSON.stringify(selectedData));
-
-    // Check if all services are deleted
-    if (selectedData.length === 0) {
-      localStorage.removeItem("selectedData");
-    }
-  }
-
-  const handleStylistClick = (stylist) => {
-    setSelectedStylist(stylist);
-  };
-
   const handleAddStylist = () => {
-    // if (selectedStylist) {
-    //   localStorage.setItem("SelectedStylist", JSON.stringify(selectedStylist));
-    //   setSelectedStylistName(`${selectedStylist.first_name} ${selectedStylist.last_name}`);
-    // }
-
     setShowStylistSlider(true);
     setIsButtonClicked(true);
     setIsSliderVisible(true);
@@ -168,12 +135,12 @@ const Checkout = () => {
   useEffect(() => {
     const fetchStylists = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token");
         const response = await axios.get(
           "https://admin.obwsalon.com/api/stylists",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -195,19 +162,41 @@ const Checkout = () => {
       setStylistName(stylist.first_name + " " + stylist.last_name);
     }
 
+    // const fetchProducts = async () => {
+    //   try {
+    //     const token = localStorage.getItem("token"); // Get the token from localStorage
+    //     const response = await axios.get(
+    //       "https://admin.obwsalon.com/api/products",
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    //         },
+    //       }
+    //     );
+    //     console.log(response.data);
+    //     setProducts(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token");
         const response = await axios.get(
           "https://admin.obwsalon.com/api/products",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         console.log(response.data);
-        setProducts(response.data);
+        // Filter the products based on branch_id = 1
+        const filteredProducts = response.data.filter(
+          (product) => product.branch_id === 1
+        );
+        setProducts(filteredProducts);
       } catch (error) {
         console.log(error);
       }
@@ -259,29 +248,8 @@ const Checkout = () => {
     }
   }, []);
 
-  const handleProductSelection = (product) => {
-    setSelectedProducts((prevSelectedProducts) => {
-      const isSelected = prevSelectedProducts.some(
-        (selectedProduct) => selectedProduct.id === product.id
-      );
-
-      if (isSelected) {
-        return prevSelectedProducts.filter(
-          (selectedProduct) => selectedProduct.id !== product.id
-        );
-      } else {
-        return [...prevSelectedProducts, product];
-      }
-    });
-  };
-
-  const handleAddItem = () => {
-    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-  };
-
   // products data
 
-  const [selectedDivs, setSelectedDivs] = useState([]);
   const handleDivSelection = (product) => {
     if (product.quantity === 0) {
       return; // Do nothing if the product is out of stock
@@ -311,22 +279,12 @@ const Checkout = () => {
     });
   };
 
-  // Fetch the previously selected products from localStorage on component mount
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
     if (storedSelectedProducts) {
       setSelectedProducts(JSON.parse(storedSelectedProducts));
     }
   }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem("selectedProducts", JSON.stringify(filteredProducts.filter(product => selectedDivs.includes(product.id))));
-
-  // }, [selectedDivs, filteredProducts]);
-
-  //  code for new products purchase
-
-  // const [selectedProducts, setSelectedProducts] = useState([]);
 
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -397,11 +355,16 @@ const Checkout = () => {
       setStylistName(stylist.first_name + " " + stylist.last_name);
     }
   }, []);
-  //
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // Render a loader while fetching data
-  // }
+  // .
+
+  const handleRemoveLocalStorage = () => {
+    localStorage.removeItem("UserBookingData");
+    localStorage.removeItem("selectedProducts");
+    localStorage.removeItem("SelectedData");
+    localStorage.removeItem("selectedStylist");
+    localStorage.removeItem("selectedStylist");
+  };
 
   return (
     <>
@@ -414,7 +377,7 @@ const Checkout = () => {
           <div id="lastRes"></div>
         </div>
         <div id="Cus">
-          <RiAccountCircleLine size={"2.5rem"} color="#058DA6" />
+          {/* <RiAccountCircleLine size={"2.5rem"} color="#058DA6" /> */}
           <span id="customer">Customer:</span>
           <span id="nameContFeil">
             {name} &nbsp; {contactNo && contactNo.substr(0, 6)}****
@@ -422,7 +385,7 @@ const Checkout = () => {
         </div>
 
         <div id="buttonsforcheckout">
-          <Link to={"/services/women"}>
+          <Link to={"/appointment/services/women"}>
             <button>Add Service</button>
           </Link>
           <button onClick={handleAddProducts}>Add Product</button>
@@ -548,7 +511,6 @@ const Checkout = () => {
                     ).toFixed(2)}
                     /-
                   </p> */}
-                    
                   </div>
                 </div>
               </div>
@@ -559,7 +521,7 @@ const Checkout = () => {
             <div id="totalwithgst">
               <div id="totalwithgstF1">
                 <div>
-                  <p>Sub Total</p>
+                  <p>Sub Total :</p>
                   <p>
                     {(Math.round(
                       (parseFloat(calculateTotalPrice()) +
@@ -591,7 +553,17 @@ const Checkout = () => {
                   </p>
                   {/* </div> */}
                 </div>
-
+                <div>
+                  <p>Discount : </p>
+                  <p>
+                    <select id="mySelect">
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="23">23</option>
+                      <option value="53">53</option>
+                    </select>
+                  </p>
+                </div>
                 <div id="gstmanipulation">
                   <p>
                     <span>Total GST:</span>
@@ -772,13 +744,13 @@ const Checkout = () => {
       {/* new data */}
 
       <div>
-        <div id="lastbtnscheck">
-          <Link to={"/home"}>
+        <div onClick={handleRemoveLocalStorage} id="lastbtnscheck">
+          <Link to={"/dashboard"}>
             <button
               style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
               id="firstbtn"
             >
-              Book now <TfiAngleRight style={{ marginLeft: "1rem" }} />
+              Save Appointment <TfiAngleRight style={{ marginLeft: "1rem" }} />
             </button>
           </Link>
         </div>
@@ -787,4 +759,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default CheckoutOfApt;

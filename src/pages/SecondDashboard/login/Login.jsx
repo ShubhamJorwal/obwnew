@@ -3,7 +3,7 @@ import { FiX } from "react-icons/fi";
 import "./loginAppointment.scss";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios"
+import axios from "axios";
 import {
   fetchCustomers,
   clearErrors,
@@ -24,7 +24,7 @@ const Login = () => {
 
   const [nameInput, setNameInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
-  const [dateTimeInput, setDateTimeInput] = useState(new Date());
+  const [dateTimeInput, setDateTimeInput] = useState(new Date());   
   const [timeInput, setTimeInput] = useState("00:00");
 
   const handleNameChange = (e) => {
@@ -65,7 +65,6 @@ const Login = () => {
       const filteredSuggestions = customers.filter(
         (suggest) =>
           suggest.first_name.toLowerCase().includes(input.toLowerCase()) ||
-          suggest.last_name.toLowerCase().includes(input.toLowerCase()) ||
           suggest.contact_no.includes(input)
       );
 
@@ -80,12 +79,11 @@ const Login = () => {
   const handleSuggestionClick = (value) => {
     const suggestion = suggestions.find(
       (suggest) =>
-        suggest.first_name + suggest.last_name === value ||
-        suggest.contact_no === value
+        suggest.first_name === value || suggest.contact_no === value
     );
 
     if (suggestion) {
-      setNameInput(suggestion.first_name + suggestion.last_name);
+      setNameInput(suggestion.first_name);
       setPhoneNumberInput(suggestion.contact_no);
     }
 
@@ -102,7 +100,7 @@ const Login = () => {
         date: dateTimeInput.toLocaleDateString(),
         time: timeInput,
       };
-  
+
       // Make the POST request
       const response = await axios.post(
         "https://admin.obwsaloon.com/create/appointment",
@@ -113,10 +111,10 @@ const Login = () => {
           },
         }
       );
-  
+
       // Handle the response as needed
       console.log("Appointment created successfully:", response.data);
-  
+
       // Redirect to the dashboard or perform any other action
       Navigate("/dashboard");
     } catch (error) {
@@ -124,7 +122,6 @@ const Login = () => {
       // Handle the error as needed
     }
   };
-  
 
   const handleCrossClick = () => {
     setShowDiv(false);
@@ -142,7 +139,7 @@ const Login = () => {
       <div className={`overlay ${showDiv ? "show" : ""}`}>
         <div className="content">
           <div id="suggestionsBox">
-            <h2>SELECT CUSTOMER</h2>
+            <h2>Submit Details</h2>
             <input
               className="namecontcidapt"
               placeholder="Name"
@@ -165,7 +162,7 @@ const Login = () => {
                 onChange={handleDateTimeChange}
                 dateFormat="MM/dd/yyyy"
               />
-              <div style={{marginLeft:"1rem"}} id="newTimepickers01">
+              <div style={{ marginLeft: "1rem" }} id="newTimepickers01">
                 <TimePicker
                   className="time-input"
                   value={timeInput}
@@ -184,13 +181,11 @@ const Login = () => {
                     className="suggestion-item"
                     onClick={() =>
                       handleSuggestionClick(
-                        suggestion.first_name + suggestion.last_name ||
-                          suggestion.contact_no
+                        suggestion.first_name || suggestion.contact_no
                       )
                     }
                   >
-                    {suggestion.first_name} {suggestion.last_name} -{" "}
-                    {suggestion.contact_no}
+                    {suggestion.first_name} - {suggestion.contact_no}
                   </li>
                 ))}
               </ul>

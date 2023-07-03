@@ -4,11 +4,11 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { RxCross2 } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServicesForChild } from "../../../../redux/Actions/ServicesAction";
+import { fetchServicesForChild } from "../../../../../redux/Actions/ServicesAction";
 import { ToastContainer, toast } from "react-toastify";
-import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
+import LoaderFirst from "../../../../../components/Loaders/LoaderFirst";
 
-const Womenservices = () => {
+const ChildservicesApt = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
 
   const Navigate = useNavigate();
@@ -78,9 +78,8 @@ const Womenservices = () => {
 
   const handleAddServices2O = () => {
     const selectedData = {
-      // service: selectedService,
-      subServices: selectedSubServices.map(subService => ({ ...subService, stylist_id: 1 , quantity: 1})),
-      
+      service: selectedService,
+      subServices: selectedSubServices.map(subService => ({ ...subService, stylist: "No stylist selected" })),
     };
   
     const existingData = localStorage.getItem("SelectedData");
@@ -120,7 +119,7 @@ const Womenservices = () => {
         <div id="midcomp">
           <h3>Select Customer type</h3>
           <div id="SecCompForServices">
-            <Link to={"/services/women"}>
+            <Link to={"/appointment/services/women"}>
               <div id="MaleService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
@@ -153,7 +152,7 @@ const Womenservices = () => {
               </div>
             </Link>
 
-            <Link to={"/services/men"}>
+            <Link to={"/appointment/services/men"}>
               <div id="MaleService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
@@ -190,7 +189,7 @@ const Womenservices = () => {
               </div>
             </Link>
 
-            <Link to={"/services/child"}>
+            <Link to={"/appointment/services/child"}>
               <div id="FeMaleService">
                 <span>
                   {/* <img id="centerIconOnser" src="/icons/01.png" alt="" /> */}
@@ -409,7 +408,7 @@ const Womenservices = () => {
 
                 <div id="lastbtnofserviceadd">
                 <Link
-  to="/home"
+  to="/appointment"
   className="book-button"
   onClick={handleAddServices2O}
 >
@@ -428,4 +427,4 @@ const Womenservices = () => {
   );
 };
 
-export default Womenservices;
+export default ChildservicesApt;

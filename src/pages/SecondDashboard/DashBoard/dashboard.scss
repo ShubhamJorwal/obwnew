@@ -11,7 +11,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     width: 100%;
-    
+
     .megamenuLinks {
       display: flex;
       justify-content: center;
@@ -20,7 +20,6 @@
       font-weight: 900;
       font-size: 20px;
 
-    
       p {
         margin-left: 1rem;
         font-family: Inter;
@@ -40,7 +39,7 @@
         color: white !important;
       }
       svg {
-        color: #E0D610 !important;
+        color: #e0d610 !important;
       }
     }
     #Option2 {
@@ -48,41 +47,41 @@
       border-bottom: none;
       color: #444343;
       svg {
-        color: #10BBCA;
+        color: #10bbca;
       }
     }
     #Option3 {
       border: none;
-        color: #444343;
-        svg {
-          color: #10BBCA;
-        }
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
     }
     #Option4 {
       border: none;
       border-top: 2px solid #18959e;
-        color: #444343;
-        svg {
-          color: #10BBCA;
-        }
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
     }
     #Option5 {
       border: none;
       border-left: 2px solid #18959e;
       border-top: 2px solid #18959e;
       border-right: 2px solid #18959e;
-        color: #444343;
-        svg {
-          color: #10BBCA;
-        }
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
     }
     #Option6 {
       border: none;
       border-top: 2px solid #18959e;
-        color: #444343;
-        svg {
-          color: #10BBCA;
-        }
+      color: #444343;
+      svg {
+        color: #10bbca;
+      }
     }
   }
 }
@@ -174,3 +173,108 @@ table td {
   bottom: 0;
   background: white;
 }
+
+#appoinmentsbydate {
+  position: fixed;
+  height: 86vh;
+  width: 100%;
+  background-color: white;
+  border-radius: 12vw 12vw 0 0;
+  bottom: 0;
+  z-index: 10;
+
+  #content-to-display02 {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+
+    #tophead {
+      h2 {
+        font-family: Inter;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 29px;
+        color: #969696;
+        display: flex;
+        justify-content: center;
+      }
+      h3 {
+        font-family: Inter;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 29px;
+        color: #016e82;
+      }
+    }
+
+    button {
+      border: none;
+      background-color: transparent;
+    }
+  }
+  #midcompline {
+    display: flex;
+    width: 666px;
+    margin: auto;
+    padding: 0 2rem 1rem 2rem;
+    
+    height: 75px;
+
+    p {
+      display: flex;
+      // margin: 0 3rem;
+      font-family: Inter;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 24px;
+      
+      align-items: center;
+    }
+  }
+  #insideDateofdash {
+    width: 666px;
+    display: flex;
+    font-size: 1.5rem;
+    padding: 2rem;
+    height: 75px;
+    border-radius: 10px;
+    border: 1px solid #048aa3;
+    margin: 1rem auto;
+
+    &:hover {
+      background: #18959e3a;
+    }
+
+    p {
+      display: flex;
+      // margin: 0 3rem;
+      font-family: Inter;
+      font-size: 20px;
+      line-height: 24px;
+      align-items: center;
+    }
+  }
+
+  #insideDateofdashs {
+    display: flex;
+    justify-content: center;
+    margin: 3rem 0;
+    background-color: #18959e43;
+    padding: 2rem;
+    p {
+      font-size: 1.4rem;
+    }
+  }
+}
+
+#datestofindApt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  input {
+    margin: 2rem;
+  }
+}
+
+

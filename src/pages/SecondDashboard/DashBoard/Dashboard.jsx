@@ -10,8 +10,11 @@ import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import SecondBtn from "../../../components/Buttons/SecondBtn";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { RxCross2 } from "react-icons/rx";
 
 const Dashboard = () => {
+  const [isDivVisible, setIsDivVisible] = useState(false);
+
   const months = [
     "January",
     "February",
@@ -89,21 +92,21 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      // Fetch all customers
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "https://admin.obwsalon.com/api/customers",
+
+      // Fetch appointments
+      const appointmentsResponse = await axios.get(
+        "https://admin.obwsalon.com/api/appointments",
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      const customers = response.data;
+      const allAppointments = appointmentsResponse.data;
 
       // Filter appointments based on selected date
-      const filteredAppointments = appointments.filter((appointment) => {
+      const filteredAppointments = allAppointments.filter((appointment) => {
         const appointmentDate = new Date(appointment.appointment_date);
         return (
           appointmentDate.getDate() === selectedDate &&
@@ -112,21 +115,20 @@ const Dashboard = () => {
         );
       });
 
-      // Display customer names for the filtered appointments
-      const customerNames = filteredAppointments.map((appointment) => {
-        const customer = customers.find(
-          (customer) => customer.id === appointment.customer_id
-        );
-        return customer ? customer.name : "";
-      });
+      console.log("Appointments for selected date:", filteredAppointments);
 
-      console.log("Appointments for selected date:", customerNames);
-
+      setAppointments(filteredAppointments);
       setLoading(false);
     } catch (error) {
       console.log("Error fetching appointments:", error);
       setLoading(false);
     }
+    setIsDivVisible(true);
+
+    const targetDiv = document.getElementById("coverddiv");
+    targetDiv.classList.add("changebackgrounddark");
+
+    setSelectedDate(date); // Set the selected date
   };
 
   useEffect(() => {
@@ -144,7 +146,7 @@ const Dashboard = () => {
             },
           }
         );
-
+        console.log(response.data);
         setAppointments(response.data);
         setLoading(false);
       } catch (error) {
@@ -155,7 +157,11 @@ const Dashboard = () => {
 
     fetchAppointments();
   }, []);
-
+  const handleBackClick = () => {
+    const targetDiv = document.getElementById("coverddiv");
+    targetDiv.classList.remove("changebackgrounddark");
+    setIsDivVisible(false);
+  };
   return (
     <>
       <div id="dashboard">
@@ -213,11 +219,51 @@ const Dashboard = () => {
           <tbody>{renderCalendar()}</tbody>
         </table>
       </div>
+
       <div id="lastbtnfordashboard">
         <Link to={"/create/appointment"}>
           <SecondBtn title={"Create Appointment"} onClick={handleSubmit} />
         </Link>
       </div>
+      {isDivVisible && (
+        <div id="appoinmentsbydate">
+          {appointments.length === 0 ? (
+            <div id="content-to-display">
+              <div id="content-to-display02">
+                <div></div>
+                <div id="tophead">
+                  <h2>
+                    {selectedDate}-{currentMonth}
+                  </h2>
+                  <h3>Appointments</h3>
+                </div>
+                <button onClick={handleBackClick}>
+                  <RxCross2 size={"2rem"} color="red" />{" "}
+                </button>
+              </div>
+              <div id="midcompline">
+                <p>Name</p>
+                <p>Phone Number</p>
+                <p>Time</p>
+                <p>Status</p>
+              </div>
+              <div id="insideDateofdash">
+                <p>No appointments found for the selected date.</p>
+              </div>
+            </div>
+          ) : (
+            <div id="content-to-display">
+              <p>Appointments for selected date:</p>
+              <ul>
+                {appointments.map((appointment) => (
+                  <li key={appointment.id}>{appointment.appointment_id}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+      <div id="coverddiv"></div>
     </>
   );
 };
