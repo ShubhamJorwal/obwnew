@@ -182,6 +182,7 @@ const Checkout = () => {
             },
           }
         );
+        console.log(response.data)
         setStylists(response.data);
       } catch (error) {
         console.log("Error fetching stylists:", error);

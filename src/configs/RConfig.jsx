@@ -24,20 +24,22 @@ import WomenservicesApt from "../pages/SecondDashboard/creates/CreateApt/Service
 import ChildservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/ChilservicesApt";
 import MenservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/MenservicesApt";
 import CheckoutOfApt from "../pages/SecondDashboard/creates/CreateApt/checkoutsofApt/CheckoutOfApt";
+import AddCustomer from "../pages/SecondDashboard/pagesForDashboard/customers/AddCustomer/AddCustomer";
+import CustomerDetails from "../pages/SecondDashboard/pagesForDashboard/customers/CustomerDetails/CustomerDetails";
+import BillDetails from "../pages/SecondDashboard/pagesForDashboard/bills/BillsDetail.jsx/BillDetails";
+import CreateCusForNewBook from "../pages/SecondDashboard/pagesForDashboard/bookings/CreateCusForNewBook";
+import BookWomenServices from "../pages/SecondDashboard/pagesForDashboard/bookings/servicesForbooking/BookWomenser";
+import BookMenServices from "../pages/SecondDashboard/pagesForDashboard/bookings/servicesForbooking/BookMenservices";
+import BookChildServices from "../pages/SecondDashboard/pagesForDashboard/bookings/servicesForbooking/BookChilservices";
+import SalonEndBooking from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/SalonCreateBooking";
+import SalonEndCancelBooking from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/SalonCancelBook";
+import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLogin />,
-  },
-  {
-    path: "/02",
-    element: <Test02 />,
-  },
-  {
-    path: "/01",
-    element: <UserEndBooking />,
   },
   {
     path: "/home",
@@ -66,7 +68,79 @@ const router = createBrowserRouter([
   },
 
 
-  // Second Dashboard
+  // Salon Dashboard
+  {
+    path: "/dashboard",
+    // element: <CorrectedDashBoard />,
+    element: <Dashboard />,
+  },
+  {
+    path: "/bookings",
+    element: <Bookings />,
+  },
+  {
+    path: "/bookings/services/women",
+    element: <BookWomenServices />,
+  },
+  {
+    path: "/bookings/services/men",
+    element: <BookMenServices />,
+  },
+  {
+    path: "/bookings/services/child",
+    element: <BookChildServices />,
+  },
+  {
+    path: "/create-new-booking/customer-details",
+    element: <CreateCusForNewBook />,
+  },
+  {
+    path: "/create-new-booking/customer-details/booking",
+    element: <SalonEndBooking />,
+  },
+  {
+    path: "/create-new-booking/customer-details/cancel-booking",
+    element: <SalonEndCancelBooking />,
+  },
+
+  {
+    path: "/bills",
+    element: <Bills />,
+  },
+  {
+    path: "/bill/:billId",
+    element: <BillDetails />,
+  },
+  {
+    path: "/products",
+    element: <Products />,
+  },
+  {
+    path: "/customers",
+    element: <Customers />,
+  },
+  {
+    path: "/stylist",
+    element: <StylistList />,
+  },
+  // add a customer
+  {
+    path: "/add/customer",
+    element: <AddCustomer />,
+  },
+  {
+    path: "/customer/details/:customerId",
+    element: <CustomerDetails />,
+  },
+
+// create a booking
+
+{
+  path: "/create/booking",
+  element: <CreateBooking />,
+},
+
+  // creates
   {
     path: "/appointment",
     element: <Login />,
@@ -91,10 +165,7 @@ const router = createBrowserRouter([
   //   path: "/dashboard01",
   //   element: <Dashboard />,
   // },
-  {
-    path: "/dashboard",
-    element: <CorrectedDashBoard />,
-  },
+
   {
     path: "/save/appointment/:id",
     element: <SaveAppointment />,
@@ -106,26 +177,7 @@ const router = createBrowserRouter([
 
 
   // end
-  {
-    path: "/bookings",
-    element: <Bookings />,
-  },
-  {
-    path: "/bills",
-    element: <Bills />,
-  },
-  {
-    path: "/products",
-    element: <Products />,
-  },
-  {
-    path: "/customers",
-    element: <Customers />,
-  },
-  {
-    path: "/stylist",
-    element: <StylistList />,
-  },
+
   // {
   //   path: "/create/appointment",
   //   element: <CreateApt />,
@@ -136,10 +188,7 @@ const router = createBrowserRouter([
     path: "/create/appointment",
     element: <CreateApt />,
   },
-  {
-    path: "/create/booking",
-    element: <CreateBooking />,
-  },
+
   
 ]);
 

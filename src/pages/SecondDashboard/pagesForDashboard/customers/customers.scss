@@ -110,6 +110,7 @@
   margin: 1rem auto;
   justify-content: space-around;
   align-items: center;
+  color: black;
 
   #f1ofcdd {
     flex-basis: 25%;
@@ -147,4 +148,24 @@
     font-weight: 500;
     line-height: 22px;
   }
+
+  &:hover {
+    background: #18959e;
+
+    p {
+      color: white !important;
+    }
+  }
+}
+
+#lastbtnfordashboard {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  width: 100%;
+  padding: 2rem;
 }

@@ -28,7 +28,7 @@ const Appointment = () => {
             },
           }
         );
-        console.log(response.data)
+        console.log(response.data);
         setAppointments(response.data);
       } catch (error) {
         console.log(error);
@@ -92,20 +92,95 @@ const CsBooking = () => {
 
   const getCustomerDetails = (customerId) => {
     const customer = customers.find((customer) => customer.id === customerId);
-    return customer ? `${customer.first_name} (${customer.contact_no})` : "N/A";
+    return customer ? `${customer.first_name} ` : "N/A";
+  };
+  const getCustomerDetailss = (customerId) => {
+    const customer = customers.find((customer) => customer.id === customerId);
+    return customer ? `${customer.contact_no} ` : "N/A";
   };
 
   return (
     <>
       <div id="Csbookingbks">
-        <div id="headboks">
-          <p>Name</p> <p>Phone Number</p> <p>Amount</p>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginLeft: "1rem",
+          }}
+          id="headboks"
+        >
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Name
+          </p>{" "}
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Phone Number
+          </p>{" "}
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Amount
+          </p>
         </div>
 
         {bookings.map((booking) => (
-          <div id="dataofCsbooks" key={booking.id}>
-            <p>Name: {getCustomerDetails(booking.customer_id)}</p>
-            <p>{booking.id}</p>
+          <div
+            style={{
+              display: "flex",
+            }}
+            id="dataofCsbooks"
+            key={booking.id}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                marginLeft: "1rem",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#3D4142",
+              }}
+            >
+              {getCustomerDetails(booking.customer_id)}
+            </p>
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#868686",
+              }}
+            >
+              {getCustomerDetailss(booking.customer_id)}
+            </p>
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#18959E",
+              }}
+            >
+              {booking.total}
+            </p>
           </div>
         ))}
       </div>
@@ -113,10 +188,263 @@ const CsBooking = () => {
   );
 };
 const Ongoing = () => {
-  return <>hiddddd</>;
+  const { customers, loading, error } = useSelector((state) => state.customers);
+  const dispatch = useDispatch();
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    dispatch(fetchCustomers()); // Fetch customers from the API
+
+    const fetchBookings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "https://admin.obwsalon.com/api/bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Filter the services with status 'pending'
+        const pendingBookings = response.data.filter(
+          (booking) => booking.status === "Ongoing"
+        );
+
+        console.log(pendingBookings);
+        setBookings(pendingBookings);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBookings();
+  }, [dispatch]);
+
+  const getCustomerDetails = (customerId) => {
+    const customer = customers.find((customer) => customer.id === customerId);
+    return customer ? `${customer.first_name} ` : "N/A";
+  };
+  const getCustomerDetailss = (customerId) => {
+    const customer = customers.find((customer) => customer.id === customerId);
+    return customer ? `${customer.contact_no} ` : "N/A";
+  };
+  return (
+    <>
+      <div id="Csbookingbks">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginLeft: "1rem",
+          }}
+          id="headboks"
+        >
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Name
+          </p>{" "}
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Phone Number
+          </p>{" "}
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Amount
+          </p>
+        </div>
+
+        {bookings.map((booking) => (
+          <div
+            style={{
+              display: "flex",
+            }}
+            id="dataofCsbooks"
+            key={booking.id}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                marginLeft: "1rem",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#3D4142",
+              }}
+            >
+              {getCustomerDetails(booking.customer_id)}
+            </p>
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#868686",
+              }}
+            >
+              {getCustomerDetailss(booking.customer_id)}
+            </p>
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#18959E",
+              }}
+            >
+              {booking.status}
+            </p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 };
 const Completed = () => {
-  return <>hiafdasd</>;
+  const { customers, loading, error } = useSelector((state) => state.customers);
+  const dispatch = useDispatch();
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    dispatch(fetchCustomers()); // Fetch customers from the API
+
+    const fetchBookings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "https://admin.obwsalon.com/api/bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Filter the services with status 'pending'
+        const pendingBookings = response.data.filter(
+          (booking) => booking.status === "Completed"
+        );
+
+        console.log(pendingBookings);
+        setBookings(pendingBookings);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBookings();
+  }, [dispatch]);
+
+  const getCustomerDetails = (customerId) => {
+    const customer = customers.find((customer) => customer.id === customerId);
+    return customer ? `${customer.first_name} ` : "N/A";
+  };
+  const getCustomerDetailss = (customerId) => {
+    const customer = customers.find((customer) => customer.id === customerId);
+    return customer ? `${customer.contact_no} ` : "N/A";
+  };
+  return <>
+        <div id="Csbookingbks">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginLeft: "1rem",
+          }}
+          id="headboks"
+        >
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Name
+          </p>{" "}
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Phone Number
+          </p>{" "}
+          <p
+            style={{
+              display: "flex",
+              flexBasis: "33%",
+              justifyContent: "center",
+            }}
+          >
+            Amount
+          </p>
+        </div>
+
+        {bookings.map((booking) => (
+          <div
+            style={{
+              display: "flex",
+            }}
+            id="dataofCsbooks"
+            key={booking.id}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                marginLeft: "1rem",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#3D4142",
+              }}
+            >
+              {getCustomerDetails(booking.customer_id)}
+            </p>
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#868686",
+              }}
+            >
+              {getCustomerDetailss(booking.customer_id)}
+            </p>
+            <p
+              style={{
+                display: "flex",
+                flexBasis: "33%",
+                fontSize: "20px",
+                justifyContent: "center",
+                color: "#18959E",
+              }}
+            >
+              {booking.status}
+            </p>
+          </div>
+        ))}
+      </div></>;
 };
 
 const Bookings = () => {
@@ -203,9 +531,11 @@ const Bookings = () => {
 
       {renderContent()}
 
-      <div id="lastbtnfordashboard">
-        <SecondBtn title={"Create New Booking"} />
-      </div>
+      <Link to={"/create-new-booking/customer-details"}>
+        <div id="lastbtnfordashboard">
+          <SecondBtn title={"Create New Booking"} />
+        </div>
+      </Link>
     </>
   );
 };

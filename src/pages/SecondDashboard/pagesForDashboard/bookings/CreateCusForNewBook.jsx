@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import "./home.scss";
+import "./bookings.scss";
 import {useNavigate} from 'react-router-dom'
 
 
-function BookingForm() {
+function CreateCusForNewBook() {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -16,9 +16,9 @@ function BookingForm() {
 
   const Navigate = useNavigate()
   useEffect(() => {
-    const userBookingData = localStorage.getItem("UserBookingData");
+    const userBookingData = localStorage.getItem("NewBookingData");
     if (userBookingData) {
-      Navigate("/checkout");
+      Navigate("/create/booking");
     }
   }, []);
   useEffect(() => {
@@ -85,14 +85,14 @@ function BookingForm() {
     }
 
     // Save user booking data to localStorage
-    localStorage.setItem("UserBookingData", JSON.stringify(selectedCustomer));
+    localStorage.setItem("NewBookingData", JSON.stringify(selectedCustomer));
 
     // Reset form fields
     setName("");
     setPhoneNumber("");
     setSelectedCustomer(null);
     setErrorMessage("");
-    Navigate("/checkout")
+    Navigate("/create/booking")
   };
 
   const handleShowSecondForm = () => {
@@ -281,63 +281,9 @@ function BookingForm() {
   );
 }
 
-export default BookingForm;
+export default CreateCusForNewBook;
 
 
 
 
 
-
-
-// import React, { useState } from 'react';
-// import axios from 'axios';
-
-// const CustomerForm = () => {
-//   const [firstName, setFirstName] = useState('');
-//   const [contactNo, setContactNo] = useState('');
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     // Retrieve the token from localStorage
-//     const token = localStorage.getItem('token');
-
-//     // Create the JSON data object
-//     const data = {
-//       first_name: firstName,
-//       contact_no: contactNo
-//     };
-
-//     try {
-//       // Send the POST request using Axios
-//       const response = await axios.post('https://admin.obwsalon.com/api/create/customer', data, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           'Content-Type': 'application/json'
-//         }
-//       });
-
-//       console.log(response.data); // Handle the response here
-//     } catch (error) {
-//       console.error(error); // Handle any error that occurred
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <label>
-//         First Name:
-//         <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-//       </label>
-//       <br />
-//       <label>
-//         Contact Number:
-//         <input type="text" value={contactNo} onChange={(e) => setContactNo(e.target.value)} />
-//       </label>
-//       <br />
-//       <button type="submit">Submit</button>
-//     </form>
-//   );
-// };
-
-// export default CustomerForm;

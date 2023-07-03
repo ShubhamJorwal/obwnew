@@ -5,49 +5,49 @@ import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { RiAccountCircleLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
-import { BsSearch } from "react-icons/bs";
 import axios from "axios";
 import { TfiAngleRight } from "react-icons/tfi";
 
 const CreateBooking = () => {
   const Navigate = useNavigate();
+  const [selectedDiscount, setSelectedDiscount] = useState("");
+
   const goToPreviousPage = () => {
-    Navigate("/services/women");
+    Navigate("/bookings");
   };
+  useEffect(() => {
+    const userBookingData = localStorage.getItem("NewBookingData");
+    if (!userBookingData) {
+      Navigate("/bookings");
+    }
+  }, []);
+  const [totalAmount, setTotalAmount] = useState(0);
+
   const [name, setName] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [subServices, setSubServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [selectedStylist, setSelectedStylist] = useState(null);
   const [showStylistSlider, setShowStylistSlider] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedStylistId, setSelectedStylistId] = useState(null);
 
   const [showProductsSlider, setshowProductsSlider] = useState(null);
 
-  const [isSelected, setIsSelected] = useState(false);
   const [products, setProducts] = useState([]);
   const [stylistName, setStylistName] = useState("");
-
-  const [selectedStylistName, setSelectedStylistName] = useState("");
 
   const [showDiv2nd, setShowDiv2nd] = useState(false);
   useEffect(() => {
     // Fetch data from localStorage
-    const storedData = localStorage.getItem("SelectedData");
-    const bookingData = localStorage.getItem("BookingData");
+    const storedData = localStorage.getItem("BookSelectedData");
+    const bookingData = localStorage.getItem("NewBookingData");
 
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
-      // const parsedBookingData = JSON.parse(bookingData);
-      const { first_name, last_name, contact_no } = JSON.parse(bookingData);
+      const { first_name, contact_no } = JSON.parse(bookingData);
 
-      // Update state with fetched data
-      // setName(parsedBookingData.map(data => `${data.first_name} ${data.last_name}`));
-      // setContactNo(parsedBookingData.map(data => data.contact_no.toString()));
-      // setContactNo(contact_no);
-      setName(`${first_name} ${last_name}`);
+      setName(`${first_name}`);
       setContactNo(contact_no);
 
       setSubServices(
@@ -63,32 +63,17 @@ const CreateBooking = () => {
     }
   }, []);
 
-  // data for products
-
-  //   // Retrieve the data from local storage
-  // const data = localStorage.getItem("selectedProducts");
-
-  // // Parse the JSON data into an object
-  // const selectedProduct = JSON.parse(data);
-
-  // // Access specific properties within the selectedProduct object
-  // console.log(selectedProduct.property1);
-  // console.log(selectedProduct.property2);
-  // // ...
-
-  // // You can also loop through the object properties
-  // for (let key in selectedProduct) {
-  //   if (selectedProduct.hasOwnProperty(key)) {
-  //     console.log(key + ": " + selectedProduct[key]);
-  //   }
-  // }
-
   //
 
   const handleAddSubService = (subServiceId) => {
     const updatedSubServices = subServices.map((subService) => {
       if (subService.id === subServiceId) {
-        return { ...subService, quantity: subService.quantity + 1 };
+        const updatedSubService = {
+          ...subService,
+          quantity: subService.quantity + 1,
+        };
+        updateLocalStorage(subServiceId, updatedSubService);
+        return updatedSubService;
       }
       return subService;
     });
@@ -98,11 +83,36 @@ const CreateBooking = () => {
   const handleRemoveSubService = (subServiceId) => {
     const updatedSubServices = subServices.map((subService) => {
       if (subService.id === subServiceId && subService.quantity > 0) {
-        return { ...subService, quantity: subService.quantity - 1 };
+        const updatedSubService = {
+          ...subService,
+          quantity: subService.quantity - 1,
+        };
+        updateLocalStorage(subServiceId, updatedSubService);
+        return updatedSubService;
       }
       return subService;
     });
     setSubServices(updatedSubServices);
+  };
+
+  const updateLocalStorage = (subServiceId, updatedSubService) => {
+    const storedData = localStorage.getItem("BookSelectedData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const updatedData = parsedData.map((data) => {
+        const updatedSubServices = data.subServices.map((subService) => {
+          if (subService.id === subServiceId) {
+            return updatedSubService;
+          }
+          return subService;
+        });
+        return {
+          ...data,
+          subServices: updatedSubServices,
+        };
+      });
+      localStorage.setItem("BookSelectedData", JSON.stringify(updatedData));
+    }
   };
 
   const handleDeleteSubService = (subServiceId) => {
@@ -111,13 +121,10 @@ const CreateBooking = () => {
     );
     setSubServices(updatedSubServices);
 
-    // Get the stored SelectedData from localStorage
-    const storedData = localStorage.getItem("SelectedData");
+    const storedData = localStorage.getItem("BookSelectedData");
     if (storedData) {
-      // Parse the stored data into an array
       const parsedData = JSON.parse(storedData);
 
-      // Find the object containing the subServiceId
       const updatedData = parsedData.map((data) => {
         const updatedSubServices = data.subServices.filter(
           (subService) => subService.id !== subServiceId
@@ -128,33 +135,13 @@ const CreateBooking = () => {
         };
       });
 
-      // Update the SelectedData in localStorage with the updated data
-      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+      localStorage.setItem("BookSelectedData", JSON.stringify(updatedData));
     }
 
     window.location.reload();
   };
 
-  function deleteService(index) {
-    selectedData.splice(index, 1);
-    localStorage.setItem("selectedData", JSON.stringify(selectedData));
-
-    // Check if all services are deleted
-    if (selectedData.length === 0) {
-      localStorage.removeItem("selectedData");
-    }
-  }
-
-  const handleStylistClick = (stylist) => {
-    setSelectedStylist(stylist);
-  };
-
   const handleAddStylist = () => {
-    // if (selectedStylist) {
-    //   localStorage.setItem("SelectedStylist", JSON.stringify(selectedStylist));
-    //   setSelectedStylistName(`${selectedStylist.first_name} ${selectedStylist.last_name}`);
-    // }
-
     setShowStylistSlider(true);
     setIsButtonClicked(true);
     setIsSliderVisible(true);
@@ -188,15 +175,16 @@ const CreateBooking = () => {
   useEffect(() => {
     const fetchStylists = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token");
         const response = await axios.get(
           "https://admin.obwsalon.com/api/stylists",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
+        console.log(response.data);
         setStylists(response.data);
       } catch (error) {
         console.log("Error fetching stylists:", error);
@@ -215,19 +203,45 @@ const CreateBooking = () => {
       setStylistName(stylist.first_name + " " + stylist.last_name);
     }
 
+    // const fetchProducts = async () => {
+    //   try {
+    //     const token = localStorage.getItem("token"); // Get the token from localStorage
+    //     const response = await axios.get(
+    //       "https://admin.obwsalon.com/api/products",
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    //         },
+    //       }
+    //     );
+    //     console.log(response.data);
+    //     setProducts(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
+        const token = localStorage.getItem("token");
+        const branchID = localStorage.getItem("branchName");
+        const num2f = parseInt(branchID);
+
+        console.log(branchID);
         const response = await axios.get(
           "https://admin.obwsalon.com/api/products",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         console.log(response.data);
-        setProducts(response.data);
+        // Filter the products based on branch_id = 1
+        const filteredProducts = response.data.filter(
+          (product) => product.branch_id === num2f
+        );
+        setProducts(filteredProducts);
       } catch (error) {
         console.log(error);
       }
@@ -279,29 +293,8 @@ const CreateBooking = () => {
     }
   }, []);
 
-  const handleProductSelection = (product) => {
-    setSelectedProducts((prevSelectedProducts) => {
-      const isSelected = prevSelectedProducts.some(
-        (selectedProduct) => selectedProduct.id === product.id
-      );
-
-      if (isSelected) {
-        return prevSelectedProducts.filter(
-          (selectedProduct) => selectedProduct.id !== product.id
-        );
-      } else {
-        return [...prevSelectedProducts, product];
-      }
-    });
-  };
-
-  const handleAddItem = () => {
-    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-  };
-
   // products data
 
-  const [selectedDivs, setSelectedDivs] = useState([]);
   const handleDivSelection = (product) => {
     if (product.quantity === 0) {
       return; // Do nothing if the product is out of stock
@@ -331,22 +324,12 @@ const CreateBooking = () => {
     });
   };
 
-  // Fetch the previously selected products from localStorage on component mount
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
     if (storedSelectedProducts) {
       setSelectedProducts(JSON.parse(storedSelectedProducts));
     }
   }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem("selectedProducts", JSON.stringify(filteredProducts.filter(product => selectedDivs.includes(product.id))));
-
-  // }, [selectedDivs, filteredProducts]);
-
-  //  code for new products purchase
-
-  // const [selectedProducts, setSelectedProducts] = useState([]);
 
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -397,6 +380,8 @@ const CreateBooking = () => {
       0
     );
     setTotalPrice(priceSum);
+
+    localStorage.setItem("TotalAmountBookOFser", priceSum);
   }, [subServices]);
 
   const calculateTotalPrice = () => {
@@ -405,7 +390,12 @@ const CreateBooking = () => {
       const productTotal = product.amount_with_gst * product.selectedQuantity;
       totalPrice += productTotal;
     });
+    localStorage.setItem("TotalAmountBook", totalPrice);
     return totalPrice.toFixed(2);
+
+    // const totalAmount = (
+    //   parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
+    // ).toFixed(2)
   };
 
   //
@@ -417,22 +407,20 @@ const CreateBooking = () => {
       setStylistName(stylist.first_name + " " + stylist.last_name);
     }
   }, []);
-  //
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // Render a loader while fetching data
-  // }
+  // .
 
   return (
     <>
       <div id="checkoutsec" className={isButtonClicked ? "my-css-class" : ""}>
-        <div id="TopHeader">
+        <div style={{ marginBottom: "3rem" }} id="TopHeader">
           <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
-          <h1>Appointment</h1>
+          <h1>Customer Booking</h1>
           <div id="lastRes"></div>
         </div>
+
         <div id="Cus">
           <RiAccountCircleLine size={"2.5rem"} color="#058DA6" />
           <span id="customer">Customer:</span>
@@ -442,7 +430,7 @@ const CreateBooking = () => {
         </div>
 
         <div id="buttonsforcheckout">
-          <Link to={"/services/women"}>
+          <Link to={"/bookings/services/women"}>
             <button>Add Service</button>
           </Link>
           <button onClick={handleAddProducts}>Add Product</button>
@@ -450,10 +438,11 @@ const CreateBooking = () => {
 
         <div id="mainsecforcheck">
           <div id="toplinescheck">
-            <h2 id="firsttoplinech">Item</h2>
-            <h2 id="ndtoplinech">Qty</h2>
-            <h2 id="rdtoplinech">Price</h2>
-            <h2 id="thtoplinech">Total</h2>
+            <h2 style={{flexBasis:"25%"}} id="firsttoplinech">Item</h2>
+            <h2 style={{flexBasis:"15%"}} id="ndtoplinech">Qty</h2>
+            <h2 style={{flexBasis:"20%"}} id="rdtoplinech">Price</h2>
+            <h2 style={{flexBasis:"15%"}} id="thtoplinech">DC</h2>
+            <h2 style={{flexBasis:"20%"}} id="thtoplinech">Total</h2>
             <div id="afdsasdfdssd">
               <MdDelete />
             </div>
@@ -463,8 +452,8 @@ const CreateBooking = () => {
             {subServices.map((subService) => (
               <div key={subService.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p>{subService.service_name}</p>
-                  <div id="incdec">
+                  <p style={{flexBasis:"25%"}}>{subService.service_name}</p>
+                  <div  style={{flexBasis:"15%"}} id="incdec">
                     <div>
                       <button
                         onClick={() => handleRemoveSubService(subService.id)}
@@ -479,8 +468,31 @@ const CreateBooking = () => {
                       </button>
                     </div>
                   </div>
-                  <div id="rdPrice">
+                  <div style={{flexBasis:"20%"}} id="rdPrice">
                     <p>{subService.price_including_gst}/-</p>
+                  </div>{" "}
+                  <div 
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      flexBasis: "15%",
+                    }}
+                    id="dicountopt"
+                  >
+                    <select id="inputselection" required="" 
+  value={subService.discount}
+  onClick={() => setDiscountSubservice(subService.id)}
+  // onChange={(e) => setSelectedDiscount(e.target.value)}
+  >
+                    <option value="">Dc</option>
+                      <option value="0">0%</option>
+                      <option value="5">5%</option>
+                      <option value="10">10%</option>
+                      <option value="15">15%</option>
+                      <option value="20">20%</option>
+                      <option value="25">25%</option>
+                      <option value="30">30%</option>
+                    </select>
                   </div>
                   <div id="thtotalprice">
                     <p>
@@ -498,8 +510,8 @@ const CreateBooking = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>Stylist : {subService.stylist}</span>
+                  <button style={{flexBasis:"18%"}} onClick={handleAddStylist}>Add Stylist</button>
+                  <span style={{flexBasis:"22%" , justifyContent:"center" , display:"flex"}}>Stylist : {subService.stylist} Rohan</span>
                   <div id="thtotalprice02">
                     {/* <p>
                     {(
@@ -507,7 +519,7 @@ const CreateBooking = () => {
                     ).toFixed(2)}
                     /-
                   </p> */}
-                    <p>
+                    {/* <p>
                       GST {subService.gst}% ={" "}
                       {(
                         subService.price_including_gst *
@@ -515,7 +527,7 @@ const CreateBooking = () => {
                         (subService.gst / 100)
                       ).toFixed(2)}
                       /-
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>
@@ -526,8 +538,8 @@ const CreateBooking = () => {
             {selectedProducts.map((product) => (
               <div key={product.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p>{product.product_name}</p>
-                  <div id="incdec">
+                  <p style={{flexBasis: "25%"}}>{product.product_name}</p>
+                  <div style={{flexBasis: "15%"}} id="incdec">
                     <div style={{ justifyContent: "center" }}>
                       <button onClick={() => handleRemoveProduct(product.id)}>
                         -
@@ -538,10 +550,29 @@ const CreateBooking = () => {
                       </button>
                     </div>
                   </div>
-                  <div id="rdPrice">
+                  <div style={{flexBasis: "20%"}} id="rdPrice">
                     <p>{product.amount_with_gst}/-</p>
                   </div>
-                  <div id="thtotalprice">
+                  <div 
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      flexBasis: "15%",
+                    }}
+                    id="dicountopt"
+                  >
+                    <select id="inputselection" required="">
+                      <option value="">Dc</option>
+                      <option value="0">0%</option>
+                      <option value="5">5%</option>
+                      <option value="10">10%</option>
+                      <option value="15">15%</option>
+                      <option value="20">20%</option>
+                      <option value="25">25%</option>
+                      <option value="30">30%</option>
+                    </select>
+                  </div>
+                  <div style={{flexBasis: "20%"}} id="thtotalprice">
                     <p>
                       {(
                         product.amount_with_gst * product.selectedQuantity
@@ -557,8 +588,8 @@ const CreateBooking = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>
+                  <button style={{flexBasis:"18%"}} onClick={handleAddStylist}>Add Stylist</button>
+                  <span style={{flexBasis:"22%" , justifyContent:"center" , display:"flex"}}>
                     Stylist :{stylistName ? stylistName : "No stylist selected"}
                   </span>
                   <div id="thtotalprice02">
@@ -568,15 +599,6 @@ const CreateBooking = () => {
                     ).toFixed(2)}
                     /-
                   </p> */}
-                    <p>
-                      GST:{product.gst}% ={" "}
-                      {(
-                        product.amount_with_gst *
-                        product.selectedQuantity *
-                        (product.gst / 100)
-                      ).toFixed(2)}
-                      /-
-                    </p>
                   </div>
                 </div>
               </div>
@@ -622,7 +644,7 @@ const CreateBooking = () => {
 
                 <div id="gstmanipulation">
                   <p>
-                    <span>Total GST:</span>
+                    <span>Total GST :</span>
                     <span>
                       {(
                         selectedProducts.reduce(
@@ -643,6 +665,14 @@ const CreateBooking = () => {
                         )
                       ).toFixed(2)}
                       /-
+                    </span>
+                  </p>
+                </div>
+                <div id="gstmanipulation">
+                  <p>
+                    <span>Discount :</span>
+                    <span>
+                     pending
                     </span>
                   </p>
                 </div>
@@ -799,14 +829,24 @@ const CreateBooking = () => {
 
       {/* new data */}
 
-      <div>
-        <div id="lastbtnscheck">
-          <Link to={"/home"}>
+      <div id="lsatbutoins">
+        <div id="lastbtnscheck01">
+          <Link to={"/create-new-booking/customer-details/cancel-booking"}>
             <button
               style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
               id="firstbtn"
             >
-              Book now <TfiAngleRight style={{ marginLeft: "1rem" }} />
+              Cancel Booking <TfiAngleRight style={{ marginLeft: "1rem" }} />
+            </button>
+          </Link>
+        </div>
+        <div id="lastbtnscheck02">
+          <Link to={"/checkout/booking/processing"}>
+            <button
+              style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
+              id="firstbtn"
+            >
+              Confirm Booking <TfiAngleRight style={{ marginLeft: "1rem" }} />
             </button>
           </Link>
         </div>

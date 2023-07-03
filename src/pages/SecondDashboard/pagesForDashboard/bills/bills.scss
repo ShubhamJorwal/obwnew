@@ -109,6 +109,7 @@
     margin-bottom: 1rem;
     p {
         margin: 0 4rem;
+        
     }
   }
   #listingbills {
@@ -120,5 +121,18 @@
     margin: 0.5rem;
     justify-content: space-around;
     align-items: center;
+    font-family: Inter;
+font-size: 20px;
+font-weight: 500;
+line-height: 29px;
+
+&:hover {
+  background-color: #048aa3;
+  p {
+
+    color: white !important;
+  }
+}
+
   }
 }

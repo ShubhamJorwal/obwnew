@@ -1,4 +1,4 @@
-#StylistListDash {
+#stylistpage {
   width: 666px;
   height: 156px;
   border-radius: 23px;
@@ -90,9 +90,84 @@
   }
 }
 
-#stlistdkl {
-    display: flex;
+#searchstylistbar {
   width: 666px;
-  border-radius: 5px;
-  border: 1px solid #9a9a9a;
+  height: 58px;
+  top: 250px;
+  left: 39px;
+  border-radius: 100px;
+  border: 0.7px solid #929292;
+  display: flex;
+  margin: auto;
+  padding: 2rem;
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 23px;
+
+  &:focus-visible {
+    border: 0.7px solid #18959e !important;
+  }
 }
+
+#ulofstylsitlist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  #boxstylsitlist {
+    margin: 1rem 0 0 0;
+    width: 666px;
+    border-radius: 5px;
+    border: 1px solid #9a9a9a;
+    display: flex;
+    img {
+      width: 117.08709716796875px;
+      height: 112px;
+      top: 328px;
+      left: 39px;
+      border-radius: 5px;
+    }
+    #secstylsit {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 1rem;
+      #firstLiofstylist {
+        font-family: Inter;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 29px;
+        letter-spacing: 0em;
+        text-align: left;
+        color: black;
+        margin: 0.5rem 0;
+      }
+      #secondstLiofstylist  {
+        display: flex;
+        font-family: Inter;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 29px;
+        letter-spacing: 0em;
+        text-align: left;
+        color: #898989;
+        margin: 0.5rem 0;
+        justify-content: space-between;
+
+        p {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+
+// #selectedstylsitstylistlsit {
+//   background-color: white;
+//   width: 100vw;
+//   height: 100vh;
+//   // position: fixed;
+// }
