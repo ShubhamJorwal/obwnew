@@ -315,7 +315,8 @@ const Womenservices = () => {
                   onClick={() => handleServiceClick(service)}
                 >
                   <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    src= {`/Men/${service.category}.jpg`}
                     alt=""
                   />
                   <p>{service.category}</p>
@@ -335,7 +336,8 @@ const Womenservices = () => {
                       objectFit: "cover",
                       borderRadius: "2vw",
                     }}
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    src= {`/Men/${selectedService.category}.jpg`}
                     alt=""
                   />
                   <div id="middledataforserbook">

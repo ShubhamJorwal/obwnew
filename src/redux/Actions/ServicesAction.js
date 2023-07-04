@@ -78,7 +78,6 @@ export const fetchServicesForWomen = () => {
         },
       })
       .then((response) => {
-        console.log(response.data)
         const servicesForBranch = response.data.filter(
           (service) => service.branch_id.toString() === branchName && service.type === 'Women'
         );
@@ -86,6 +85,8 @@ export const fetchServicesForWomen = () => {
           type: FETCH_SERVICES_SUCCESS,
           payload: servicesForBranch,
         });
+        
+        console.log(servicesForBranch)
       })
       .catch((error) => {
         dispatch({

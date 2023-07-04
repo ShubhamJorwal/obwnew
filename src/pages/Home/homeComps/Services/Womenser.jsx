@@ -8,6 +8,8 @@ import { fetchServicesForWomen } from "../../../../redux/Actions/ServicesAction"
 import { ToastContainer, toast } from "react-toastify";
 import LoaderFirst from "../../../../components/Loaders/LoaderFirst";
 
+// import HairServices from '../../../../../public/Women/Hair Services.jpg'
+
 const Womenservices = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
 
@@ -79,11 +81,15 @@ const Womenservices = () => {
   const handleAddServices2O = () => {
     const selectedData = {
       // service: selectedService,
-      subServices: selectedSubServices.map(subService => ({ ...subService, stylist_id: 1 , quantity: 1})),
+      subServices: selectedSubServices.map((subService) => ({
+        ...subService,
+        stylist_id: 1,
+        quantity: 1,
+      })),
     };
-  
+
     const existingData = localStorage.getItem("SelectedData");
-  
+
     if (existingData) {
       const dataArray = JSON.parse(existingData);
       const filteredDataArray = dataArray.filter((item) => {
@@ -94,7 +100,7 @@ const Womenservices = () => {
         });
         return !isDuplicate;
       });
-  
+
       filteredDataArray.push(selectedData);
       localStorage.setItem("SelectedData", JSON.stringify(filteredDataArray));
     } else {
@@ -102,7 +108,6 @@ const Womenservices = () => {
       localStorage.setItem("SelectedData", JSON.stringify(dataArray));
     }
   };
-  
 
   return (
     <>
@@ -316,7 +321,8 @@ const Womenservices = () => {
                   onClick={() => handleServiceClick(service)}
                 >
                   <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    src= {`/Women/${service.category}.jpg`}
                     alt=""
                   />
                   <p>{service.category}</p>
@@ -336,7 +342,8 @@ const Womenservices = () => {
                       objectFit: "cover",
                       borderRadius: "2vw",
                     }}
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    // src={`${selectedService.category}.jpg`}
+                    src= {`/Women/${selectedService.category}.jpg`}
                     alt=""
                   />
                   <div id="middledataforserbook">
