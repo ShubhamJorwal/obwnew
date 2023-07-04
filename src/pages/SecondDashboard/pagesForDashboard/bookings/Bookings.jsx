@@ -503,25 +503,27 @@ const Bookings = () => {
 
       <div id="FourCatofbookp">
         <div
-          className="singbtnBp"
+          className={`singbtnBp ${selectedOption === "Appointment" ? "selected" : ""}`}
           onClick={() => handleOptionClick("Appointment")}
         >
           {" "}
           Appointment{" "}
         </div>
         <div
-          className="singbtnBp"
+          className={`singbtnBp ${selectedOption === "CsBooking" ? "selected" : ""}`}
           onClick={() => handleOptionClick("CsBooking")}
         >
           {" "}
           C.S Booking{" "}
         </div>
-        <div className="singbtnBp" onClick={() => handleOptionClick("Ongoing")}>
+        <div           className={`singbtnBp ${selectedOption === "Ongoing" ? "selected" : ""}`}
+ onClick={() => handleOptionClick("Ongoing")}>
           {" "}
           Ongoing{" "}
         </div>
         <div
-          className="singbtnBp"
+                    className={`singbtnBp ${selectedOption === "Completed" ? "selected" : ""}`}
+
           onClick={() => handleOptionClick("Completed")}
         >
           {" "}

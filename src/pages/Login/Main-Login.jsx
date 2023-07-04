@@ -61,7 +61,7 @@ const MainLogin = () => {
 
       // Store the token in localStorage or any other state management solution of your choice
       localStorage.setItem("token", token);
-      localStorage.setItem("branchName", 1);
+      localStorage.setItem("branchName", option);
 
       // Clear the form, error message, and option selection
       setEmail("");
@@ -97,7 +97,7 @@ const MainLogin = () => {
         />
         <select
           id="inputselection"
-          // required
+          required
           value={option}
           onChange={(e) => setOption(e.target.value)}
         >

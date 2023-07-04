@@ -144,7 +144,7 @@
         color: black;
         margin: 0.5rem 0;
       }
-      #secondstLiofstylist  {
+      #secondstLiofstylist {
         display: flex;
         font-family: Inter;
         font-size: 20px;
@@ -164,10 +164,74 @@
   }
 }
 
+#selectedstylsitstylistlsit  {
+  background-color: white;
+  width: 100vw;
+  min-height: 100vh;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  margin: auto;
+  top: 0 ;
+  left: 0;
 
-// #selectedstylsitstylistlsit {
-//   background-color: white;
-//   width: 100vw;
-//   height: 100vh;
-//   // position: fixed;
-// }
+
+
+  #topdataforstyde {
+    width: 666px;
+    color: #535151;
+    margin: 3rem auto;
+
+    #firstlinestli {
+      display: flex;
+      justify-content: space-between;
+      font-family: Inter;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 29px;
+      padding-bottom: 1.5rem;
+    }
+    #secondstylili {
+      display: flex;
+      justify-content: space-between;
+      font-family: Inter;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 29px;
+      color: #535151;
+      border-bottom: 1px solid #8d8d8d;
+      padding-bottom: 1.5rem;
+    }
+  }
+  #bookingsbyeachstylist {
+    h1 {
+      text-align: center;
+      font-family: Inter;
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 39px;
+      margin: 2rem 0;
+    }
+    #headstylsit {
+      display: flex;
+      margin: 0 1rem;
+      p {
+        font-family: Inter;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 24px;
+      }
+    }
+    margin-bottom: 3rem;
+
+  }
+  #bookingrowstylistid {
+    width: 666px;
+    border-radius: 10px;
+    border: 1px solid #048aa3;
+    margin: 1rem auto;
+    display: flex;
+    padding: 1.5rem;
+    
+  }
+}

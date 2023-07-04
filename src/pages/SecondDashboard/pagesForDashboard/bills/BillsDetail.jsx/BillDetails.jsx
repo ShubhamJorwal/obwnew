@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 
@@ -8,6 +8,8 @@ const BillDetails = () => {
   const [billDetails, setBillDetails] = useState(null);
   const [customerDetails, setCustomerDetails] = useState(null);
   const token = localStorage.getItem("token");
+  
+  const Navigate = useNavigate();
 
   useEffect(() => {
     const fetchBillDetails = async () => {
@@ -47,8 +49,15 @@ const BillDetails = () => {
   const goToPreviousPage = () => {
     Navigate("/bills");
   };
+
+
+
+
+
+  // new functions 
+  
   return (
-    <div>
+    <div id="checkoutsec">
       <div style={{ marginBottom: "3rem" }} id="TopHeader">
         <div id="backbtn" onClick={goToPreviousPage}>
           <AiOutlineArrowLeft />
@@ -57,22 +66,32 @@ const BillDetails = () => {
         <div id="lastRes"></div>
       </div>
       <div id="topdetailsbilldetai">
-        <h2>Customer</h2>
-        <div>
-          <p>Customer ID: {customerDetails.customer_id}</p>
-          <p>First Name: {customerDetails.first_name}</p>
-          <p>Last Name: {customerDetails.last_name}</p>
-          <p>Gender: {customerDetails.gender}</p>
+        <h2
+          style={{
+            fontWeight: "600",
+            fontSize: "26px",
+            textDecoration: "underline",
+            lineHeight: "1rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          Customer
+        </h2>
+        <div id="flexsideljk">
+          <p>{customerDetails.first_name} {customerDetails.last_name}</p>
+          <p>{customerDetails.contact_no}</p>
+          <p>{billDetails.date}</p>
+          <p>Bill No - {billDetails.bill_id}</p>
         </div>
         {/* Display other customer details */}
       </div>
-      <div id="">
-        <h2>Customer</h2>
-        <p>{billDetails.bill_id}</p>
-        <p>{billDetails.date}</p>
-        <p>{billDetails.total}</p>
-        {/* Display other bill details */}
-      </div>
+      <div id="buttonsforcheckout">
+          <Link to={"/services/women"}>
+            <button>Add Service</button>
+          </Link>
+          {/* <button onClick={handleAddProducts}>Add Product</button> */}
+          <button >Add Product</button>
+        </div>
     </div>
   );
 };

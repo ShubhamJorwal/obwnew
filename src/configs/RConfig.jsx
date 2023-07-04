@@ -18,14 +18,14 @@ import SaveAppointment from "../pages/SecondDashboard/DashBoard/SaveAppointment"
 
 import CreateBooking from '../pages/SecondDashboard/creates/CreateBooking/CreateBooking'
 import ProtectedRouteForUser from "./AuthRoutes";
-import UserEndBooking from "../pages/Home/CreateBooking";
+import UserEndBooking from "../pages/Home/NewCreateBooking";
 import Test02 from "../pages/test/Test2";
 import WomenservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/WomenserApt";
 import ChildservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/ChilservicesApt";
 import MenservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/MenservicesApt";
 import CheckoutOfApt from "../pages/SecondDashboard/creates/CreateApt/checkoutsofApt/CheckoutOfApt";
 import AddCustomer from "../pages/SecondDashboard/pagesForDashboard/customers/AddCustomer/AddCustomer";
-import CustomerDetails from "../pages/SecondDashboard/pagesForDashboard/customers/CustomerDetails/CustomerDetails";
+import CustomerDetails from "../pages/SecondDashboard/pagesForDashboard/customers/CustomerDetails/CustomerBookDetails";
 import BillDetails from "../pages/SecondDashboard/pagesForDashboard/bills/BillsDetail.jsx/BillDetails";
 import CreateCusForNewBook from "../pages/SecondDashboard/pagesForDashboard/bookings/CreateCusForNewBook";
 import BookWomenServices from "../pages/SecondDashboard/pagesForDashboard/bookings/servicesForbooking/BookWomenser";
@@ -34,6 +34,8 @@ import BookChildServices from "../pages/SecondDashboard/pagesForDashboard/bookin
 import SalonEndBooking from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/SalonCreateBooking";
 import SalonEndCancelBooking from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/SalonCancelBook";
 import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
+import ConfirmCreateBooking from "../pages/SecondDashboard/creates/CreateBooking/ConfirmCreateBooking";
+import UserEndBooking2O from "../pages/SecondDashboard/creates/CreateBooking/BookCOm";
 
 
 const router = createBrowserRouter([
@@ -66,6 +68,7 @@ const router = createBrowserRouter([
     path: "/checkout/booking/processing",
     element:<ProtectedRouteForUser> <UserEndBooking /> </ProtectedRouteForUser>,
   },
+  
 
 
   // Salon Dashboard
@@ -128,16 +131,21 @@ const router = createBrowserRouter([
     path: "/add/customer",
     element: <AddCustomer />,
   },
-  {
-    path: "/customer/details/:customerId",
-    element: <CustomerDetails />,
-  },
 
 // create a booking
 
 {
   path: "/create/booking",
   element: <CreateBooking />,
+},
+{
+  path: "/confirm/create/booking",
+  element: <ConfirmCreateBooking />,
+},
+
+{
+  path: "/bookings/booking/processing",
+  element:<UserEndBooking2O />,
 },
 
   // creates

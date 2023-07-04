@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./createbooking.scss";
 import { useNavigate } from "react-router-dom";
 
-function UserEndBooking() {
+function UserEndBooking2O() {
   const Navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -52,10 +52,11 @@ function UserEndBooking() {
       const bookingData = {
         customer_id: id,
         total_amount: totalAmou,
-        status: "pending",
+        status: "Ongoing",
         date: "2023-06-16",
         services: allSubServices,
       };
+      console.log(bookingData)
   
       // Send the POST request to the API
       fetch("https://admin.obwsalon.com/api/create/bookings", {
@@ -84,9 +85,9 @@ function UserEndBooking() {
     };
   
     const removeItem = () => {
-      localStorage.removeItem("UserBookingData");
+      localStorage.removeItem("NewBookingData");
       localStorage.removeItem("selectedProducts");
-      localStorage.removeItem("SelectedData");
+      localStorage.removeItem("BookSelectedData");
       localStorage.removeItem("selectedStylist");
       localStorage.removeItem("selectedStylist");
       localStorage.removeItem("TotalAmountBookOFser");
@@ -142,10 +143,13 @@ function UserEndBooking() {
 </svg>
           </svg>
           <p>Booking created successfully</p>
+
+          
+          <button style={{margin:"1rem 0"}} id="firstbtn" onClick={handleGoHome}>Book Again</button>
         </div>
       )}
     </div>
   );
 }
 
-export default UserEndBooking;
+export default UserEndBooking2O;

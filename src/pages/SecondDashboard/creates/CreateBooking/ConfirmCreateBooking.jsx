@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./checkout.scss";
+import "./createbooking.scss";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
@@ -8,20 +8,39 @@ import { RxCross2 } from "react-icons/rx";
 import axios from "axios";
 import { TfiAngleRight } from "react-icons/tfi";
 
-const Checkout = () => {
+const ConfirmCreateBooking = () => {
   const Navigate = useNavigate();
+  const [selectedDiscount, setSelectedDiscount] = useState("");
+
   const goToPreviousPage = () => {
-    Navigate("/services/women");
+    Navigate("/bookings");
   };
   useEffect(() => {
-    const userBookingData = localStorage.getItem("UserBookingData");
+    const userBookingData = localStorage.getItem("NewBookingData");
     if (!userBookingData) {
-      Navigate("/services/women");
+      Navigate("/bookings");
+    }
+  }, []);
+
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState(null);
+  const [data, setData] = useState(null);
+
+
+  useEffect(() => {
+    // Fetch data from localStorage
+    const storedData = localStorage.getItem("NewBookingData");
+
+    if (storedData) {
+      // Parse the retrieved data if necessary
+      const parsedData = JSON.parse(storedData);
+      setData(parsedData);
     }
   }, []);
   const [totalAmount, setTotalAmount] = useState(0);
 
   const [name, setName] = useState("");
+  // const [date, setDate] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [subServices, setSubServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -38,16 +57,23 @@ const Checkout = () => {
   const [showDiv2nd, setShowDiv2nd] = useState(false);
   useEffect(() => {
     // Fetch data from localStorage
-    const storedData = localStorage.getItem("SelectedData");
-    const bookingData = localStorage.getItem("UserBookingData");
+    const storedData = localStorage.getItem("BookSelectedData");
+    const bookingData = localStorage.getItem("NewBookingData");
 
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
-      const bookingDataObj = JSON.parse(bookingData);
-      const { first_name, contact_no } = bookingDataObj.customer;
+      const { first_name, contact_no, created_at } = JSON.parse(bookingData);
 
-      setName(first_name);
+      const createdAtDate = new Date(created_at);
+      const formattedDate = createdAtDate.toLocaleDateString();
+      const formattedTime = createdAtDate.toLocaleTimeString();
+
+      setDate(formattedDate);
+      setTime(formattedTime);
+
+      setName(`${first_name}`);
       setContactNo(contact_no);
+      setDate(formattedDate);
 
       setSubServices(
         parsedData
@@ -95,7 +121,7 @@ const Checkout = () => {
   };
 
   const updateLocalStorage = (subServiceId, updatedSubService) => {
-    const storedData = localStorage.getItem("SelectedData");
+    const storedData = localStorage.getItem("BookSelectedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       const updatedData = parsedData.map((data) => {
@@ -110,7 +136,7 @@ const Checkout = () => {
           subServices: updatedSubServices,
         };
       });
-      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+      localStorage.setItem("BookSelectedData", JSON.stringify(updatedData));
     }
   };
 
@@ -120,7 +146,7 @@ const Checkout = () => {
     );
     setSubServices(updatedSubServices);
 
-    const storedData = localStorage.getItem("SelectedData");
+    const storedData = localStorage.getItem("BookSelectedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
 
@@ -134,7 +160,7 @@ const Checkout = () => {
         };
       });
 
-      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+      localStorage.setItem("BookSelectedData", JSON.stringify(updatedData));
     }
 
     window.location.reload();
@@ -412,45 +438,58 @@ const Checkout = () => {
   return (
     <>
       <div id="checkoutsec" className={isButtonClicked ? "my-css-class" : ""}>
-        <div id="fixpose">
-        <div id="TopHeader">
+        <div style={{ marginBottom: "3rem" }} id="TopHeader">
           <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
-          <h1>CHECKOUT</h1>
+          <h1>Customer Booking</h1>
           <div id="lastRes"></div>
         </div>
-          <div id="buttonsforcheckout">
-            <Link to={"/services/women"}>
-              <button>Add Service</button>
-            </Link>
-            <button onClick={handleAddProducts}>Add Product</button>
-          </div>
-          <div id="Cus">
-            <RiAccountCircleLine size={"2.5rem"} color="#058DA6" />
-            <span id="customer">Customer:</span>
-            <span id="nameContFeil">
-              {name} &nbsp; {contactNo && contactNo.substr(0, 6)}****
-            </span>
-          </div>
+
+        <div style={{display:"flex", flexDirection:"column" ,justifyContent:"space-between",alignItems:"unset"}} id="Cus">
+          {/* <RiAccountCircleLine size={"2.5rem"} color="#058DA6" /> */}
+          <span style={{margin:"0", borderBottom:"1px solid black" , width:"150px", margin:"1rem 0" , padding:"0.2rem 0"}} id="customer">Customer:</span>
+          <span id="nameContFeil">
+            {name} &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{contactNo && contactNo.substr(0, 6)}**** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{date}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{time}
+          </span>
+        </div>
+        
+
+        <div id="buttonsforcheckout">
+          <Link to={"/bookings/services/women"}>
+            <button>Add Service</button>
+          </Link>
+          <button onClick={handleAddProducts}>Add Product</button>
+        </div>
+
+        <div id="mainsecforcheck">
           <div id="toplinescheck">
-            <h2 id="firsttoplinech">Item</h2>
-            <h2 id="ndtoplinech">Qty</h2>
-            <h2 id="rdtoplinech">Price</h2>
-            <h2 id="thtoplinech">Total</h2>
+            <h2 style={{ flexBasis: "25%" }} id="firsttoplinech">
+              Item
+            </h2>
+            <h2 style={{ flexBasis: "15%" }} id="ndtoplinech">
+              Qty
+            </h2>
+            <h2 style={{ flexBasis: "20%" }} id="rdtoplinech">
+              Price
+            </h2>
+            <h2 style={{ flexBasis: "15%" }} id="thtoplinech">
+              DC
+            </h2>
+            <h2 style={{ flexBasis: "20%" }} id="thtoplinech">
+              Total
+            </h2>
             <div id="afdsasdfdssd">
               <MdDelete />
             </div>
           </div>
-        </div>
 
-        <div id="mainsecforcheck">
           <div id="ordersSec">
             {subServices.map((subService) => (
               <div key={subService.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p>{subService.service_name}</p>
-                  <div id="incdec">
+                  <p style={{ flexBasis: "25%" }}>{subService.service_name}</p>
+                  <div style={{ flexBasis: "15%" }} id="incdec">
                     <div>
                       <button
                         onClick={() => handleRemoveSubService(subService.id)}
@@ -465,8 +504,33 @@ const Checkout = () => {
                       </button>
                     </div>
                   </div>
-                  <div id="rdPrice">
+                  <div style={{ flexBasis: "20%" }} id="rdPrice">
                     <p>{subService.price_including_gst}/-</p>
+                  </div>{" "}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      flexBasis: "15%",
+                    }}
+                    id="dicountopt"
+                  >
+                    <select
+                      id="inputselection"
+                      required=""
+                      value={subService.discount}
+                      onClick={() => setDiscountSubservice(subService.id)}
+                      // onChange={(e) => setSelectedDiscount(e.target.value)}
+                    >
+                      <option value="">Dc</option>
+                      <option value="0">0%</option>
+                      <option value="5">5%</option>
+                      <option value="10">10%</option>
+                      <option value="15">15%</option>
+                      <option value="20">20%</option>
+                      <option value="25">25%</option>
+                      <option value="30">30%</option>
+                    </select>
                   </div>
                   <div id="thtotalprice">
                     <p>
@@ -484,8 +548,21 @@ const Checkout = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>Stylist : {subService.stylist} Rohan</span>
+                  <button
+                    style={{ flexBasis: "18%" }}
+                    onClick={handleAddStylist}
+                  >
+                    Add Stylist
+                  </button>
+                  <span
+                    style={{
+                      flexBasis: "22%",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                  >
+                    Stylist : {subService.stylist} Rohan
+                  </span>
                   <div id="thtotalprice02">
                     {/* <p>
                     {(
@@ -512,8 +589,8 @@ const Checkout = () => {
             {selectedProducts.map((product) => (
               <div key={product.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p>{product.product_name}</p>
-                  <div id="incdec">
+                  <p style={{ flexBasis: "25%" }}>{product.product_name}</p>
+                  <div style={{ flexBasis: "15%" }} id="incdec">
                     <div style={{ justifyContent: "center" }}>
                       <button onClick={() => handleRemoveProduct(product.id)}>
                         -
@@ -524,10 +601,29 @@ const Checkout = () => {
                       </button>
                     </div>
                   </div>
-                  <div id="rdPrice">
+                  <div style={{ flexBasis: "20%" }} id="rdPrice">
                     <p>{product.amount_with_gst}/-</p>
                   </div>
-                  <div id="thtotalprice">
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      flexBasis: "15%",
+                    }}
+                    id="dicountopt"
+                  >
+                    <select id="inputselection" required="">
+                      <option value="">Dc</option>
+                      <option value="0">0%</option>
+                      <option value="5">5%</option>
+                      <option value="10">10%</option>
+                      <option value="15">15%</option>
+                      <option value="20">20%</option>
+                      <option value="25">25%</option>
+                      <option value="30">30%</option>
+                    </select>
+                  </div>
+                  <div style={{ flexBasis: "20%" }} id="thtotalprice">
                     <p>
                       {(
                         product.amount_with_gst * product.selectedQuantity
@@ -543,8 +639,19 @@ const Checkout = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>
+                  <button
+                    style={{ flexBasis: "18%" }}
+                    onClick={handleAddStylist}
+                  >
+                    Add Stylist
+                  </button>
+                  <span
+                    style={{
+                      flexBasis: "22%",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                  >
                     Stylist :{stylistName ? stylistName : "No stylist selected"}
                   </span>
                   <div id="thtotalprice02">
@@ -564,8 +671,8 @@ const Checkout = () => {
             <div id="totalwithgst">
               <div id="totalwithgstF1">
                 <div>
-                  <p style={{flexBasis:"50%"}} >Sub Total</p>
-                  <p style={{flexBasis:"50%"}} >
+                  <p>Sub Total</p>
+                  <p>
                     {(Math.round(
                       (parseFloat(calculateTotalPrice()) +
                         parseFloat(totalPrice)) *
@@ -591,7 +698,7 @@ const Checkout = () => {
                             0
                           )
                       )) /
-                      100}.00
+                      100}
                     /-
                   </p>
                   {/* </div> */}
@@ -599,8 +706,8 @@ const Checkout = () => {
 
                 <div id="gstmanipulation">
                   <p>
-                    <span style={{flexBasis:"50%"}} >Total GST</span>
-                    <span style={{flexBasis:"50%"}} >
+                    <span>Total GST :</span>
+                    <span>
                       {(
                         selectedProducts.reduce(
                           (total, product) =>
@@ -623,10 +730,16 @@ const Checkout = () => {
                     </span>
                   </p>
                 </div>
+                <div id="gstmanipulation">
+                  <p>
+                    <span>Discount :</span>
+                    <span>pending</span>
+                  </p>
+                </div>
               </div>
               <div id="totalwithgstF2">
-                <span style={{flexBasis:"50%"}}  id="fspanoftgst">Total :</span>{" "}
-                <span style={{flexBasis:"50%"}} id="sspanoftgst">
+                <span id="fspanoftgst">Total:</span>{" "}
+                <span id="sspanoftgst">
                   {(
                     parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
                   ).toFixed(2)}
@@ -776,11 +889,15 @@ const Checkout = () => {
 
       {/* new data */}
 
-      <div>
-        <div id="lastbtnscheck">
-          <Link to={"/checkout/booking/processing"}>
-            <button style={{ padding: "1rem 2rem" }} id="secondbtn">
-              Book now
+      <div style={{justifyContent:"center"}} id="lsatbutoins">
+
+        <div id="lastbtnscheck02">
+          <Link to={"/bookings/booking/processing"}>
+            <button
+              style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
+              id="firstbtn"
+            >
+              Confirm Bill <TfiAngleRight style={{ marginLeft: "1rem" }} />
             </button>
           </Link>
         </div>
@@ -789,4 +906,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default ConfirmCreateBooking;

@@ -253,10 +253,10 @@ function CreateCusForNewBook() {
             {filteredSuggestions.length > 0 && (
               <ul>
                 {filteredSuggestions.map((customer) => (
-                  <span>
+                  <span onClick={() => handleSuggestionClick(customer)}>
                     <li
                       key={customer.id}
-                      onClick={() => handleSuggestionClick(customer)}
+                      
                     >
                       {customer.first_name}
                     </li>

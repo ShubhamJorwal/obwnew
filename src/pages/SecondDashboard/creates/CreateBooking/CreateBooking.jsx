@@ -21,9 +21,26 @@ const CreateBooking = () => {
       Navigate("/bookings");
     }
   }, []);
+
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState(null);
+  const [data, setData] = useState(null);
+
+
+  useEffect(() => {
+    // Fetch data from localStorage
+    const storedData = localStorage.getItem("NewBookingData");
+
+    if (storedData) {
+      // Parse the retrieved data if necessary
+      const parsedData = JSON.parse(storedData);
+      setData(parsedData);
+    }
+  }, []);
   const [totalAmount, setTotalAmount] = useState(0);
 
   const [name, setName] = useState("");
+  // const [date, setDate] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [subServices, setSubServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -45,10 +62,18 @@ const CreateBooking = () => {
 
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
-      const { first_name, contact_no } = JSON.parse(bookingData);
+      const { first_name, contact_no, created_at } = JSON.parse(bookingData);
+
+      const createdAtDate = new Date(created_at);
+      const formattedDate = createdAtDate.toLocaleDateString();
+      const formattedTime = createdAtDate.toLocaleTimeString();
+
+      setDate(formattedDate);
+      setTime(formattedTime);
 
       setName(`${first_name}`);
       setContactNo(contact_no);
+      setDate(formattedDate);
 
       setSubServices(
         parsedData
@@ -421,13 +446,14 @@ const CreateBooking = () => {
           <div id="lastRes"></div>
         </div>
 
-        <div id="Cus">
-          <RiAccountCircleLine size={"2.5rem"} color="#058DA6" />
-          <span id="customer">Customer:</span>
+        <div style={{display:"flex", flexDirection:"column" ,justifyContent:"space-between",alignItems:"unset"}} id="Cus">
+          {/* <RiAccountCircleLine size={"2.5rem"} color="#058DA6" /> */}
+          <span style={{margin:"0", borderBottom:"1px solid black" , width:"150px", margin:"1rem 0" , padding:"0.2rem 0"}} id="customer">Customer:</span>
           <span id="nameContFeil">
-            {name} &nbsp; {contactNo && contactNo.substr(0, 6)}****
+            {name} &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{contactNo && contactNo.substr(0, 6)}**** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{date}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{time}
           </span>
         </div>
+        
 
         <div id="buttonsforcheckout">
           <Link to={"/bookings/services/women"}>
@@ -438,11 +464,21 @@ const CreateBooking = () => {
 
         <div id="mainsecforcheck">
           <div id="toplinescheck">
-            <h2 style={{flexBasis:"25%"}} id="firsttoplinech">Item</h2>
-            <h2 style={{flexBasis:"15%"}} id="ndtoplinech">Qty</h2>
-            <h2 style={{flexBasis:"20%"}} id="rdtoplinech">Price</h2>
-            <h2 style={{flexBasis:"15%"}} id="thtoplinech">DC</h2>
-            <h2 style={{flexBasis:"20%"}} id="thtoplinech">Total</h2>
+            <h2 style={{ flexBasis: "25%" }} id="firsttoplinech">
+              Item
+            </h2>
+            <h2 style={{ flexBasis: "15%" }} id="ndtoplinech">
+              Qty
+            </h2>
+            <h2 style={{ flexBasis: "20%" }} id="rdtoplinech">
+              Price
+            </h2>
+            <h2 style={{ flexBasis: "15%" }} id="thtoplinech">
+              DC
+            </h2>
+            <h2 style={{ flexBasis: "20%" }} id="thtoplinech">
+              Total
+            </h2>
             <div id="afdsasdfdssd">
               <MdDelete />
             </div>
@@ -452,8 +488,8 @@ const CreateBooking = () => {
             {subServices.map((subService) => (
               <div key={subService.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p style={{flexBasis:"25%"}}>{subService.service_name}</p>
-                  <div  style={{flexBasis:"15%"}} id="incdec">
+                  <p style={{ flexBasis: "25%" }}>{subService.service_name}</p>
+                  <div style={{ flexBasis: "15%" }} id="incdec">
                     <div>
                       <button
                         onClick={() => handleRemoveSubService(subService.id)}
@@ -468,10 +504,10 @@ const CreateBooking = () => {
                       </button>
                     </div>
                   </div>
-                  <div style={{flexBasis:"20%"}} id="rdPrice">
+                  <div style={{ flexBasis: "20%" }} id="rdPrice">
                     <p>{subService.price_including_gst}/-</p>
                   </div>{" "}
-                  <div 
+                  <div
                     style={{
                       display: "flex",
                       justifyContent: "center",
@@ -479,12 +515,14 @@ const CreateBooking = () => {
                     }}
                     id="dicountopt"
                   >
-                    <select id="inputselection" required="" 
-  value={subService.discount}
-  onClick={() => setDiscountSubservice(subService.id)}
-  // onChange={(e) => setSelectedDiscount(e.target.value)}
-  >
-                    <option value="">Dc</option>
+                    <select
+                      id="inputselection"
+                      required=""
+                      value={subService.discount}
+                      onClick={() => setDiscountSubservice(subService.id)}
+                      // onChange={(e) => setSelectedDiscount(e.target.value)}
+                    >
+                      <option value="">Dc</option>
                       <option value="0">0%</option>
                       <option value="5">5%</option>
                       <option value="10">10%</option>
@@ -510,8 +548,21 @@ const CreateBooking = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button style={{flexBasis:"18%"}} onClick={handleAddStylist}>Add Stylist</button>
-                  <span style={{flexBasis:"22%" , justifyContent:"center" , display:"flex"}}>Stylist : {subService.stylist} Rohan</span>
+                  <button
+                    style={{ flexBasis: "18%" }}
+                    onClick={handleAddStylist}
+                  >
+                    Add Stylist
+                  </button>
+                  <span
+                    style={{
+                      flexBasis: "22%",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                  >
+                    Stylist : {subService.stylist} Rohan
+                  </span>
                   <div id="thtotalprice02">
                     {/* <p>
                     {(
@@ -538,8 +589,8 @@ const CreateBooking = () => {
             {selectedProducts.map((product) => (
               <div key={product.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p style={{flexBasis: "25%"}}>{product.product_name}</p>
-                  <div style={{flexBasis: "15%"}} id="incdec">
+                  <p style={{ flexBasis: "25%" }}>{product.product_name}</p>
+                  <div style={{ flexBasis: "15%" }} id="incdec">
                     <div style={{ justifyContent: "center" }}>
                       <button onClick={() => handleRemoveProduct(product.id)}>
                         -
@@ -550,10 +601,10 @@ const CreateBooking = () => {
                       </button>
                     </div>
                   </div>
-                  <div style={{flexBasis: "20%"}} id="rdPrice">
+                  <div style={{ flexBasis: "20%" }} id="rdPrice">
                     <p>{product.amount_with_gst}/-</p>
                   </div>
-                  <div 
+                  <div
                     style={{
                       display: "flex",
                       justifyContent: "center",
@@ -572,7 +623,7 @@ const CreateBooking = () => {
                       <option value="30">30%</option>
                     </select>
                   </div>
-                  <div style={{flexBasis: "20%"}} id="thtotalprice">
+                  <div style={{ flexBasis: "20%" }} id="thtotalprice">
                     <p>
                       {(
                         product.amount_with_gst * product.selectedQuantity
@@ -588,8 +639,19 @@ const CreateBooking = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button style={{flexBasis:"18%"}} onClick={handleAddStylist}>Add Stylist</button>
-                  <span style={{flexBasis:"22%" , justifyContent:"center" , display:"flex"}}>
+                  <button
+                    style={{ flexBasis: "18%" }}
+                    onClick={handleAddStylist}
+                  >
+                    Add Stylist
+                  </button>
+                  <span
+                    style={{
+                      flexBasis: "22%",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                  >
                     Stylist :{stylistName ? stylistName : "No stylist selected"}
                   </span>
                   <div id="thtotalprice02">
@@ -671,9 +733,7 @@ const CreateBooking = () => {
                 <div id="gstmanipulation">
                   <p>
                     <span>Discount :</span>
-                    <span>
-                     pending
-                    </span>
+                    <span>pending</span>
                   </p>
                 </div>
               </div>
@@ -841,7 +901,7 @@ const CreateBooking = () => {
           </Link>
         </div>
         <div id="lastbtnscheck02">
-          <Link to={"/checkout/booking/processing"}>
+          <Link to={"/confirm/create/booking"}>
             <button
               style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
               id="firstbtn"

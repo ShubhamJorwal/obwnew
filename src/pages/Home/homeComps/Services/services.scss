@@ -1,6 +1,6 @@
 #servicesForSal {
   #TopHeader {
-    position: relative;
+    position: fixed !important;
     width: 100%;
     height: 12vh;
     left: 0px;
@@ -34,8 +34,11 @@
   }
 
   #midcomp {
+    margin-top: 10vh !important;
+    position: fixed;
     width: 623px;
     margin: auto;
+    background-color: white;
     h3 {
       text-align: center;
       margin: 2rem 0 1rem 0;
@@ -122,6 +125,9 @@
   }
 }
 
+#thirdcomp {
+  margin-top: calc(10vh + 3rem + 2rem + 118px + 3rem);
+}
 // slide up
 #servicesForSal {
   display: flex;

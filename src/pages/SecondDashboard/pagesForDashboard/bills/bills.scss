@@ -108,8 +108,7 @@
     justify-content: space-around;
     margin-bottom: 1rem;
     p {
-        margin: 0 4rem;
-        
+      margin: 0 4rem;
     }
   }
   #listingbills {
@@ -122,17 +121,33 @@
     justify-content: space-around;
     align-items: center;
     font-family: Inter;
-font-size: 20px;
-font-weight: 500;
-line-height: 29px;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 29px;
 
-&:hover {
-  background-color: #048aa3;
-  p {
-
-    color: white !important;
+    &:hover {
+      background-color: #048aa3;
+      p {
+        color: white !important;
+      }
+    }
   }
 }
+
+#topdetailsbilldetai {
+  display: flex;
+  flex-direction: column;
+
+  width: 670.0000000000025px;
+  margin: auto;
+
+  #flexsideljk {
+    display: flex;
+    justify-content: space-between;
+    font-family: Inter;
+font-size: 21px;
+font-weight: 600;
+line-height: 29px;
 
   }
 }
