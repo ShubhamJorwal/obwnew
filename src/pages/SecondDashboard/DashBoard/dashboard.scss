@@ -175,13 +175,16 @@ table td {
 }
 
 #appoinmentsbydate {
-  position: fixed;
-  height: 86vh;
+  // position: fixed;
+  position: absolute;
+  // height: 86vh;
   width: 100%;
   background-color: white;
   border-radius: 12vw 12vw 0 0;
-  bottom: 0;
+  // bottom: 0;
+  top: 0;
   z-index: 10;
+  margin-top: 14vh;
 
   #content-to-display02 {
     margin: 2rem 0;
@@ -218,7 +221,7 @@ table td {
     width: 666px;
     margin: auto;
     padding: 0 2rem 1rem 2rem;
-    
+
     height: 75px;
 
     p {
@@ -228,7 +231,7 @@ table td {
       font-size: 20px;
       font-weight: 400;
       line-height: 24px;
-      
+
       align-items: center;
     }
   }
@@ -277,4 +280,79 @@ table td {
   }
 }
 
+.react-calendar__month-view__days {
+  button {
+    padding: 1.5rem;
+    border: 1px solid #18959e46;
+    background-color: rgb(233, 233, 233);
+    transition: all 0.2s;
+    font-size: 1.2rem;
+    cursor: pointer;
+    &:hover {
+      transform: scale(0.93);
+    }
+  }
+}
 
+.react-calendar__month-view__weekdays {
+  background: #18959e;
+  color: white;
+  div {
+    justify-content: center;
+    display: flex;
+    padding: 1.3rem 0;
+    text-decoration: none;
+    border-right: 1px solid rgb(233, 233, 233);
+
+    abbr {
+      text-decoration: none;
+    }
+    
+  }
+}
+
+.react-calendar__navigation__label {
+  border: none;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  padding: 1.1rem;
+  background-color: rgb(233, 233, 233);
+  margin: 0.7rem 0;
+  button {
+    background-color: transparent;
+    font-size: 1.7rem;
+    margin: 0 0.7rem;
+  }
+  .react-calendar__navigation__arrow {
+    font-size: 2.5rem;
+    border: none;
+  }
+}
+
+.react-calendar__month-view__days__day--weekend {
+  // color: red;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: lightgray;
+  z-index: -1;
+
+}
+
+.react-calendar__month-view__days__day--neighboringMonth.react-calendar__tile--active {
+  background-color: lightgray;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth.react-calendar__tile--now {
+  background-color: lightgray;
+}
+
+.react-calendar__tile--active {
+  background-color: #e6f7ff;
+}
+
+.react-calendar__tile--now {
+  background-color: #cce0ff;
+}

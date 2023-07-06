@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchServicesForMen } from "../../../../../redux/Actions/ServicesAction";
 import { ToastContainer, toast } from "react-toastify";
-import LoaderFirst from "../../../../../components/Loaders/LoaderFirst";
+import LoaderFirst from "../../../../..//components/Loaders/LoaderFirst";
 
 const MenservicesApt = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
@@ -78,8 +78,8 @@ const MenservicesApt = () => {
 
   const handleAddServices2O = () => {
     const selectedData = {
-      service: selectedService,
-      subServices: selectedSubServices.map(subService => ({ ...subService, stylist: "No stylist selected" })),
+      // service: selectedService,
+      subServices: selectedSubServices.map(subService => ({ ...subService, stylist_id: 1 , quantity: 1})),
     };
   
     const existingData = localStorage.getItem("SelectedData");
@@ -291,7 +291,7 @@ const MenservicesApt = () => {
             </Link>
           </div>
         </div>
-        <div>
+        <div id="thirdcomp">
           <h3
             style={{
               textAlign: "center",
@@ -315,7 +315,8 @@ const MenservicesApt = () => {
                   onClick={() => handleServiceClick(service)}
                 >
                   <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    src= {`/Men/${service.category}.jpg`}
                     alt=""
                   />
                   <p>{service.category}</p>
@@ -335,7 +336,8 @@ const MenservicesApt = () => {
                       objectFit: "cover",
                       borderRadius: "2vw",
                     }}
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReqxC_9BoBHx70zR-_RYWlf_rP7LlUSIVTNA&usqp=CAU"
+                    src= {`/Men/${selectedService.category}.jpg`}
                     alt=""
                   />
                   <div id="middledataforserbook">
@@ -407,7 +409,7 @@ const MenservicesApt = () => {
 
                 <div id="lastbtnofserviceadd">
                 <Link
-  to="/appointment"
+  to="/home"
   className="book-button"
   onClick={handleAddServices2O}
 >
@@ -422,6 +424,7 @@ const MenservicesApt = () => {
       </div>
 
       <ToastContainer position="bottom-right" />
+      <div id="topcoverareadiv"></div>
     </>
   );
 };

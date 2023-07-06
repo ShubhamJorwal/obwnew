@@ -12,9 +12,12 @@ import { fetchCustomers } from "../../../../redux/Actions/CustomerAction";
 import "./bookings.scss";
 import { Link } from "react-router-dom";
 import SecondBtn from "../../../../components/Buttons/SecondBtn";
+import AppointmentDetails from "../../DashBoard/AppointmentDetails";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showdiv, setshowdiv] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,27 +40,56 @@ const Appointment = () => {
 
     fetchData();
   }, []);
+
+  const handleAppointmentClick = (appointment) => {
+    setSelectedAppointment(appointment);
+    setshowdiv(false);
+  };
+
   return (
     <>
-      <div id="aptbookings">
-        <div id="headboks">
-          <p id="f1heboks">Name</p> <p id="f2heboks">Phone Number</p>{" "}
-          <p id="f3heboks">Time</p> <p id="f4heboks">Status</p>
-        </div>
-        {appointments.map((appointment) => (
-          <div id="ListOfApts" key={appointment.id}>
-            <p id="Loaptsf1">Booking ID: {appointment.booking_id}</p>
-            <p id="Loaptsf2">Customer ID: {appointment.customer_id}</p>
-            <p id="Loaptsf3" style={{ color: "blue" }}>
-              11:30AM
-            </p>
-            <p id="Loaptsf4" style={{ color: "green" }}>
-              Confirmed
-            </p>
-            {/* Render other appointment details */}
+      {showdiv && (
+        <div id="aptbookings">
+          <div id="headboks">
+            <p style={{flexBasis:"30%"}} id="f1heboks">Name</p> <p style={{flexBasis:"25%"}} id="f2heboks">Phone Number</p>{" "}
+            <p style={{flexBasis:"19%"}} id="f3heboks">Time</p> <p style={{flexBasis:"26%"}} id="f4heboks">Status</p>
           </div>
-        ))}
-      </div>
+          {appointments.map((appointment) => (
+            <div
+              id="ListOfApts"
+              key={appointment.id}
+              onClick={() => handleAppointmentClick(appointment)}
+            >
+              <p  style={{flexBasis:"30%"}}  id="Loaptsf1">Booking ID: {appointment.booking_id}</p>
+              <p  style={{flexBasis:"25%"}}  id="Loaptsf2">Customer ID: {appointment.customer_id}</p>
+              <p  style={{flexBasis:"19%" ,color: "blue"}}  id="Loaptsf3" >
+                11:30AM
+              </p>
+              <p  style={{flexBasis:"26%", color: "green"}}  id="Loaptsf4" >
+                Confirmed
+              </p>
+              {/* Render other appointment details */}
+            </div>
+          ))}
+        </div>
+      )}
+            <Link to={"/create-new-booking/customer-details"}>
+        <div id="lastbtnfordashboard">
+          <SecondBtn title={"Create New Booking"} />
+        </div>
+      </Link>
+      {selectedAppointment && (
+        <div id="appointmentDetails">
+          {/* <h3>Appointment Details</h3>
+          <p>Booking ID: </p>
+          <p>Customer ID: =</p> */}
+          {/* Render other appointment details */}
+          <AppointmentDetails
+            aptid={selectedAppointment.id}
+            aptcusid={selectedAppointment.customer_id}
+          />
+        </div>
+      )}
     </>
   );
 };
@@ -184,6 +216,11 @@ const CsBooking = () => {
           </div>
         ))}
       </div>
+      <Link to={"/create-new-booking/customer-details"}>
+        <div id="lastbtnfordashboard">
+          <SecondBtn title={"Create New Booking"} />
+        </div>
+      </Link>
     </>
   );
 };
@@ -315,6 +352,11 @@ const Ongoing = () => {
           </div>
         ))}
       </div>
+      <Link to={"/create-new-booking/customer-details"}>
+        <div id="lastbtnfordashboard">
+          <SecondBtn title={"Create New Booking"} />
+        </div>
+      </Link>
     </>
   );
 };
@@ -361,8 +403,9 @@ const Completed = () => {
     const customer = customers.find((customer) => customer.id === customerId);
     return customer ? `${customer.contact_no} ` : "N/A";
   };
-  return <>
-        <div id="Csbookingbks">
+  return (
+    <>
+      <div id="Csbookingbks">
         <div
           style={{
             display: "flex",
@@ -444,7 +487,14 @@ const Completed = () => {
             </p>
           </div>
         ))}
-      </div></>;
+      </div>
+      <Link to={"/create-new-booking/customer-details"}>
+        <div id="lastbtnfordashboard">
+          <SecondBtn title={"Create New Booking"} />
+        </div>
+      </Link>
+    </>
+  );
 };
 
 const Bookings = () => {
@@ -503,27 +553,36 @@ const Bookings = () => {
 
       <div id="FourCatofbookp">
         <div
-          className={`singbtnBp ${selectedOption === "Appointment" ? "selected" : ""}`}
+          className={`singbtnBp ${
+            selectedOption === "Appointment" ? "selected" : ""
+          }`}
           onClick={() => handleOptionClick("Appointment")}
         >
           {" "}
           Appointment{" "}
         </div>
         <div
-          className={`singbtnBp ${selectedOption === "CsBooking" ? "selected" : ""}`}
+          className={`singbtnBp ${
+            selectedOption === "CsBooking" ? "selected" : ""
+          }`}
           onClick={() => handleOptionClick("CsBooking")}
         >
           {" "}
           C.S Booking{" "}
         </div>
-        <div           className={`singbtnBp ${selectedOption === "Ongoing" ? "selected" : ""}`}
- onClick={() => handleOptionClick("Ongoing")}>
+        <div
+          className={`singbtnBp ${
+            selectedOption === "Ongoing" ? "selected" : ""
+          }`}
+          onClick={() => handleOptionClick("Ongoing")}
+        >
           {" "}
           Ongoing{" "}
         </div>
         <div
-                    className={`singbtnBp ${selectedOption === "Completed" ? "selected" : ""}`}
-
+          className={`singbtnBp ${
+            selectedOption === "Completed" ? "selected" : ""
+          }`}
           onClick={() => handleOptionClick("Completed")}
         >
           {" "}
@@ -533,11 +592,9 @@ const Bookings = () => {
 
       {renderContent()}
 
-      <Link to={"/create-new-booking/customer-details"}>
-        <div id="lastbtnfordashboard">
-          <SecondBtn title={"Create New Booking"} />
-        </div>
-      </Link>
+      <div style={{position:"relative" , bottom:"0" , height:"15vw"}}></div>
+
+      
     </>
   );
 };

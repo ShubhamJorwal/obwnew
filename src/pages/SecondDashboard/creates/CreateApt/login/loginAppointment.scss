@@ -72,6 +72,7 @@ h2 {
   padding: 5vw 0;
   border-radius: 20px;
   border: 2px solid #016e82;
+  margin-top: 25vh !important;
 
   h2 {
     margin-bottom: 6vw;
@@ -218,7 +219,9 @@ h2 {
   animation: slideUp 1s ease forwards;
   background-color: white;
   border-radius: 4rem 4rem 0 0;
-  padding: 1rem;
+  // padding: 1rem;
+  bottom: 0;
+  position: fixed;
 }
 
 @keyframes slideUp {

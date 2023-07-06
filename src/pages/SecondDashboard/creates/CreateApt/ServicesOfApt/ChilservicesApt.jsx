@@ -8,7 +8,7 @@ import { fetchServicesForChild } from "../../../../../redux/Actions/ServicesActi
 import { ToastContainer, toast } from "react-toastify";
 import LoaderFirst from "../../../../../components/Loaders/LoaderFirst";
 
-const ChildservicesApt = () => {
+const ChildServicesApt = () => {
   const [selectedSubServices, setSelectedSubServices] = useState([]);
 
   const Navigate = useNavigate();
@@ -78,8 +78,9 @@ const ChildservicesApt = () => {
 
   const handleAddServices2O = () => {
     const selectedData = {
-      service: selectedService,
-      subServices: selectedSubServices.map(subService => ({ ...subService, stylist: "No stylist selected" })),
+      // service: selectedService,
+      subServices: selectedSubServices.map(subService => ({ ...subService, stylist_id: 1 , quantity: 1})),
+      
     };
   
     const existingData = localStorage.getItem("SelectedData");
@@ -291,7 +292,7 @@ const ChildservicesApt = () => {
             </Link>
           </div>
         </div>
-        <div>
+        <div id="thirdcomp">
           <h3
             style={{
               textAlign: "center",
@@ -408,7 +409,7 @@ const ChildservicesApt = () => {
 
                 <div id="lastbtnofserviceadd">
                 <Link
-  to="/appointment"
+  to="/home"
   className="book-button"
   onClick={handleAddServices2O}
 >
@@ -423,8 +424,10 @@ const ChildservicesApt = () => {
       </div>
 
       <ToastContainer position="bottom-right" />
+      
+      <div id="topcoverareadiv"></div>
     </>
   );
 };
 
-export default ChildservicesApt;
+export default ChildServicesApt;

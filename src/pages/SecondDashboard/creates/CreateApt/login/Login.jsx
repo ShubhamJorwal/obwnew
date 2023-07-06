@@ -205,44 +205,320 @@
 
 // export default Login;
 
+// import React, { useState, useEffect } from "react";
+// import "./loginAppointment.scss";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import TimePicker from "react-time-picker";
+// import "react-time-picker/dist/TimePicker.css";
 
+// function Login() {
+//   const [name, setName] = useState("");
+//   const [phoneNumber, setPhoneNumber] = useState("");
+//   const [suggestions, setSuggestions] = useState([]);
+//   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+//   const [selectedCustomer, setSelectedCustomer] = useState(null);
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [showSecondForm, setShowSecondForm] = useState(false);
+//   const [dateTimeInput, setDateTimeInput] = useState(new Date());
+//   const [timeInput, setTimeInput] = useState("10:00 AM");
+
+//   const token = localStorage.getItem("token");
+//   const Navigate = useNavigate();
+
+//   useEffect(() => {
+//     const UserAppointmentData = localStorage.getItem("UserAppointmentData");
+//     if (UserAppointmentData) {
+//       Navigate("/create/appointment");
+//     }
+//   }, [Navigate]);
+
+//   useEffect(() => {
+//     const fetchCustomerData = async () => {
+//       try {
+//         const response = await fetch(
+//           "https://admin.obwsalon.com/api/customers",
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+
+//         if (response.ok) {
+//           const data = await response.json();
+//           setSuggestions(data);
+//         } else {
+//           console.error("Failed to fetch customer data");
+//         }
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+
+//     fetchCustomerData();
+//   }, [token]);
+
+//   const handleNameChange = (event) => {
+//     const input = event.target.value;
+//     setName(input);
+//     filterSuggestions(input);
+//   };
+
+//   const handlePhoneNumberChange = (event) => {
+//     const input = event.target.value;
+//     setPhoneNumber(input);
+//     filterSuggestions(input);
+//   };
+
+//   const filterSuggestions = (input) => {
+//     const filteredSuggestions = suggestions.filter(
+//       (customer) =>
+//         (customer.first_name &&
+//           customer.first_name.toLowerCase().startsWith(input.toLowerCase())) ||
+//         customer.contact_no.startsWith(input)
+//     );
+//     setFilteredSuggestions(filteredSuggestions.slice(0, 5));
+//   };
+
+//   const handleSuggestionClick = (customer) => {
+//     setSelectedCustomer(customer);
+//     setName(customer.first_name);
+//     setPhoneNumber(customer.contact_no);
+//     setFilteredSuggestions([]);
+//   };
+
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+
+//     if (!selectedCustomer) {
+//       setErrorMessage("No details found. Please create an account first.");
+//       return;
+//     }
+
+//     try {
+//       const appointmentData = {
+//         customer_id: selectedCustomer.id,
+//         appointment_date: dateTimeInput.toISOString().slice(0, 10),
+//         appointment_time: timeInput,
+//         status: "Not Assigned",
+//       };
+
+//       // Make POST request to the API
+//       const response = await axios.post(
+//         "https://admin.obwsalon.com/api/create/appointments",
+//         appointmentData,
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       if (response.status === 200) {
+//         // Appointment created successfully
+//         console.log("Appointment created!");
+//       } else {
+//         // Handle error response
+//         console.error("Failed to create appointment");
+//       }
+//     } catch (error) {
+//       console.error("An error occurred while creating the appointment:", error);
+//     }
+
+//     // Save user appointment data to localStorage
+//     localStorage.setItem(
+//       "UserAppointmentData",
+//       JSON.stringify(selectedCustomer)
+//     );
+
+//     // Reset form fields
+//     setName("");
+//     setPhoneNumber("");
+//     setSelectedCustomer(null);
+//     setErrorMessage("");
+//     Navigate("/create/appointment");
+//   };
+
+//   const handleShowSecondForm = () => {
+//     setShowSecondForm(true);
+//   };
+
+//   const handleBackButtonClick = () => {
+//     setShowSecondForm(false);
+//     setErrorMessage("");
+//   };
+
+//   const handleCreateCustomer = async (event) => {
+//     event.preventDefault();
+
+//     try {
+//       const response = await fetch(
+//         "https://admin.obwsalon.com/api/create/customer",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: JSON.stringify({
+//             first_name: name,
+//             contact_no: phoneNumber,
+//           }),
+//         }
+//       );
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         setSelectedCustomer(data);
+//       } else {
+//         console.error("Failed to create customer");
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+
+//     // Navigate("/appointment");
+//   };
+
+//   if (showSecondForm) {
+//     return (
+//       <>
+//         <div id="backgroundblackcol"></div>
+
+//         <div class="animation-container">
+//           <div class="animation-element">
+//             <div id="StartBook">
+//               <div id="suggestionsBox">
+//                 <h2>CREATE NEW CUSTOMER</h2>
+//                 <form onSubmit={handleCreateCustomer}>
+//                   <input
+//                     type="text"
+//                     id="name"
+//                     value={name}
+//                     onChange={handleNameChange}
+//                     placeholder="Name"
+//                   />
+//                   <input
+//                     type="text"
+//                     id="phoneNumber"
+//                     value={phoneNumber}
+//                     onChange={handlePhoneNumberChange}
+//                     placeholder="Mobile Number"
+//                   />
+//                   <button type="submit">Create</button>
+//                   <p id="orbackfcre">or</p>
+//                   <button type="button" onClick={handleBackButtonClick}>
+//                     Back
+//                   </button>
+//                 </form>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </>
+//     );
+//   }
+
+//   return (
+//     <>
+//       <div id="backgroundblackcol"></div>
+//       <div class="animation-container">
+//         <div class="animation-element">
+//           <div id="StartBook">
+//             <div id="suggestionsBox">
+//               <h2>ENTER DETAILS</h2>
+//               <form onSubmit={handleSubmit}>
+//                 <input
+//                   type="text"
+//                   id="name"
+//                   value={name}
+//                   onChange={handleNameChange}
+//                   placeholder="Name"
+//                 />
+//                 <input
+//                   type="text"
+//                   id="phoneNumber"
+//                   value={phoneNumber}
+//                   onChange={handlePhoneNumberChange}
+//                   placeholder="Mobile Number"
+//                 />
+//                 <div id="newTmepickers">
+//                   <DatePicker
+//                     selected={dateTimeInput}
+//                     onChange={setDateTimeInput}
+//                     dateFormat="MM/dd/yyyy"
+//                   />
+//                   <div style={{ marginLeft: "1rem" }} id="newTimepickers01">
+//                     <TimePicker
+//                       className="time-input"
+//                       value={timeInput}
+//                       onChange={setTimeInput}
+//                       format="h:mm a"
+//                       disableClock={true}
+//                     />
+//                   </div>
+//                 </div>
+//                 <button type="submit">Submit</button>
+
+//                 {filteredSuggestions.length > 0 && (
+//                   <ul>
+//                     {filteredSuggestions.map((customer) => (
+//                       <span key={customer.id}>
+//                         <li onClick={() => handleSuggestionClick(customer)}>
+//                           {customer.first_name} - {customer.contact_no}
+//                         </li>
+//                       </span>
+//                     ))}
+//                   </ul>
+//                 )}
+//               </form>
+//             </div>
+//             <div id="error_message">
+//               {errorMessage && <p>{errorMessage}</p>}
+//             </div>
+//             <div id="newusercreate">
+//               <p>Not account yet? </p>
+//             </div>
+//             <div id="SignUp">
+//               <button type="button" onClick={handleShowSecondForm}>
+//                 Create New Customer
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// export default Login;
 
 
 
 import React, { useState, useEffect } from "react";
-import "./loginAppointment.scss";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import TimePicker from "react-time-picker";
-import "react-time-picker/dist/TimePicker.css";
+import { Link, useNavigate } from "react-router-dom";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import "./loginAppointment.scss";
 
-function Login() {
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+function AppointmentForm() {
+  const Navigate = useNavigate()
+  const [mobileNumber, setMobileNumber] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showSecondForm, setShowSecondForm] = useState(false);
-  const [dateTimeInput, setDateTimeInput] = useState(new Date());
-  const [timeInput, setTimeInput] = useState("10:00 AM");
-
-  const token = localStorage.getItem("token");
-  const Navigate = useNavigate();
+  const [dateTime, setDateTime] = useState("");
 
   useEffect(() => {
-    const UserAppointmentData = localStorage.getItem("UserAppointmentData");
-    if (UserAppointmentData) {
-      Navigate("/create/appointment");
-    }
-  }, [Navigate]);
-
-  useEffect(() => {
-    const fetchCustomerData = async () => {
+    const fetchCustomerSuggestions = async () => {
       try {
-        const response = await fetch(
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
           "https://admin.obwsalon.com/api/customers",
           {
             headers: {
@@ -251,9 +527,9 @@ function Login() {
           }
         );
 
-        if (response.ok) {
-          const data = await response.json();
-          setSuggestions(data);
+        if (response.status === 200) {
+          const customers = response.data;
+          setSuggestions(customers);
         } else {
           console.error("Failed to fetch customer data");
         }
@@ -262,35 +538,25 @@ function Login() {
       }
     };
 
-    fetchCustomerData();
-  }, [token]);
+    fetchCustomerSuggestions();
+  }, []);
 
-  const handleNameChange = (event) => {
+  const handleMobileNumberChange = (event) => {
     const input = event.target.value;
-    setName(input);
-    filterSuggestions(input);
-  };
-
-  const handlePhoneNumberChange = (event) => {
-    const input = event.target.value;
-    setPhoneNumber(input);
+    setMobileNumber(input);
     filterSuggestions(input);
   };
 
   const filterSuggestions = (input) => {
-    const filteredSuggestions = suggestions.filter(
-      (customer) =>
-        (customer.first_name &&
-          customer.first_name.toLowerCase().startsWith(input.toLowerCase())) ||
-        customer.contact_no.startsWith(input)
+    const filteredSuggestions = suggestions.filter((customer) =>
+      customer.contact_no.includes(input)
     );
     setFilteredSuggestions(filteredSuggestions.slice(0, 5));
   };
 
   const handleSuggestionClick = (customer) => {
     setSelectedCustomer(customer);
-    setName(customer.first_name);
-    setPhoneNumber(customer.contact_no);
+    setMobileNumber(customer.contact_no);
     setFilteredSuggestions([]);
   };
 
@@ -298,19 +564,25 @@ function Login() {
     event.preventDefault();
 
     if (!selectedCustomer) {
-      setErrorMessage("No details found. Please create an account first.");
+      setErrorMessage(
+        "No customer found. Please select from suggestions. Create new user"
+      );
+      // setErrorMessage("");
       return;
     }
 
-    try {
-      const appointmentData = {
-        customer_id: selectedCustomer.id,
-        appointment_date: dateTimeInput.toISOString().slice(0, 10),
-        appointment_time: timeInput,
-        status: "Not Assigned",
-      };
+    const token = localStorage.getItem("token");
 
-      // Make POST request to the API
+    const customerId = selectedCustomer.id; // Get the customer ID from the "id" property
+
+    const appointmentData = {
+      customer_id: customerId, // Use the customer ID
+      appointment_date: dateTime.slice(0, 10),
+      appointment_time: dateTime.slice(11),
+      status: "not assigned",
+    };
+
+    try {
       const response = await axios.post(
         "https://admin.obwsalon.com/api/create/appointments",
         appointmentData,
@@ -323,109 +595,34 @@ function Login() {
       );
 
       if (response.status === 200) {
-        // Appointment created successfully
-        console.log("Appointment created!");
+        console.log("Appointment created successfully");
       } else {
-        // Handle error response
         console.error("Failed to create appointment");
       }
     } catch (error) {
       console.error("An error occurred while creating the appointment:", error);
     }
 
-    // Save user appointment data to localStorage
+    // Save form data and appointment data in localStorage
     localStorage.setItem(
-      "UserAppointmentData",
-      JSON.stringify(selectedCustomer)
+      "formData",
+      JSON.stringify({
+        mobileNumber,
+        firstName: selectedCustomer.first_name,
+        lastName: selectedCustomer.last_name,
+      })
     );
+    localStorage.setItem("appointmentData", JSON.stringify(appointmentData));
 
-    // Reset form fields
-    setName("");
-    setPhoneNumber("");
+    // Clear form fields
+    setMobileNumber("");
     setSelectedCustomer(null);
     setErrorMessage("");
-    Navigate("/create/appointment");
+    
+    Navigate("/create/appointment/success");
   };
 
-  const handleShowSecondForm = () => {
-    setShowSecondForm(true);
-  };
 
-  const handleBackButtonClick = () => {
-    setShowSecondForm(false);
-    setErrorMessage("");
-  };
-
-  const handleCreateCustomer = async (event) => {
-    event.preventDefault();
-
-    try {
-      const response = await fetch(
-        "https://admin.obwsalon.com/api/create/customer",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            first_name: name,
-            contact_no: phoneNumber,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setSelectedCustomer(data);
-      } else {
-        console.error("Failed to create customer");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    // Navigate("/appointment");
-  };
-
-  if (showSecondForm) {
-    return (
-      <>
-        <div id="backgroundblackcol"></div>
-
-        <div class="animation-container">
-          <div class="animation-element">
-            <div id="StartBook">
-              <div id="suggestionsBox">
-                <h2>CREATE NEW CUSTOMER</h2>
-                <form onSubmit={handleCreateCustomer}>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={handleNameChange}
-                    placeholder="Name"
-                  />
-                  <input
-                    type="text"
-                    id="phoneNumber"
-                    value={phoneNumber}
-                    onChange={handlePhoneNumberChange}
-                    placeholder="Mobile Number"
-                  />
-                  <button type="submit">Create</button>
-                  <p id="orbackfcre">or</p>
-                  <button type="button" onClick={handleBackButtonClick}>
-                    Back
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -433,70 +630,57 @@ function Login() {
       <div class="animation-container">
         <div class="animation-element">
           <div id="StartBook">
-            <div id="suggestionsBox">
+            <div
+              id="suggestionsBox"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
               <h2>ENTER DETAILS</h2>
               <form onSubmit={handleSubmit}>
                 <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={handleNameChange}
-                  placeholder="Name"
-                />
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  value={phoneNumber}
-                  onChange={handlePhoneNumberChange}
                   placeholder="Mobile Number"
+                  type="number"
+                  value={mobileNumber}
+                  onChange={handleMobileNumberChange}
                 />
-                <div id="newTmepickers">
-                  <DatePicker
-                    selected={dateTimeInput}
-                    onChange={setDateTimeInput}
-                    dateFormat="MM/dd/yyyy"
-                  />
-                  <div style={{ marginLeft: "1rem" }} id="newTimepickers01">
-                    <TimePicker
-                      className="time-input"
-                      value={timeInput}
-                      onChange={setTimeInput}
-                      format="h:mm a"
-                      disableClock={true}
-                    />
-                  </div>
-                </div>
-                <button type="submit">Submit</button>
-
                 {filteredSuggestions.length > 0 && (
-                  <ul>
+                  <ul style={{padding:"0.5rem"}}>
                     {filteredSuggestions.map((customer) => (
-                      <span key={customer.id}>
-                        <li onClick={() => handleSuggestionClick(customer)}>
-                          {customer.first_name} - {customer.contact_no}
-                        </li>
-                      </span>
+                      <li style={{padding:"1rem"}}
+                        key={customer.customerId}
+                        onClick={() => handleSuggestionClick(customer)}
+                      >
+                        {customer.contact_no} - {customer.first_name}{" "}
+                        {customer.last_name}
+                      </li>
                     ))}
                   </ul>
                 )}
+
+                <input
+                  type="datetime-local"
+                  value={dateTime}
+                  onChange={(e) => setDateTime(e.target.value)}
+                />
+                <br />
+                <button type="submit">Submit</button>
               </form>
-            </div>
-            <div id="error_message">
               {errorMessage && <p>{errorMessage}</p>}
-            </div>
-            <div id="newusercreate">
-              <p>Not account yet? </p>
-            </div>
-            <div id="SignUp">
-              <button type="button" onClick={handleShowSecondForm}>
-                Create New Customer
-              </button>
             </div>
           </div>
         </div>
+      </div>
+      <div id="fixedbtnforall">
+        <Link to={"/add/customer"}>
+          <button id="secondbtn">Create New Customer</button>
+        </Link>
+      </div>
+      <div id="fixedbtnforall01">
+        <Link to={"/dashboard"}>
+          <button id="firstbtn"> <AiOutlineArrowLeft /> &nbsp; Back</button>
+        </Link>
       </div>
     </>
   );
 }
 
-export default Login;
+export default AppointmentForm;

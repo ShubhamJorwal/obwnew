@@ -20,8 +20,8 @@ import CreateBooking from '../pages/SecondDashboard/creates/CreateBooking/Create
 import ProtectedRouteForUser from "./AuthRoutes";
 import UserEndBooking from "../pages/Home/NewCreateBooking";
 import Test02 from "../pages/test/Test2";
-import WomenservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/WomenserApt";
-import ChildservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/ChilservicesApt";
+import WomenserApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/WomenserApt";
+import ChildServicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/ChilservicesApt";
 import MenservicesApt from "../pages/SecondDashboard/creates/CreateApt/ServicesOfApt/MenservicesApt";
 import CheckoutOfApt from "../pages/SecondDashboard/creates/CreateApt/checkoutsofApt/CheckoutOfApt";
 import AddCustomer from "../pages/SecondDashboard/pagesForDashboard/customers/AddCustomer/AddCustomer";
@@ -36,6 +36,7 @@ import SalonEndCancelBooking from "../pages/SecondDashboard/pagesForDashboard/bo
 import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
 import ConfirmCreateBooking from "../pages/SecondDashboard/creates/CreateBooking/ConfirmCreateBooking";
 import UserEndBooking2O from "../pages/SecondDashboard/creates/CreateBooking/BookCOm";
+import ApointmentSuces from "../pages/SecondDashboard/creates/CreateApt/login/ApointmentSuces";
 
 
 const router = createBrowserRouter([
@@ -150,8 +151,12 @@ const router = createBrowserRouter([
 
   // creates
   {
-    path: "/appointment",
+    path: "/create/appointment",
     element: <Login />,
+  },
+  {
+    path: "/create/appointment/success",
+    element: <ApointmentSuces />,
   },
   {
     path: "/create/appointment",
@@ -159,7 +164,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/appointment/services/women",
-    element: <WomenservicesApt />,
+    element: <WomenserApt />,
   },
   {
     path: "/appointment/services/men",
@@ -167,7 +172,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/appointment/services/child",
-    element: <ChildservicesApt />,
+    element: <ChildServicesApt />,
   },
   // {
   //   path: "/dashboard01",
