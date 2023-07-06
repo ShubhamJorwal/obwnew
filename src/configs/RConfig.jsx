@@ -45,6 +45,10 @@ const router = createBrowserRouter([
     element: <MainLogin />,
   },
   {
+    path: "/01",
+    element: <Test02 />,
+  },
+  {
     path: "/home",
     element:<ProtectedRouteForUser> <Home /> </ProtectedRouteForUser>,
   },  
@@ -180,7 +184,7 @@ const router = createBrowserRouter([
   // },
 
   {
-    path: "/save/appointment/:id",
+    path: "/save/appointment/",
     element: <SaveAppointment />,
   },
 

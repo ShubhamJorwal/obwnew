@@ -619,7 +619,8 @@ function AppointmentForm() {
     setSelectedCustomer(null);
     setErrorMessage("");
     
-    Navigate("/create/appointment/success");
+    // Navigate("/create/appointment/success");
+    Navigate("/save/appointment/");
   };
 
 

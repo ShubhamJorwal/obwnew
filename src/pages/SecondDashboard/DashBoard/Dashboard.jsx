@@ -294,6 +294,7 @@ const Dashboard = () => {
   const [customerData, setCustomerData] = useState([]);
   const [displayDatanew, setdisplayDatanew] = useState([]);
   const [reloadtrigerr, setreloadtrigerr] = useState(false);
+  const [badgearr, setbadgearr] = useState([]);
 
   const handleSubmit = async (date) => {
     console.log("====================================");
@@ -409,6 +410,86 @@ const Dashboard = () => {
     );
   }, [reloadtrigerr]);
 
+
+  // new code
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+      // Fetch appointments
+      const fetchData = async () => {
+        try {
+          const appointmentsResponse = await axios.get(
+            "https://admin.obwsalon.com/api/appointments",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const apointentstobeextracedofdata = appointmentsResponse.data;
+          const datesapp=extractDates(apointentstobeextracedofdata)
+          setbadgearr(datesapp)
+          
+        console.log(datesapp,'dattaaa');
+          
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+      fetchData();
+  }, []);
+
+
+
+  function extractDates(appointments) {
+    const dateMap = {};
+  
+    // Count the occurrences of each date
+    appointments.forEach((appointment) => {
+      const date = appointment.appointment_date;
+      if (appointment.appointment_date) {
+        const dateOnly = date.split('T')[0]; // Extract date without time
+        dateMap[dateOnly] = dateMap[dateOnly] ? dateMap[dateOnly] + 1 : 1;
+      }
+    });
+  
+    // Convert the dateMap into the desired format
+    const result = Object.entries(dateMap).map(([date, number]) => ({
+      date,
+      number,
+    }));
+  
+    return result;
+  }
+  
+  const tileContent = ({ date }) => {
+    const matchingDate = badgearr.find((item) => {
+      const itemDate = new Date(item.date);
+      return (
+        itemDate.getFullYear() === date.getFullYear() &&
+        itemDate.getMonth() === date.getMonth() &&
+        itemDate.getDate() === date.getDate()
+      );
+    });
+  
+    if (matchingDate) {
+      const { number } = matchingDate;
+      return (
+        
+          
+          <sup className="badge_over_date">{number}</sup>
+        
+      );
+    }
+  
+    return <div></div>;
+  };
+  
+  
+
+
+  // new code end date superscript badge
   return (
     <>
       <div id="dashboard">
@@ -440,7 +521,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <Calendar onClickDay={(e) => hadledatepicked(e)} value={Calandervalue} />
+      <Calendar onClickDay={(e) => hadledatepicked(e)} value={Calandervalue} tileContent={tileContent} />
 
       <div id="lastbtnfordashboard">
         <Link to={"/create/appointment"}>

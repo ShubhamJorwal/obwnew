@@ -356,3 +356,16 @@ table td {
 .react-calendar__tile--now {
   background-color: #cce0ff;
 }
+
+
+.badge_over_date{
+  background-color: #18959e;
+  padding: 4px 8px;
+  justify-content: center;
+  text-align: center; 
+  border-radius: 50%;
+  color: #fff;
+  font-weight: bold;
+
+  margin: 0.2vw;
+}
