@@ -13,6 +13,20 @@ const SaveAppointment = () => {
   const goToPreviousPage = () => {
     Navigate("/dashboard");
   };
+
+  const [formData, setFormData] = useState(null);
+
+  useEffect(() => {
+    // Fetch data from localStorage
+    const storedFormData = localStorage.getItem("formData");
+
+    // Parse the data if it exists
+    if (storedFormData) {
+      const parsedData = JSON.parse(storedFormData);
+      setFormData(parsedData);
+    }
+  }, []);
+
   // useEffect(() => {
   //   const userBookingData = localStorage.getItem("UserBookingData");
   //   if (!userBookingData) {
@@ -52,18 +66,18 @@ const SaveAppointment = () => {
     setAppointments(parsedData);
 
     if (parsedData && parsedData.customer_id) {
-      fetch('https://admin.obwsalon.com/api/customers')
-        .then(response => response.json())
-        .then(data => {
+      fetch("https://admin.obwsalon.com/api/customers")
+        .then((response) => response.json())
+        .then((data) => {
           // Apply filter to fetch a particular user by ID
           const filteredCustomer = data.find(
-            customer => customer.id === parsedData.customer_id
+            (customer) => customer.id === parsedData.customer_id
           );
 
           setCustomer(filteredCustomer);
         })
-        .catch(error => {
-          console.error('Error fetching customer details:', error);
+        .catch((error) => {
+          console.error("Error fetching customer details:", error);
         });
     }
   }, []);
@@ -474,17 +488,24 @@ const SaveAppointment = () => {
             <button onClick={handleAddProducts}>Add Product</button>
           </div>
           {appointments && (
-            <div id="Cus" style={{justifyContent:"space-between"}}>
-              <span id="nameContFeil">Name: </span>
-              <span id="nameContFeil">Contact NO: </span>
+            <div id="Cus" style={{ justifyContent: "space-between" }}>
+              {formData && (
+                <span id="nameContFeil">
+                  {" "}
+                  {formData.firstName} {formData.lastName}
+                </span>
+              )}
+              {formData && (
+                <span id="nameContFeil"> {formData.mobileNumber}</span>
+              )}
               {/* <span id="nameContFeil">{appointments.customer_id}</span> */}
               <span id="nameContFeil">{appointments.appointment_time}</span>
               <span id="nameContFeil">{appointments.appointment_date}</span>
               {/* {name} &nbsp; {contactNo && contactNo.substr(0, 6)}**** */}
             </div>
           )}
-          {customer  && (
-            <div id="Cus" style={{justifyContent:"space-between"}}>
+          {customer && (
+            <div id="Cus" style={{ justifyContent: "space-between" }}>
               <span>{customer.first_name}</span>
               {/* {name} &nbsp; {contactNo && contactNo.substr(0, 6)}**** */}
             </div>
@@ -838,7 +859,7 @@ const SaveAppointment = () => {
         <div id="lastbtnscheck">
           <Link to={"/create/appointment/success"}>
             <button style={{ padding: "1rem 2rem" }} id="secondbtn">
-              Book now
+              Save Appointment
             </button>
           </Link>
         </div>

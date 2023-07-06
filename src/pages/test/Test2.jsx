@@ -226,49 +226,99 @@
 // export default SubservicesComponent;
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 
-const Appointments = () => {
-  const [appointments, setAppointments] = useState([]);
+const NewAppointment = () => {
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const apiUrl = 'https://admin.obwsalon.com/api/save/appointments';
+    
+    // Fetching appointment data from localStorage
+    const responseData = JSON.parse(localStorage.getItem('responseData'));
+    const appointmentId = responseData?.appointment?.id;
+    
+    // Fetching services data from localStorage
+    const selectedData = JSON.parse(localStorage.getItem('SelectedData'));
+    const subservices = selectedData[0]?.subServices;
 
-    if (token) {
-      fetchAppointments(token);
-    }
+    const services = subservices.map((subservice) => ({
+      service_name: subservice.service_name,
+      qty: subservice.quantity,
+      price: parseFloat(subservice.price_including_gst),
+      total: parseFloat(subservice.price_including_gst),
+      stylist_id: subservice.stylist_id,
+    }));
+
+    const appointmentData = {
+      appointment_id: appointmentId,
+      status: 'Confirmed',
+      services: services,
+    };
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    axios
+      .post(apiUrl, appointmentData, { headers })
+      .then((response) => {
+        console.log('Appointment created successfully:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error creating appointment:', error);
+      });
   }, []);
 
-  const fetchAppointments = (token) => {
-    const url = 'https://admin.obwsalon.com/api/appointments';
 
-    fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const today = new Date().toISOString().split('T')[0];
-        const currentDayAppointments = data.filter(
-          (appointment) => appointment.appointment_date === today
-        );
-        setAppointments(currentDayAppointments);
-      })
-      .catch((error) => console.log(error));
-  };
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   const apiUrl = 'https://admin.obwsalon.com/api/save/appointments';
+    
+  //   // Fetching appointment data from localStorage
+  //   const responseData = JSON.parse(localStorage.getItem('responseData'));
+  //   const appointmentId = responseData?.appointment?.id;
 
-  return (
-    <div>
-      <h1>Appointments</h1>
-      {appointments.map((appointment) => (
-        <div key={appointment.id}>
-          {/* <p>{appointment.appointment_id}</p> */}
-          <p>{appointment.appointment_date}</p>
-        </div>
-      ))}
-    </div>
-  );
+  //   const appointmentData = {
+  //     appointment_id: appointmentId,
+  //     status: 'Not Assigned',
+  //     services: [
+  //       {
+  //         service_name: 'Haircut',
+  //         qty: 1,
+  //         price: 50.00,
+  //         total: 50.00,
+  //         stylist_id: 1,
+  //       },
+  //       {
+  //         service_name: 'Hair Coloring',
+  //         qty: 1,
+  //         price: 50.00,
+  //         total: 50.00,
+  //         stylist_id: 2,
+  //       },
+  //     ],
+  //   };
+
+  //   const headers = {
+  //     Authorization: `Bearer ${token}`,
+  //     'Content-Type': 'application/json',
+  //   };
+
+  //   axios
+  //     .post(apiUrl, appointmentData, { headers })
+  //     .then((response) => {
+  //       console.log('Appointment created successfully:', response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error creating appointment:', error);
+  //     });
+  // }, []);
+
+  return <div>New Appointment Component</div>;
 };
 
-export default Appointments;
+export default NewAppointment;

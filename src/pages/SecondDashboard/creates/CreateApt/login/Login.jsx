@@ -593,9 +593,11 @@ function AppointmentForm() {
           },
         }
       );
-
+    
       if (response.status === 200) {
         console.log("Appointment created successfully");
+        // Store the response data in localStorage
+        localStorage.setItem("responseData", JSON.stringify(response.data));
       } else {
         console.error("Failed to create appointment");
       }
