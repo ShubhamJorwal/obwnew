@@ -335,9 +335,12 @@ table td {
   // color: red;
 }
 
-.react-calendar__month-view__days__day--neighboringMonth {
+.react-calendar__month-view__days__day--neighboringMonth,.badge_over_date {
   color: lightgray;
   z-index: -1;
+  sup {
+    display: none;
+  }
 
 }
 

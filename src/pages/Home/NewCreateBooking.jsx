@@ -38,7 +38,7 @@ function UserEndBooking() {
             price: parseFloat(subService.price_including_gst),
             qty: subService.quantity,
             service_name: subService.service_name,
-            stylist_id: 1,
+            stylist_id: subService.stylist_info.id, // Use stylist_id from subService's stylist_info
             total: parseFloat(
               subService.price_including_gst * subService.quantity
             ),
@@ -49,11 +49,12 @@ function UserEndBooking() {
       }
   
       // Create the booking data
+      const currentDate = new Date().toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
       const bookingData = {
         customer_id: id,
         total_amount: totalAmou,
         status: "pending",
-        date: "2023-06-16",
+        date: currentDate,
         services: allSubServices,
       };
       console.log(bookingData)
@@ -78,7 +79,7 @@ function UserEndBooking() {
           // console.log(data);
 
           setTimeout(() => {
-            Navigate("/services/women");
+            // Navigate("/services/women");
           }, 3000);
         })
         .catch((error) => {

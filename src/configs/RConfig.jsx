@@ -15,6 +15,9 @@ import MainLogin from "../pages/Login/Main-Login";
 import CreateApt from "../pages/SecondDashboard/creates/CreateApt/CreateApt";
 import CorrectedDashBoard from "../pages/SecondDashboard/DashBoard/CorrectedDashBoard";
 import SaveAppointment from "../pages/SecondDashboard/DashBoard/SaveAppointment";
+import CancelAppointment from "../pages/SecondDashboard/DashBoard/CancelAppointment.jsx";
+import ConfirmAppointment from "../pages/SecondDashboard/DashBoard/ConfirmAppointment.jsx";
+import SavedApt from "../pages/SecondDashboard/DashBoard/SavedApt";
 
 import CreateBooking from '../pages/SecondDashboard/creates/CreateBooking/CreateBooking'
 import ProtectedRouteForUser from "./AuthRoutes";
@@ -186,6 +189,18 @@ const router = createBrowserRouter([
   {
     path: "/save/appointment/",
     element: <SaveAppointment />,
+  },
+  {
+    path: "/saved/appointment/:id",
+    element: <SavedApt />,
+  },
+  {
+    path: "/saved/appointment/cancel/:id",
+    element: <CancelAppointment />,
+  },
+  {
+    path: "/saved/appointment/confirm/:id",
+    element: <ConfirmAppointment />,
   },
 
   // store for dashboard users

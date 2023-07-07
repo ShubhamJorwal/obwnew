@@ -8,41 +8,23 @@ import { MdOutlineContentCut } from "react-icons/md";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCustomers } from "../../../../redux/Actions/CustomerAction";
+import { zonedTimeToUtc, utcToZonedTime, format } from "date-fns-tz";
 
 import "./bookings.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecondBtn from "../../../../components/Buttons/SecondBtn";
 import AppointmentDetails from "../../DashBoard/AppointmentDetails";
+import SavedApt from "../../DashBoard/SavedApt";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [showdiv, setshowdiv] = useState(true);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       const response = await axios.get(
-  //         "https://admin.obwsalon.com/api/appointments",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-  //       console.log(response.data);
-  //       setAppointments(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
+  const [customerDetails, setCustomerDetails] = useState(null);
+  const Navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (token) {
       fetchAppointments(token);
@@ -50,7 +32,7 @@ const Appointment = () => {
   }, []);
 
   const fetchAppointments = (token) => {
-    const url = 'https://admin.obwsalon.com/api/appointments';
+    const url = "https://admin.obwsalon.com/api/appointments";
 
     fetch(url, {
       headers: {
@@ -59,31 +41,55 @@ const Appointment = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        const today = new Date().toISOString().split('T')[0];
+        const timeZone = "Asia/Kolkata";
+        const today = utcToZonedTime(new Date(), timeZone);
+        const formattedDate = format(today, "yyyy-MM-dd");
+
+        console.log(formattedDate);
+
         const currentDayAppointments = data.filter(
-          (appointment) => appointment.appointment_date === today
+          (appointment) => appointment.appointment_date === formattedDate
         );
         setAppointments(currentDayAppointments);
+        console.log(currentDayAppointments);
       })
       .catch((error) => console.log(error));
   };
 
-  const handleAppointmentClick = (appointment) => {
-    setSelectedAppointment(appointment);
+  const handleAppointmentClick = (appointmentId) => {
+    // setSelectedAppointmentId(appointmentId);
+
+    Navigate(`/saved/appointment/${appointmentId.id}`);
     setshowdiv(false);
+    const clearLocalStorage = () => {
+      localStorage.removeItem("TotalAmountBookOFser");
+      localStorage.removeItem("appointmentData");
+      localStorage.removeItem("responseData");
+      localStorage.removeItem("selectedProducts");
+      localStorage.removeItem("SelectedData");
+      localStorage.removeItem("TotalAmountBook");
+      localStorage.removeItem("selectedStylist");
+      localStorage.removeItem("formData");
+    };
+    clearLocalStorage();
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
+
 
   return (
     <>
       {showdiv && (
         <div id="aptbookings">
-          <div id="headboks">
+          <div id="headboks" style={{ padding: "1rem 1.5rem" }}>
             <p style={{ flexBasis: "30%" }} id="f1heboks">
               Name
             </p>{" "}
             <p style={{ flexBasis: "25%" }} id="f2heboks">
               Phone Number
             </p>{" "}
+
             <p style={{ flexBasis: "19%" }} id="f3heboks">
               Time
             </p>{" "}
@@ -98,37 +104,35 @@ const Appointment = () => {
               onClick={() => handleAppointmentClick(appointment)}
             >
               <p style={{ flexBasis: "30%" }} id="Loaptsf1">
-                Booking ID: {appointment.booking_id}
+                {appointment.first_name} {appointment.last_name}
               </p>
               <p style={{ flexBasis: "25%" }} id="Loaptsf2">
-                Customer ID: {appointment.customer_id}
+                {appointment.contact_no}
               </p>
-              <p style={{ flexBasis: "19%", color: "blue" }} id="Loaptsf3">
-                11:30AM
+              <p style={{ flexBasis: "19%", color: "blue" , fontWeight:"600"}} id="Loaptsf3">
+                {appointment.appointment_time}
               </p>
-              <p style={{ flexBasis: "26%", color: "green" }} id="Loaptsf4">
-                Confirmed
+              <p
+                style={{ flexBasis: "26%", color: "green", fontWeight: "600" }}
+                id="Loaptsf4"
+              >
+                {appointment.status}
               </p>
               {/* Render other appointment details */}
             </div>
           ))}
         </div>
       )}
+
       <Link to={"/create-new-booking/customer-details"}>
         <div id="lastbtnfordashboard">
           <SecondBtn title={"Create New Booking"} />
         </div>
       </Link>
-      {selectedAppointment && (
+
+      {selectedAppointmentId && (
         <div id="appointmentDetails">
-          {/* <h3>Appointment Details</h3>
-          <p>Booking ID: </p>
-          <p>Customer ID: =</p> */}
-          {/* Render other appointment details */}
-          <AppointmentDetails
-            aptid={selectedAppointment.id}
-            aptcusid={selectedAppointment.customer_id}
-          />
+          <SavedApt appointmentId={selectedAppointmentId.id} />
         </div>
       )}
     </>
@@ -162,34 +166,34 @@ const CsBooking = () => {
 
   //   fetchBookings();
   // }, [dispatch]);
-  
-  
-useEffect(() => {
-  const token = localStorage.getItem('token');
 
-  if (token) {
-    fetchAppointments(token);
-  }
-}, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-const fetchAppointments = (token) => {
-  const url = 'https://admin.obwsalon.com/api/appointments';
+    if (token) {
+      fetchAppointments(token);
+    }
+  }, []);
 
-  axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((response) => {
-      const data = response.data;
-      const today = new Date().toISOString().split('T')[0];
-      const currentDayAppointments = data.filter(
-        (appointment) => appointment.appointment_date === today
-      );
-      setBookings(currentDayAppointments);
-    })
-    .catch((error) => console.log(error));
-};
+  const fetchAppointments = (token) => {
+    const url = "https://admin.obwsalon.com/api/appointments";
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const data = response.data;
+        const today = new Date().toISOString().split("T")[0];
+        const currentDayAppointments = data.filter(
+          (appointment) => appointment.appointment_date === today
+        );
+        setBookings(currentDayAppointments);
+      })
+      .catch((error) => console.log(error));
+  };
 
   const getCustomerDetails = (customerId) => {
     const customer = customers.find((customer) => customer.id === customerId);

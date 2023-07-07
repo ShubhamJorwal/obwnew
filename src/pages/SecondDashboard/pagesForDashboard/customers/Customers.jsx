@@ -11,6 +11,10 @@ import { Link, useNavigate } from "react-router-dom";
 import SecondBtn from "../../../../components/Buttons/SecondBtn";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 
+
+// new import 
+import EditUserForm from "./EditCustomer/EditCustomer";
+
 const Customers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [customers, setCustomers] = useState([]);
@@ -28,6 +32,21 @@ const Customers = () => {
     const token = localStorage.getItem("token");
     fetchCustomers(token);
   }, []);
+
+// edit btn clik neww code
+
+  const [showEditform, setshowEditform] = useState(false);
+  const [editdetais, setEditdetais] = useState({});
+  let renderEditForm=(user)=>{
+    console.log(user)
+    setEditdetais(user)
+    setshowEditform(e=>!e)
+  }
+
+// edit btn clik new code end 
+
+
+
 
   const fetchCustomers = async (token) => {
     setLoading(true);
@@ -169,7 +188,22 @@ const Customers = () => {
                       {selectedCustomer.customer.customer_since}
                     </p>
                     <p>
-                      <GrEdit />{" "}
+                      <GrEdit onClick= {()=>renderEditForm(
+                        {
+                          "customer_id": selectedCustomer.customer.customer_id,
+                          "first_name": selectedCustomer.customer.first_name,
+                          "last_name": selectedCustomer.customer.last_name,
+                          "gender": selectedCustomer.customer.gender,
+                          "age": selectedCustomer.customer.age,
+                          "contact_no": selectedCustomer.customer.contact_no,
+                          "customer_type": selectedCustomer.customer.customer_type,
+                          "customer_since": selectedCustomer.customer.customer_since,
+                          "updated_at": selectedCustomer.customer.updated_at,
+                          "created_at": selectedCustomer.customer.created_at,
+                          "id": selectedCustomer.customer.id
+              
+                        }
+                      )} />{" edit"}
                     </p>
                   </div>
                   <div id="bookingsbyeachstylist">
@@ -311,7 +345,7 @@ const Customers = () => {
       )}
 
       {/* Existing JSX code */}
-      {isDivVisible && (
+        {isDivVisible && (
         <div id="wholcussyls">
           <div id="Customersecdash">
             <div id="topmegamenu">
@@ -399,6 +433,8 @@ const Customers = () => {
           </Link>
         </div>
       )}
+
+{showEditform&&<EditUserForm user={editdetais} close={setshowEditform}/>}
     </>
   );
 };

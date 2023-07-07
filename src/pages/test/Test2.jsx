@@ -36,11 +36,6 @@
 
 // // export default MyComponent;
 
-
-
-
-
-
 // // import React, { useEffect, useState } from 'react';
 // // import axios from 'axios';
 
@@ -122,10 +117,6 @@
 // // };
 
 // // export default MyComponent;
-
-
-
-
 
 // import React, { Component } from 'react';
 // import axios from 'axios';
@@ -226,99 +217,100 @@
 // export default SubservicesComponent;
 
 
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const NewAppointment = () => {
-
+  const [bookingStatus, setBookingStatus] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const apiUrl = 'https://admin.obwsalon.com/api/save/appointments';
-    
-    // Fetching appointment data from localStorage
-    const responseData = JSON.parse(localStorage.getItem('responseData'));
-    const appointmentId = responseData?.appointment?.id;
-    
-    // Fetching services data from localStorage
-    const selectedData = JSON.parse(localStorage.getItem('SelectedData'));
-    const subservices = selectedData[0]?.subServices;
+    const token = localStorage.getItem("token");
+    const apiUrl = "https://admin.obwsalon.com/api/save/appointments";
 
-    const services = subservices.map((subservice) => ({
-      service_name: subservice.service_name,
-      qty: subservice.quantity,
-      price: parseFloat(subservice.price_including_gst),
-      total: parseFloat(subservice.price_including_gst),
-      stylist_id: subservice.stylist_id,
-    }));
+    // Fetching appointment data from localStorage
+    const responseData = JSON.parse(localStorage.getItem("responseData"));
+    const appointmentId = responseData?.appointment?.id;
+
+    // Fetching services data from localStorage
+    const selectedData = JSON.parse(localStorage.getItem("SelectedData"));
+
+    // Fetching products data from localStorage
+    const selectedProducts = JSON.parse(localStorage.getItem("selectedProducts"));
+
+    const services = [];
+
+    selectedData?.forEach((data) => {
+      const subservices = data?.subServices || [];
+
+      subservices?.forEach((subservice) => {
+        const service = {
+          service_name: subservice?.service_name || "Unknown Service",
+          qty: subservice?.quantity || 0,
+          price: parseFloat(subservice?.price_including_gst) || 0,
+          total: parseFloat(subservice?.price_including_gst) || 0,
+          stylist_id: subservice?.stylist_id || 0,
+        };
+
+        services.push(service);
+      });
+    });
+
+    selectedProducts?.forEach((product) => {
+      const service = {
+        service_name: product?.product_name || "Unknown Product",
+        qty: product?.quantity || 0,
+        price: parseFloat(product?.price) || 0,
+        total: parseFloat(product?.price) || 0,
+        stylist_id: 0, // Assuming no stylist is associated with the product
+      };
+
+      services.push(service);
+    });
 
     const appointmentData = {
       appointment_id: appointmentId,
-      status: 'Confirmed',
+      status: "Confirmed",
       services: services,
     };
 
     const headers = {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     axios
       .post(apiUrl, appointmentData, { headers })
       .then((response) => {
-        console.log('Appointment created successfully:', response.data);
+        console.log("Appointment created successfully:", response.data);
+        setBookingStatus("success");
+        clearLocalStorage();
       })
       .catch((error) => {
-        console.error('Error creating appointment:', error);
+        console.error("Error creating appointment:", error);
+        setBookingStatus("error");
       });
   }, []);
 
+  const clearLocalStorage = () => {
+    localStorage.removeItem("TotalAmountBookOFser");
+    localStorage.removeItem("appointmentData");
+    localStorage.removeItem("responseData");
+    localStorage.removeItem("selectedProducts");
+    localStorage.removeItem("SelectedData");
+    localStorage.removeItem("TotalAmountBook");
+    localStorage.removeItem("selectedStylist");
+    localStorage.removeItem("formData");
+  };
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token');
-  //   const apiUrl = 'https://admin.obwsalon.com/api/save/appointments';
-    
-  //   // Fetching appointment data from localStorage
-  //   const responseData = JSON.parse(localStorage.getItem('responseData'));
-  //   const appointmentId = responseData?.appointment?.id;
-
-  //   const appointmentData = {
-  //     appointment_id: appointmentId,
-  //     status: 'Not Assigned',
-  //     services: [
-  //       {
-  //         service_name: 'Haircut',
-  //         qty: 1,
-  //         price: 50.00,
-  //         total: 50.00,
-  //         stylist_id: 1,
-  //       },
-  //       {
-  //         service_name: 'Hair Coloring',
-  //         qty: 1,
-  //         price: 50.00,
-  //         total: 50.00,
-  //         stylist_id: 2,
-  //       },
-  //     ],
-  //   };
-
-  //   const headers = {
-  //     Authorization: `Bearer ${token}`,
-  //     'Content-Type': 'application/json',
-  //   };
-
-  //   axios
-  //     .post(apiUrl, appointmentData, { headers })
-  //     .then((response) => {
-  //       console.log('Appointment created successfully:', response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error creating appointment:', error);
-  //     });
-  // }, []);
-
-  return <div>New Appointment Component</div>;
+  return (
+    <div>
+      {bookingStatus === "success" && <div>Your appointment is booked.</div>}
+      {bookingStatus === "error" && (
+        <div>Something went wrong. Please try again.</div>
+      )}
+    </div>
+  );
 };
 
 export default NewAppointment;
+

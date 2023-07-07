@@ -280,12 +280,13 @@ import { RiAccountCircleLine } from "react-icons/ri";
 import { MdOutlineContentCut } from "react-icons/md";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import SecondBtn from "../../../components/Buttons/SecondBtn";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { RxCross2 } from "react-icons/rx";
 import Calendar from "react-calendar";
 
 const Dashboard = () => {
+  const Navigate = useNavigate();
   const [isDivVisible, setIsDivVisible] = useState(false);
   const [Calandervalue, setCalandervalue] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState("");
@@ -314,6 +315,7 @@ const Dashboard = () => {
           },
         }
       );
+      
       const allAppointments = appointmentsResponse.data;
 
       // Filter appointments based on selected date
@@ -410,59 +412,55 @@ const Dashboard = () => {
     );
   }, [reloadtrigerr]);
 
-
   // new code
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-      // Fetch appointments
-      const fetchData = async () => {
-        try {
-          const appointmentsResponse = await axios.get(
-            "https://admin.obwsalon.com/api/appointments",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          const apointentstobeextracedofdata = appointmentsResponse.data;
-          const datesapp=extractDates(apointentstobeextracedofdata)
-          setbadgearr(datesapp)
-          
-        console.log(datesapp,'dattaaa');
-          
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-      fetchData();
+    // Fetch appointments
+    const fetchData = async () => {
+      try {
+        const appointmentsResponse = await axios.get(
+          "https://admin.obwsalon.com/api/appointments",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const apointentstobeextracedofdata = appointmentsResponse.data;
+        const datesapp = extractDates(apointentstobeextracedofdata);
+        setbadgearr(datesapp);
+
+        console.log(datesapp, "dattaaa");
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
   }, []);
-
-
 
   function extractDates(appointments) {
     const dateMap = {};
-  
-    // Count the occurrences of each date
-    appointments.forEach((appointment) => {
-      const date = appointment.appointment_date;
-      if (appointment.appointment_date) {
-        const dateOnly = date.split('T')[0]; // Extract date without time
-        dateMap[dateOnly] = dateMap[dateOnly] ? dateMap[dateOnly] + 1 : 1;
-      }
-    });
-  
+
+    // // Count the occurrences of each date
+    // appointments.forEach((appointment) => {
+    //   const date = appointment.appointment_date;
+    //   if (appointment.appointment_date) {
+    //     const dateOnly = date.split("T")[0]; // Extract date without time
+    //     dateMap[dateOnly] = dateMap[dateOnly] ? dateMap[dateOnly] + 1 : 1;
+    //   }
+    // });
+
     // Convert the dateMap into the desired format
     const result = Object.entries(dateMap).map(([date, number]) => ({
       date,
       number,
     }));
-  
+
     return result;
   }
-  
+
   const tileContent = ({ date }) => {
     const matchingDate = badgearr.find((item) => {
       const itemDate = new Date(item.date);
@@ -472,22 +470,34 @@ const Dashboard = () => {
         itemDate.getDate() === date.getDate()
       );
     });
-  
+
     if (matchingDate) {
       const { number } = matchingDate;
-      return (
-        
-          
-          <sup className="badge_over_date">{number}</sup>
-        
-      );
+      return <sup className="badge_over_date">{number}</sup>;
     }
-  
+
     return <div></div>;
   };
-  
-  
 
+  const handleAppointmentClick = (appointmentId) => {
+    // setSelectedAppointmentId(appointmentId);
+    Navigate(`/saved/appointment/${appointmentId}`);
+    setshowdiv(false);
+    const clearLocalStorage = () => {
+      localStorage.removeItem("TotalAmountBookOFser");
+      localStorage.removeItem("appointmentData");
+      localStorage.removeItem("responseData");
+      localStorage.removeItem("selectedProducts");
+      localStorage.removeItem("SelectedData");
+      localStorage.removeItem("TotalAmountBook");
+      localStorage.removeItem("selectedStylist");
+      localStorage.removeItem("formData");
+    };
+    clearLocalStorage();
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  };
 
   // new code end date superscript badge
   return (
@@ -521,7 +531,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <Calendar onClickDay={(e) => hadledatepicked(e)} value={Calandervalue} tileContent={tileContent} />
+      <Calendar
+        onClickDay={(e) => hadledatepicked(e)}
+        value={Calandervalue}
+        tileContent={tileContent}
+      />
 
       <div id="lastbtnfordashboard">
         <Link to={"/create/appointment"}>
@@ -531,31 +545,30 @@ const Dashboard = () => {
 
       {isDivVisible && (
         <div id="appoinmentsbydate">
-
           <div id="content-to-display02">
             <div></div>
             <div id="tophead">
               <h2>{convertDateFormat(Calandervalue)}</h2>
               <h3>Appointments</h3>
             </div>
-          <button onClick={handleBackClick}>
-            <RxCross2 size={"2rem"} color="red" />{" "}
-          </button>
+            <button onClick={handleBackClick}>
+              <RxCross2 size={"2rem"} color="red" />{" "}
+            </button>
           </div>
           {appointments.length === 0 ? (
             <div id="content-to-display">
               {/* <div id="content-to-display02"> */}
               {/* <div></div> */}
               {/* <div id="tophead"> */}
-                {/* <h2>{convertDateFormat(Calandervalue)}</h2> */}
-                {/* <h3>Appointments</h3> */}
-                {/* </div> */}
+              {/* <h2>{convertDateFormat(Calandervalue)}</h2> */}
+              {/* <h3>Appointments</h3> */}
+              {/* </div> */}
               {/* </div> */}
               <div id="midcompline">
-                <p  style={{flexBasis:"30%"}}>Name</p>
-                <p  style={{flexBasis:"25%"}}>Phone Number</p>
-                <p  style={{flexBasis:"19%"}}>Time</p>
-                <p  style={{flexBasis:"26%"}}>Status</p>
+                <p style={{ flexBasis: "30%" }}>Name</p>
+                <p style={{ flexBasis: "25%" }}>Phone Number</p>
+                <p style={{ flexBasis: "19%" }}>Time</p>
+                <p style={{ flexBasis: "26%" }}>Status</p>
               </div>
               <div id="insideDateofdash">
                 <p>No appointments found for the selected date.</p>
@@ -565,25 +578,34 @@ const Dashboard = () => {
             <div id="content-to-display">
               {" "}
               <div id="midcompline">
-                <p style={{flexBasis:"30%"}}>Name</p>
-                <p style={{flexBasis:"25%"}}>Phone Number</p>
-                <p style={{flexBasis:"19%"}}>Time</p>
-                <p style={{flexBasis:"26%"}}>Status</p>
+                <p style={{ flexBasis: "30%" }}>Name</p>
+                <p style={{ flexBasis: "25%" }}>Phone Number</p>
+                <p style={{ flexBasis: "19%" }}>Time</p>
+                <p style={{ flexBasis: "26%" }}>Status</p>
               </div>
               {appointments.map((appointment, index) => (
                 <div key={appointment.id} id="content-to-display">
-                  <div id="insideDateofdash">
-                    <p style={{flexBasis:"30%"}}>   {displayDatanew[index]
-                      ? displayDatanew[index].customer?.first_name + ' '+displayDatanew[index].customer?.last_name 
-                      : 'null'}</p>
-                      <p style={{flexBasis:"25%"}}>
+                  <div
+                    id="insideDateofdash"
+                    onClick={() => handleAppointmentClick(appointment.id)}
+                  >
+                    <p style={{ flexBasis: "30%" }}>
+                      {" "}
                       {displayDatanew[index]
-                      ? displayDatanew[index].customer?.contact_no 
-                      : 'null'}
-                      </p>
-                      <p style={{flexBasis:"19%"}}>{appointment.appointment_time}</p>
-                      <p style={{flexBasis:"26%"}}>{appointment.status}</p>
-                 
+                        ? displayDatanew[index].customer?.first_name +
+                          " " +
+                          displayDatanew[index].customer?.last_name
+                        : "null"}
+                    </p>
+                    <p style={{ flexBasis: "25%" }}>
+                      {displayDatanew[index]
+                        ? displayDatanew[index].customer?.contact_no
+                        : "null"}
+                    </p>
+                    <p style={{ flexBasis: "19%" }}>
+                      {appointment.appointment_time}
+                    </p>
+                    <p style={{ flexBasis: "26%" }}>{appointment.status}</p>
                   </div>
                 </div>
               ))}
@@ -608,13 +630,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-
-
-
-
-
