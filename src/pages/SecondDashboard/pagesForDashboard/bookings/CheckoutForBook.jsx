@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./createbooking.scss";
+import "./checkout.scss";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
@@ -8,39 +8,20 @@ import { RxCross2 } from "react-icons/rx";
 import axios from "axios";
 import { TfiAngleRight } from "react-icons/tfi";
 
-const CreateBooking = () => {
+const Checkout = () => {
   const Navigate = useNavigate();
-  const [selectedDiscount, setSelectedDiscount] = useState("");
-
   const goToPreviousPage = () => {
-    Navigate("/bookings");
+    Navigate("/services/women");
   };
   useEffect(() => {
-    const userBookingData = localStorage.getItem("formData");
+    const userBookingData = localStorage.getItem("UserBookingData");
     if (!userBookingData) {
-      Navigate("/bookings");
-    }
-  }, []);
-
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
-  const [data, setData] = useState(null);
-
-
-  useEffect(() => {
-    // Fetch data from localStorage
-    const storedData = localStorage.getItem("NewBookingData");
-
-    if (storedData) {
-      // Parse the retrieved data if necessary
-      const parsedData = JSON.parse(storedData);
-      setData(parsedData);
+      Navigate("/services/women");
     }
   }, []);
   const [totalAmount, setTotalAmount] = useState(0);
 
   const [name, setName] = useState("");
-  // const [date, setDate] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [subServices, setSubServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -57,23 +38,16 @@ const CreateBooking = () => {
   const [showDiv2nd, setShowDiv2nd] = useState(false);
   useEffect(() => {
     // Fetch data from localStorage
-    const storedData = localStorage.getItem("BookSelectedData");
-    const bookingData = localStorage.getItem("NewBookingData");
+    const storedData = localStorage.getItem("SelectedData");
+    const bookingData = localStorage.getItem("UserBookingData");
 
     if (storedData && bookingData) {
       const parsedData = JSON.parse(storedData);
-      const { first_name, contact_no, created_at } = JSON.parse(bookingData);
+      const bookingDataObj = JSON.parse(bookingData);
+      const { first_name, contact_no } = bookingDataObj.customer;
 
-      const createdAtDate = new Date(created_at);
-      const formattedDate = createdAtDate.toLocaleDateString();
-      const formattedTime = createdAtDate.toLocaleTimeString();
-
-      setDate(formattedDate);
-      setTime(formattedTime);
-
-      setName(`${first_name}`);
+      setName(first_name);
       setContactNo(contact_no);
-      setDate(formattedDate);
 
       setSubServices(
         parsedData
@@ -121,7 +95,7 @@ const CreateBooking = () => {
   };
 
   const updateLocalStorage = (subServiceId, updatedSubService) => {
-    const storedData = localStorage.getItem("BookSelectedData");
+    const storedData = localStorage.getItem("SelectedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       const updatedData = parsedData.map((data) => {
@@ -136,7 +110,7 @@ const CreateBooking = () => {
           subServices: updatedSubServices,
         };
       });
-      localStorage.setItem("BookSelectedData", JSON.stringify(updatedData));
+      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
     }
   };
 
@@ -146,7 +120,7 @@ const CreateBooking = () => {
     );
     setSubServices(updatedSubServices);
 
-    const storedData = localStorage.getItem("BookSelectedData");
+    const storedData = localStorage.getItem("SelectedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
 
@@ -160,21 +134,25 @@ const CreateBooking = () => {
         };
       });
 
-      localStorage.setItem("BookSelectedData", JSON.stringify(updatedData));
+      localStorage.setItem("SelectedData", JSON.stringify(updatedData));
     }
 
     window.location.reload();
   };
-
-  const handleAddStylist = () => {
+// s1402 added a state to tmmporary hold the cliked id of service 
+  const [clickedserviceid, setclickedserviceid] = useState(null);
+  const handleAddStylist = (id) => {
+    setclickedbyProductornot(false)
+    setclickedserviceid(id)
     setShowStylistSlider(true);
     setIsButtonClicked(true);
     setIsSliderVisible(true);
+    console.log('all=',stylists);
   };
   const handleAddStylist2O = () => {
     const selectedStylist = stylists.find(
       (stylist) => stylist.id === selectedStylistId
-    );
+      );
 
     if (selectedStylist) {
       localStorage.setItem("selectedStylist", JSON.stringify(selectedStylist));
@@ -185,7 +163,14 @@ const CreateBooking = () => {
     setShowStylistSlider(false);
     setshowProductsSlider(false);
   };
-
+// new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function start
+const handleselectionofstylist=()=>{
+  setIsSliderVisible(false);
+    setIsButtonClicked(false);
+    setShowStylistSlider(false);
+    setshowProductsSlider(false);
+}
+// new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function end
   const handleAddProducts = () => {
     setshowProductsSlider(true);
     setIsButtonClicked(true);
@@ -285,9 +270,39 @@ const CreateBooking = () => {
 
     window.location.reload();
   };
-  const handleClick = (stylistId) => {
-    setSelectedStylistId(stylistId);
+  const handleClick = (stylist) => {
+    // setSelectedStylistId(stylistId);
+    // s1402 added code  onclik of stylist 
+    console.log(stylist,clickedserviceid);
+    updateSubServiceWithStylist(clickedserviceid,stylist)
   };
+
+
+  // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist start
+  const updateSubServiceWithStylist = (subServiceId, stylistInfo) => {
+    const storedData = localStorage.getItem("SelectedData");
+    const parsedData = JSON.parse(storedData);
+    const updatedData = parsedData.map((data) => {
+      const updatedSubServices = data.subServices.map((subService) => {
+        if (subService.id === subServiceId) {
+          return {
+            ...subService,
+            stylist_info: stylistInfo,
+          };
+        }
+        return subService;
+      });
+      return {
+        ...data,
+        subServices: updatedSubServices,
+      };
+    });
+  
+    localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+  };
+  
+  
+  // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist end 
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(products);
@@ -348,6 +363,35 @@ const CreateBooking = () => {
       return updatedSelectedProducts;
     });
   };
+
+  // s1402 addinf a function tha will update the product list wih stylist on seleting stylist
+
+  const handleAddProduct2 = (productId, stylistInfo) => {
+    const updatedProducts = selectedProducts.map((product) => {
+      if (product.id === productId) {
+        return { ...product, selectedQuantity: product.selectedQuantity + 1, stylist_info: stylistInfo };
+      }
+      return product;
+    });
+    setSelectedProducts(updatedProducts);
+  
+    localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
+  };
+
+
+  // s1402 productclikchandler 
+  const [clickedbyProductornot, setclickedbyProductornot] = useState(false);
+  const [clickedProductid, setclickedProductid] = useState(null);
+  const handleAddStylisttoproduct = (id) => {
+    setclickedbyProductornot(true)
+    setclickedProductid(id)
+    setShowStylistSlider(true);
+    setIsButtonClicked(true);
+    setIsSliderVisible(true);
+    console.log('all=',stylists,id);
+  };
+
+  // s1402 product fun end  
 
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -438,58 +482,45 @@ const CreateBooking = () => {
   return (
     <>
       <div id="checkoutsec" className={isButtonClicked ? "my-css-class" : ""}>
-        <div style={{ marginBottom: "3rem" }} id="TopHeader">
+        <div id="fixpose">
+        <div id="TopHeader">
           <div id="backbtn" onClick={goToPreviousPage}>
             <AiOutlineArrowLeft />
           </div>
-          <h1>Customer Booking</h1>
+          <h1>CHECKOUT</h1>
           <div id="lastRes"></div>
         </div>
-
-        <div style={{display:"flex", flexDirection:"column" ,justifyContent:"space-between",alignItems:"unset"}} id="Cus">
-          {/* <RiAccountCircleLine size={"2.5rem"} color="#058DA6" /> */}
-          <span style={{margin:"0", borderBottom:"1px solid black" , width:"150px", margin:"1rem 0" , padding:"0.2rem 0"}} id="customer">Customer:</span>
-          <span id="nameContFeil">
-            {name} &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{contactNo && contactNo.substr(0, 6)}**** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{date}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{time}
-          </span>
-        </div>
-        
-
-        <div id="buttonsforcheckout">
-          <Link to={"/bookings/services/women"}>
-            <button>Add Service</button>
-          </Link>
-          <button onClick={handleAddProducts}>Add Product</button>
-        </div>
-
-        <div id="mainsecforcheck">
+          <div id="buttonsforcheckout">
+            <Link to={"/services/women"}>
+              <button>Add Service</button>
+            </Link>
+            <button onClick={handleAddProducts}>Add Product</button>
+          </div>
+          <div id="Cus">
+            <RiAccountCircleLine size={"2.5rem"} color="#058DA6" />
+            <span id="customer">Customer:</span>
+            <span id="nameContFeil">
+              {name} &nbsp; {contactNo && contactNo.substr(0, 6)}****
+            </span>
+          </div>
           <div id="toplinescheck">
-            <h2 style={{ flexBasis: "25%" }} id="firsttoplinech">
-              Item
-            </h2>
-            <h2 style={{ flexBasis: "15%" }} id="ndtoplinech">
-              Qty
-            </h2>
-            <h2 style={{ flexBasis: "20%" }} id="rdtoplinech">
-              Price
-            </h2>
-            <h2 style={{ flexBasis: "15%" }} id="thtoplinech">
-              DC
-            </h2>
-            <h2 style={{ flexBasis: "20%" }} id="thtoplinech">
-              Total
-            </h2>
+            <h2 id="firsttoplinech">Item</h2>
+            <h2 id="ndtoplinech">Qty</h2>
+            <h2 id="rdtoplinech">Price</h2>
+            <h2 id="thtoplinech">Total</h2>
             <div id="afdsasdfdssd">
               <MdDelete />
             </div>
           </div>
+        </div>
 
+        <div id="mainsecforcheck">
           <div id="ordersSec">
             {subServices.map((subService) => (
               <div key={subService.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p style={{ flexBasis: "25%" }}>{subService.service_name}</p>
-                  <div style={{ flexBasis: "15%" }} id="incdec">
+                  <p>{subService.service_name}{subService.id}</p>
+                  <div id="incdec">
                     <div>
                       <button
                         onClick={() => handleRemoveSubService(subService.id)}
@@ -504,33 +535,8 @@ const CreateBooking = () => {
                       </button>
                     </div>
                   </div>
-                  <div style={{ flexBasis: "20%" }} id="rdPrice">
+                  <div id="rdPrice">
                     <p>{subService.price_including_gst}/-</p>
-                  </div>{" "}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      flexBasis: "15%",
-                    }}
-                    id="dicountopt"
-                  >
-                    <select
-                      id="inputselection"
-                      required=""
-                      value={subService.discount}
-                      onClick={() => setDiscountSubservice(subService.id)}
-                      // onChange={(e) => setSelectedDiscount(e.target.value)}
-                    >
-                      <option value="">Dc</option>
-                      <option value="0">0%</option>
-                      <option value="5">5%</option>
-                      <option value="10">10%</option>
-                      <option value="15">15%</option>
-                      <option value="20">20%</option>
-                      <option value="25">25%</option>
-                      <option value="30">30%</option>
-                    </select>
                   </div>
                   <div id="thtotalprice">
                     <p>
@@ -548,21 +554,11 @@ const CreateBooking = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button
-                    style={{ flexBasis: "18%" }}
-                    onClick={handleAddStylist}
-                  >
-                    Add Stylist
-                  </button>
-                  <span
-                    style={{
-                      flexBasis: "22%",
-                      justifyContent: "center",
-                      display: "flex",
-                    }}
-                  >
-                    Stylist : {subService.stylist} Rohan
-                  </span>
+                  <button onClick={()=>handleAddStylist(subService.id)}>Add Stylist</button>
+                  {/* <span>Stylist : {JSON.stringify(subService.stylist_info)} </span> */}
+                  {subService.stylist_info && subService.stylist_info.first_name && (
+            <span>{subService.stylist_info.first_name}{" "}{subService.stylist_info.last_name}</span>
+          )}
                   <div id="thtotalprice02">
                     {/* <p>
                     {(
@@ -589,8 +585,8 @@ const CreateBooking = () => {
             {selectedProducts.map((product) => (
               <div key={product.id} id="OrderCHeck">
                 <div id="firstrowCheck">
-                  <p style={{ flexBasis: "25%" }}>{product.product_name}</p>
-                  <div style={{ flexBasis: "15%" }} id="incdec">
+                  <p>{product.product_name}</p>
+                  <div id="incdec">
                     <div style={{ justifyContent: "center" }}>
                       <button onClick={() => handleRemoveProduct(product.id)}>
                         -
@@ -601,29 +597,10 @@ const CreateBooking = () => {
                       </button>
                     </div>
                   </div>
-                  <div style={{ flexBasis: "20%" }} id="rdPrice">
+                  <div id="rdPrice">
                     <p>{product.amount_with_gst}/-</p>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      flexBasis: "15%",
-                    }}
-                    id="dicountopt"
-                  >
-                    <select id="inputselection" required="">
-                      <option value="">Dc</option>
-                      <option value="0">0%</option>
-                      <option value="5">5%</option>
-                      <option value="10">10%</option>
-                      <option value="15">15%</option>
-                      <option value="20">20%</option>
-                      <option value="25">25%</option>
-                      <option value="30">30%</option>
-                    </select>
-                  </div>
-                  <div style={{ flexBasis: "20%" }} id="thtotalprice">
+                  <div id="thtotalprice">
                     <p>
                       {(
                         product.amount_with_gst * product.selectedQuantity
@@ -639,20 +616,16 @@ const CreateBooking = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button
-                    style={{ flexBasis: "18%" }}
-                    onClick={handleAddStylist}
-                  >
-                    Add Stylist
-                  </button>
-                  <span
-                    style={{
-                      flexBasis: "22%",
-                      justifyContent: "center",
-                      display: "flex",
-                    }}
-                  >
-                    Stylist :{stylistName ? stylistName : "No stylist selected"}
+                  <button 
+                  onClick={()=>handleAddStylisttoproduct(product.id)}
+                  // s1402 added function to add stylist
+                    // onClick={()=> handleAddProduct}
+                  >Add Stylist</button>
+                  <span>
+                  {product.stylist_info && product.stylist_info.first_name && (
+            <span>{product.stylist_info.first_name}{" "}{product.stylist_info.last_name}</span>
+          )}
+                    
                   </span>
                   <div id="thtotalprice02">
                     {/* <p>
@@ -671,8 +644,8 @@ const CreateBooking = () => {
             <div id="totalwithgst">
               <div id="totalwithgstF1">
                 <div>
-                  <p>Sub Total</p>
-                  <p>
+                  <p style={{flexBasis:"50%"}} >Sub Total</p>
+                  <p style={{flexBasis:"50%"}} >
                     {(Math.round(
                       (parseFloat(calculateTotalPrice()) +
                         parseFloat(totalPrice)) *
@@ -698,7 +671,7 @@ const CreateBooking = () => {
                             0
                           )
                       )) /
-                      100}
+                      100}.00
                     /-
                   </p>
                   {/* </div> */}
@@ -706,8 +679,8 @@ const CreateBooking = () => {
 
                 <div id="gstmanipulation">
                   <p>
-                    <span>Total GST :</span>
-                    <span>
+                    <span style={{flexBasis:"50%"}} >Total GST</span>
+                    <span style={{flexBasis:"50%"}} >
                       {(
                         selectedProducts.reduce(
                           (total, product) =>
@@ -730,16 +703,10 @@ const CreateBooking = () => {
                     </span>
                   </p>
                 </div>
-                <div id="gstmanipulation">
-                  <p>
-                    <span>Discount :</span>
-                    <span>pending</span>
-                  </p>
-                </div>
               </div>
               <div id="totalwithgstF2">
-                <span id="fspanoftgst">Total:</span>{" "}
-                <span id="sspanoftgst">
+                <span style={{flexBasis:"50%"}}  id="fspanoftgst">Total :</span>{" "}
+                <span style={{flexBasis:"50%"}} id="sspanoftgst">
                   {(
                     parseFloat(calculateTotalPrice()) + parseFloat(totalPrice)
                   ).toFixed(2)}
@@ -773,7 +740,7 @@ const CreateBooking = () => {
                       className={
                         selectedStylistId === stylist.id ? "selected" : ""
                       }
-                      onClick={() => handleClick(stylist.id)}
+                      onClick={() => clickedbyProductornot?handleAddProduct2(clickedProductid,stylist): handleClick(stylist)}
                     >
                       <div id="f1midfd">
                         <img
@@ -782,7 +749,7 @@ const CreateBooking = () => {
                         />
                         <div id="s1midfd">
                           <p>
-                            {stylist.first_name} {stylist.last_name}
+                            {stylist.first_name} {stylist.last_name} 
                           </p>{" "}
                           <span>Experience - {stylist.experience}</span>
                         </div>
@@ -797,7 +764,8 @@ const CreateBooking = () => {
                   <a
                     className="book-button"
                     href="/checkout"
-                    onClick={handleAddStylist2O}
+                    // onClick={handleAddStylist2O}
+                    onClick={handleselectionofstylist}
                   >
                     Add Stylist
                   </a>
@@ -889,24 +857,11 @@ const CreateBooking = () => {
 
       {/* new data */}
 
-      <div id="lsatbutoins">
-        <div id="lastbtnscheck01">
-          <Link to={"/create-new-booking/customer-details/cancel-booking"}>
-            <button
-              style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
-              id="firstbtn"
-            >
-              Cancel Booking <TfiAngleRight style={{ marginLeft: "1rem" }} />
-            </button>
-          </Link>
-        </div>
-        <div id="lastbtnscheck02">
-          <Link to={"/confirm/create/booking"}>
-            <button
-              style={{ width: " unset", padding: "1rem 2rem", display: "flex" }}
-              id="firstbtn"
-            >
-              Confirm Booking <TfiAngleRight style={{ marginLeft: "1rem" }} />
+      <div>
+        <div id="lastbtnscheck">
+          <Link to={"/checkout/booking/processing"}>
+            <button style={{ padding: "1rem 2rem" }} id="secondbtn">
+              Book now
             </button>
           </Link>
         </div>
@@ -915,4 +870,4 @@ const CreateBooking = () => {
   );
 };
 
-export default CreateBooking;
+export default Checkout;

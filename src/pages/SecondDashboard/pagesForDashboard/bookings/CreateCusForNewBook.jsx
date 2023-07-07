@@ -291,27 +291,29 @@
 
 
 
+
+
 import React, { useState, useEffect } from "react";
-import "./bookings.scss";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+// import "./loginAppointment.scss";
+import "./bookings.scss";
 
 function CreateCusForNewBook() {
+  const Navigate = useNavigate()
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const token = localStorage.getItem("token");
-
-  const Navigate = useNavigate();
 
   useEffect(() => {
     const fetchCustomerSuggestions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
+        const response = await axios.get(
           "https://admin.obwsalon.com/api/customers",
           {
             headers: {
@@ -320,8 +322,8 @@ function CreateCusForNewBook() {
           }
         );
 
-        if (response.ok) {
-          const customers = await response.json();
+        if (response.status === 200) {
+          const customers = response.data;
           setSuggestions(customers);
         } else {
           console.error("Failed to fetch customer data");
@@ -335,23 +337,29 @@ function CreateCusForNewBook() {
   }, []);
 
   const handleNameChange = (event) => {
-    setName(event.target.value);
+    const input = event.target.value;
+    setName(input);
+    filterSuggestions(input);
   };
 
   const handlePhoneNumberChange = (event) => {
-    setPhoneNumber(event.target.value);
-    filterSuggestions(event.target.value);
+    const input = event.target.value;
+    setPhoneNumber(input);
+    filterSuggestions(input);
   };
 
   const filterSuggestions = (input) => {
     const filteredSuggestions = suggestions.filter((customer) =>
-      customer.contact_no.includes(input)
+      customer.contact_no.includes(input) ||
+      customer.first_name.toLowerCase().includes(input.toLowerCase()) ||
+      customer.last_name.toLowerCase().includes(input.toLowerCase())
     );
     setFilteredSuggestions(filteredSuggestions.slice(0, 5));
   };
 
   const handleSuggestionClick = (customer) => {
     setSelectedCustomer(customer);
+    setName(customer.first_name + " " + customer.last_name);
     setPhoneNumber(customer.contact_no);
     setFilteredSuggestions([]);
   };
@@ -359,71 +367,108 @@ function CreateCusForNewBook() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!selectedCustomer) {
+      setErrorMessage(
+        "No customer found. Please select from suggestions. Create new user"
+      );
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    const customerId = selectedCustomer.id; // Get the customer ID from the "id" property
+
+    const appointmentData = {
+      customer_id: customerId, // Use the customer ID
+      status: "not assigned",
+    };
+
     try {
-      const response = await fetch(
-        "https://admin.obwsalon.com/api/create/customer",
+      const response = await axios.post(
+        "https://admin.obwsalon.com/api/create/appointments",
+        appointmentData,
         {
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            first_name: name,
-            contact_no: phoneNumber,
-          }),
         }
       );
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("UserBookingData", JSON.stringify(data));
-        setName("");
-        setPhoneNumber("");
-        setErrorMessage("");
-        Navigate("/checkout");
+    
+      if (response.status === 200) {
+        console.log("Appointment created successfully");
+        // Store the response data in localStorage
+        localStorage.setItem("responseData", JSON.stringify(response.data));
       } else {
-        console.error("Failed to create customer");
+        console.error("Failed to create appointment");
       }
     } catch (error) {
-      console.error(error);
+      console.error("An error occurred while creating the appointment:", error);
     }
+
+    // Save form data and appointment data in localStorage
+    localStorage.setItem(
+      "formData",
+      JSON.stringify({
+        name,
+        phoneNumber,
+      })
+    );
+    localStorage.setItem("appointmentData", JSON.stringify(appointmentData));
+
+    // Clear form fields
+    setName("");
+    setPhoneNumber("");
+    setSelectedCustomer(null);
+    setErrorMessage("");
+    
+    // Navigate("/create/appointment/success");
+    Navigate("/dashboard/booking/checkout");
   };
 
   return (
     <>
-      <div id="StartBook">
-        <div id="suggestionsBox">
-          <h2>Enter Details</h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={handleNameChange}
-              placeholder="Name"
-            />
-            <input
-              type="number"
-              id="phoneNumber"
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
-              placeholder="Mobile Number"
-            />
-            {filteredSuggestions.length > 0 && (
-              <ul>
-                {filteredSuggestions.map((customer) => (
-                  <li
-                    key={customer.customerId}
-                    onClick={() => handleSuggestionClick(customer)}
-                  >
-                   {customer.contact_no} - {customer.first_name} {customer.last_name}
-                  </li>
-                ))}
-              </ul>
-            )}
-            <button type="submit">Submit</button>
-          </form>
+      <div id="backgroundblackcol"></div>
+      <div class="animation-container">
+        <div class="animation-element">
+          <div id="StartBook">
+            <div
+              id="suggestionsBox"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <h2>ENTER DETAILS</h2>
+              <form onSubmit={handleSubmit}>
+                <input
+                  placeholder="Name"
+                  type="text"
+                  value={name}
+                  onChange={handleNameChange}
+                />
+                <input
+                  placeholder="Phone Number"
+                  type="number"
+                  value={phoneNumber}
+                  onChange={handlePhoneNumberChange}
+                />
+                {filteredSuggestions.length > 0 && (
+                  <ul style={{padding:"0.5rem"}}>
+                    {filteredSuggestions.map((customer) => (
+                      <li style={{padding:"1rem"}}
+                        key={customer.customerId}
+                        onClick={() => handleSuggestionClick(customer)}
+                      >
+                        {customer.contact_no} - {customer.first_name}{" "}
+                        {customer.last_name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <button type="submit">Submit</button>
+              </form>
+              {errorMessage && <p>{errorMessage}</p>}
+            </div>
+          </div>
         </div>
       </div>
       <div id="fixedbtnforall">
@@ -433,9 +478,7 @@ function CreateCusForNewBook() {
       </div>
       <div id="fixedbtnforall01">
         <Link to={"/bookings"}>
-          <button id="firstbtn">
-            <AiOutlineArrowLeft /> &nbsp; Back
-          </button>
+          <button id="firstbtn"> <AiOutlineArrowLeft /> &nbsp; Back</button>
         </Link>
       </div>
     </>

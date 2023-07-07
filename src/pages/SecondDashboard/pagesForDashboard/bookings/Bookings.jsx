@@ -104,10 +104,10 @@ const Appointment = () => {
               onClick={() => handleAppointmentClick(appointment)}
             >
               <p style={{ flexBasis: "30%" }} id="Loaptsf1">
-                {appointment.first_name} {appointment.last_name}
+                {appointment.customer.first_name} {appointment.customer.last_name}
               </p>
               <p style={{ flexBasis: "25%" }} id="Loaptsf2">
-                {appointment.contact_no}
+                {appointment.customer.contact_no}
               </p>
               <p style={{ flexBasis: "19%", color: "blue" , fontWeight:"600"}} id="Loaptsf3">
                 {appointment.appointment_time}
@@ -143,29 +143,29 @@ const CsBooking = () => {
   const dispatch = useDispatch();
   const [bookings, setBookings] = useState([]);
 
-  // useEffect(() => {
-  //   dispatch(fetchCustomers()); // Fetch customers from the API
+  useEffect(() => {
+    dispatch(fetchCustomers()); // Fetch customers from the API
 
-  //   const fetchBookings = async () => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       const response = await axios.get(
-  //         "https://admin.obwsalon.com/api/bookings",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-  //       console.log(response.data);
-  //       setBookings(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+    const fetchBookings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "https://admin.obwsalon.com/api/bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setBookings(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  //   fetchBookings();
-  // }, [dispatch]);
+    fetchBookings();
+  }, [dispatch]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -176,7 +176,7 @@ const CsBooking = () => {
   }, []);
 
   const fetchAppointments = (token) => {
-    const url = "https://admin.obwsalon.com/api/appointments";
+    const url = "https://admin.obwsalon.com/api/bookings";
 
     axios
       .get(url, {
@@ -197,7 +197,7 @@ const CsBooking = () => {
 
   const getCustomerDetails = (customerId) => {
     const customer = customers.find((customer) => customer.id === customerId);
-    return customer ? `${customer.first_name} ` : "N/A";
+    return customer ? `${customer.first_name} ${customer.last_name} ` : "N/A";
   };
   const getCustomerDetailss = (customerId) => {
     const customer = customers.find((customer) => customer.id === customerId);
@@ -284,7 +284,7 @@ const CsBooking = () => {
                 color: "#18959E",
               }}
             >
-              {booking.total}
+              {booking?.total || "Undefined"}
             </p>
           </div>
         ))}

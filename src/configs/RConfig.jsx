@@ -106,6 +106,10 @@ const router = createBrowserRouter([
     element: <CreateCusForNewBook />,
   },
   {
+    path: "/dashboard/booking/checkout",
+    element: <CreateBooking />,
+  },
+  {
     path: "/create-new-booking/customer-details/booking",
     element: <SalonEndBooking />,
   },
