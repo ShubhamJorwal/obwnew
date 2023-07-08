@@ -84,7 +84,7 @@ const ApointmentSuces = () => {
         setBookingStatus("error");
       });
       setTimeout(() => {
-        // Navigate("/dashboard");
+        Navigate("/dashboard");
       }, 3000);
     
   }, []);

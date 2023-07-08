@@ -142,6 +142,7 @@ const CsBooking = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
   const dispatch = useDispatch();
   const [bookings, setBookings] = useState([]);
+  const Navigate = useNavigate()
 
   useEffect(() => {
     dispatch(fetchCustomers()); // Fetch customers from the API
@@ -246,6 +247,7 @@ const CsBooking = () => {
 
         {bookings.map((booking) => (
           <div
+          onClick={() => Navigate(`/customer/booking/${booking.id}`)}
             style={{
               display: "flex",
             }}
@@ -381,7 +383,7 @@ const Ongoing = () => {
         </div>
 
         {bookings.map((booking) => (
-          <div
+          <div  
             style={{
               display: "flex",
             }}

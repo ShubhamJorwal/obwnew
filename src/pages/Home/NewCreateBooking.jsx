@@ -57,7 +57,7 @@ function UserEndBooking() {
         date: currentDate,
         services: allSubServices,
       };
-      console.log(bookingData)
+      
   
       // Send the POST request to the API
       fetch("https://admin.obwsalon.com/api/create/bookings", {
@@ -68,6 +68,7 @@ function UserEndBooking() {
         },
         body: JSON.stringify(bookingData),
       })
+      
         .then((response) => {
           if (!response.ok) {
             throw new Error("Booking failed. Please try again."); // Throw an error if the response is not successful

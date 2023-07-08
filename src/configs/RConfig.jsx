@@ -40,6 +40,8 @@ import Dashboard from "../pages/SecondDashboard/DashBoard/Dashboard";
 import ConfirmCreateBooking from "../pages/SecondDashboard/creates/CreateBooking/ConfirmCreateBooking";
 import UserEndBooking2O from "../pages/SecondDashboard/creates/CreateBooking/BookCOm";
 import ApointmentSuces from "../pages/SecondDashboard/creates/CreateApt/login/ApointmentSuces";
+import CreateNewBooking from "../pages/SecondDashboard/creates/NewBooking/CreateNewBooking";
+import ConfCancBooking from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleBookings/ConfCancBooking";
 
 
 const router = createBrowserRouter([
@@ -77,6 +79,11 @@ const router = createBrowserRouter([
     element:<ProtectedRouteForUser> <UserEndBooking /> </ProtectedRouteForUser>,
   },
   
+  
+  {
+    path: "/dashboard/create-new-booking",
+    element:<CreateNewBooking /> ,
+  },
 
 
   // Salon Dashboard
@@ -84,10 +91,15 @@ const router = createBrowserRouter([
     path: "/dashboard",
     // element: <CorrectedDashBoard />,
     element: <Dashboard />,
+    // element: <ProtectedRouteForUser> <Dashboard /> </ProtectedRouteForUser>,
   },
   {
     path: "/bookings",
     element: <Bookings />,
+  },
+  {
+    path: "/customer/booking/:id",
+    element: <ConfCancBooking />,
   },
   {
     path: "/bookings/services/women",
