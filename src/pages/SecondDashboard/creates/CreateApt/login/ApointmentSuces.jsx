@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const ApointmentSuces = () => {
   const Navigate = useNavigate();
   const [bookingStatus, setBookingStatus] = useState("");
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -12,7 +13,12 @@ const ApointmentSuces = () => {
 
     // Fetching appointment data from localStorage
     const responseData = JSON.parse(localStorage.getItem("responseData"));
-    const appointmentId = responseData?.appointment?.id;
+    const SecondAptData = JSON.parse(localStorage.getItem("appointmentData"));
+    const appointmentId = responseData?.appointment?.id || SecondAptData?.appointment_id;
+    console.log(SecondAptData?.appointment_id)
+    console.log(appointmentId)
+    console.log(responseData)
+    console.log(SecondAptData)
 
     // Fetching services data from localStorage
     const selectedData = JSON.parse(localStorage.getItem("SelectedData"));
@@ -28,12 +34,12 @@ const ApointmentSuces = () => {
       subservices?.forEach((subservice) => {
         const service = {
           service_name: subservice?.service_name || "Unknown Service",
-          qty: subservice?.quantity || 0,
-          price: parseFloat(subservice?.price_including_gst) || 0,
-          total: parseFloat(subservice?.price_including_gst*subservice?.quantity || 0) || 0,
-          stylist_id: subservice?.stylist_id || 0,
+          qty: subservice?.quantity || "error",
+          price: parseFloat(subservice?.price_including_gst) || "error",
+          total: parseFloat(subservice?.price_including_gst*subservice?.quantity || "error") || "error",
+          stylist_id: subservice?.stylist_id || "error",
           type: "services",
-          id: subservice?.id || 0
+          id: subservice?.id || "error"
         };
 
         services.push(service);
@@ -59,6 +65,7 @@ const ApointmentSuces = () => {
       status: "Not Assigned",
       services: services,
     };
+    console.log(appointmentData)
 
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -77,7 +84,7 @@ const ApointmentSuces = () => {
         setBookingStatus("error");
       });
       setTimeout(() => {
-        Navigate("/dashboard");
+        // Navigate("/dashboard");
       }, 3000);
     
   }, []);

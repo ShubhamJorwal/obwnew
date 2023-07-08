@@ -15,13 +15,17 @@ const ConfirmAppointment = () => {
     // const responseData = JSON.parse(localStorage.getItem("responseData"));
     // const appointmentId = responseData?.appointment?.id;
     const appointmentId = id
+    
+    console.log(appointmentId)
 
     // Fetching services data from localStorage
     const selectedData = JSON.parse(localStorage.getItem("SelectedData"));
 
+    console.log(selectedData)
     // Fetching products data from localStorage
     const selectedProducts = JSON.parse(localStorage.getItem("selectedProducts"));
 
+    console.log(selectedProducts)
     const services = [];
 
     selectedData?.forEach((data) => {
@@ -39,6 +43,7 @@ const ConfirmAppointment = () => {
         };
 
         services.push(service);
+        console.log(service)
       });
     });
 
@@ -54,6 +59,7 @@ const ConfirmAppointment = () => {
       };
 
       services.push(service);
+      console.log(service)
     });
 
     const appointmentData = {
@@ -62,6 +68,7 @@ const ConfirmAppointment = () => {
       services: services,
     };
 
+    console.log(appointmentData)
     const headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -79,7 +86,7 @@ const ConfirmAppointment = () => {
         setBookingStatus("error");
       });
       setTimeout(() => {
-        Navigate("/dashboard");
+        // Navigate("/dashboard");
       }, 3000);
     
   }, []);

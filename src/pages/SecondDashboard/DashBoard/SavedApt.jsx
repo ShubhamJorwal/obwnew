@@ -309,9 +309,18 @@ const SavedApt = () => {
     setshowProductsSlider(false);
   };
 
+// new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function start
+const handleselectionofstylist=()=>{
+  setIsSliderVisible(false);
+    setIsButtonClicked(false);
+    setShowStylistSlider(false);
+    setshowProductsSlider(false);
+}
+// new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function end
   const handleAddProducts = () => {
     setshowProductsSlider(true);
     setIsButtonClicked(true);
+
     setIsSliderVisible(true);
   };
 
@@ -389,9 +398,38 @@ const SavedApt = () => {
     window.location.reload();
   };
 
-  const handleClick = (stylistId) => {
-    setSelectedStylistId(stylistId);
+  const handleClick = (stylist) => {
+    // setSelectedStylistId(stylistId);
+    // s1402 added code  onclik of stylist 
+    console.log(stylist,clickedserviceid);
+    updateSubServiceWithStylist(clickedserviceid,stylist)
   };
+
+  // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist start
+  const updateSubServiceWithStylist = (subServiceId, stylistInfo) => {
+    const storedData = localStorage.getItem("SelectedData");
+    const parsedData = JSON.parse(storedData);
+    const updatedData = parsedData.map((data) => {
+      const updatedSubServices = data.subServices.map((subService) => {
+        if (subService.id === subServiceId) {
+          return {
+            ...subService,
+            stylist_info: stylistInfo,
+          };
+        }
+        return subService;
+      });
+      return {
+        ...data,
+        subServices: updatedSubServices,
+      };
+    });
+  
+    localStorage.setItem("SelectedData", JSON.stringify(updatedData));
+  };
+  
+  
+  // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist end 
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(products);
@@ -409,6 +447,7 @@ const SavedApt = () => {
   useEffect(() => {
     setFilteredProducts(products);
   }, [products]);
+
 
   const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -448,6 +487,41 @@ const SavedApt = () => {
     });
   };
 
+  // s1402 addinf a function tha will update the product list wih stylist on seleting stylist
+
+  const handleAddProduct2 = (productId, stylistInfo) => {
+    const updatedProducts = selectedProducts.map((product) => {
+      if (product.id === productId) {
+        return { ...product, selectedQuantity: product.selectedQuantity + 1, stylist_info: stylistInfo };
+      }
+      return product;
+    });
+    setSelectedProducts(updatedProducts);
+  
+    localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
+  };
+
+
+  // s1402 productclikchandler 
+  const [clickedbyProductornot, setclickedbyProductornot] = useState(false);
+  const [clickedProductid, setclickedProductid] = useState(null);
+  const handleAddStylisttoproduct = (id) => {
+    setclickedbyProductornot(true)
+    setclickedProductid(id)
+    setShowStylistSlider(true);
+    setIsButtonClicked(true);
+    setIsSliderVisible(true);
+    console.log('all=',stylists,id);
+  };
+
+  // s1402 product fun end  
+
+  useEffect(() => {
+    const storedSelectedProducts = localStorage.getItem("selectedProducts");
+    if (storedSelectedProducts) {
+      setSelectedProducts(JSON.parse(storedSelectedProducts));
+    }
+  }, []);
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
     if (storedSelectedProducts) {
@@ -600,8 +674,11 @@ const SavedApt = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
-                  <span>Stylist : {subService.stylist} Rohan</span>
+                <button onClick={()=>handleAddStylist(subService.id)}>Add Stylist</button>
+                  {/* <span>Stylist : {JSON.stringify(subService.stylist_info)} </span> */}
+                  {subService.stylist_info && subService.stylist_info.first_name && (
+            <span>{subService.stylist_info.first_name}{" "}{subService.stylist_info.last_name}</span>
+          )}
                   <div id="thtotalprice02">
                   </div>
                 </div>
@@ -645,10 +722,17 @@ const SavedApt = () => {
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                  <button onClick={handleAddStylist}>Add Stylist</button>
+                <button 
+                  onClick={()=>handleAddStylisttoproduct(product.id)}
+                  // s1402 added function to add stylist
+                    // onClick={()=> handleAddProduct}
+                  >Add Stylist</button>
                   <span>
-                    Stylist :{stylistName ? stylistName : "No stylist selected"}
-                  </span>
+                  {product.stylist_info && product.stylist_info.first_name && (
+            <span>{product.stylist_info.first_name}{" "}{product.stylist_info.last_name}
+            </span>
+          )}
+          </span>
                   <div id="thtotalprice02">
                     {/* <p>
                     {(
@@ -789,7 +873,9 @@ const SavedApt = () => {
                   <a
                     className="book-button"
                     href="/checkout"
-                    onClick={handleAddStylist2O}
+                    // onClick={handleAddStylist2O}
+                    
+                    onClick={handleselectionofstylist}
                   >
                     Add Stylist
                   </a>
