@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useEffect, useState } from "react";
 import "./saveAptData.scss";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
@@ -27,8 +23,6 @@ const SavedApt = () => {
   }, []);
 
   const currentDate = new Date().toISOString().slice(0, 10); // Get the current date in YYYY-MM-DD format
-
-
 
   const [services, setServices] = useState([]);
   const [customer01, setCustomer01] = useState(null);
@@ -119,7 +113,7 @@ const SavedApt = () => {
   const [showStylistSlider, setShowStylistSlider] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedStylistId, setSelectedStylistId] = useState(null);
-  const [showdiv , setshowdiv ] = useState(null);
+  const [showdiv, setshowdiv] = useState(null);
 
   const [showProductsSlider, setshowProductsSlider] = useState(null);
 
@@ -132,21 +126,21 @@ const SavedApt = () => {
     const data = localStorage.getItem("appointmentData");
     const parsedData = JSON.parse(data);
     setAppointments(parsedData);
-  
+
     if (parsedData && parsedData.customer_id) {
       const token = localStorage.getItem("token");
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       };
-  
+
       fetch("https://admin.obwsalon.com/api/customers", { headers })
         .then((response) => response.json())
         .then((data) => {
           const filteredCustomer = data.find(
             (customer) => customer.id === parsedData.customer_id
           );
-  
+
           setCustomer(filteredCustomer);
         })
         .catch((error) => {
@@ -154,22 +148,22 @@ const SavedApt = () => {
         });
     }
   }, []);
-  
+
   useEffect(() => {
     const storedData = localStorage.getItem("SelectedData");
     const appointmentData = localStorage.getItem("appointmentData");
     const token = localStorage.getItem("token"); // Assuming you have a token stored in localStorage
-  
+
     if (storedData && appointmentData && token) {
       const parsedData = JSON.parse(storedData);
       const appointmentDataObj = JSON.parse(appointmentData);
       const { customer_id, appointment_date, appointment_time, status } =
         appointmentDataObj;
-  
+
       setAppointmentDate(appointment_date);
       setAppointmentTime(appointment_time);
       setStatus(status);
-  
+
       fetch("https://admin.obwsalon.com/api/customers", {
         headers: {
           Authorization: `Bearer ${token}`, // Add the token to the Authorization header
@@ -187,7 +181,7 @@ const SavedApt = () => {
           console.log("Error fetching customer details:", error);
           setLoading(false);
         });
-  
+
       setSubServices(
         parsedData
           .map(({ subServices }) =>
@@ -199,7 +193,6 @@ const SavedApt = () => {
       setLoading(false);
     }
   }, []);
-  
 
   const handleAddSubService = (subServiceId) => {
     const updatedSubServices = subServices.map((subService) => {
@@ -257,7 +250,7 @@ const SavedApt = () => {
     );
     setSubServices(updatedSubServices);
 
-    const storedData= localStorage.getItem("SelectedData");
+    const storedData = localStorage.getItem("SelectedData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
 
@@ -274,13 +267,13 @@ const SavedApt = () => {
       localStorage.setItem("SelectedData", JSON.stringify(updatedData));
     }
 
-    const localStorageKey = 'SelectedData';
+    const localStorageKey = "SelectedData";
 
     const data = JSON.parse(localStorage.getItem(localStorageKey));
     const subServiceIndex = data[0].subServices.findIndex(
       (subService) => subService.id === subServiceId
     );
-  
+
     if (subServiceIndex !== -1) {
       data[0].subServices.splice(subServiceIndex, 1);
       localStorage.setItem(localStorageKey, JSON.stringify(data));
@@ -309,14 +302,14 @@ const SavedApt = () => {
     setshowProductsSlider(false);
   };
 
-// new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function start
-const handleselectionofstylist=()=>{
-  setIsSliderVisible(false);
+  // new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function start
+  const handleselectionofstylist = () => {
+    setIsSliderVisible(false);
     setIsButtonClicked(false);
     setShowStylistSlider(false);
     setshowProductsSlider(false);
-}
-// new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function end
+  };
+  // new s1402 function for stylists been dded to the object of rendered list that is  been used to display the function end
   const handleAddProducts = () => {
     setshowProductsSlider(true);
     setIsButtonClicked(true);
@@ -400,9 +393,9 @@ const handleselectionofstylist=()=>{
 
   const handleClick = (stylist) => {
     // setSelectedStylistId(stylistId);
-    // s1402 added code  onclik of stylist 
-    console.log(stylist,clickedserviceid);
-    updateSubServiceWithStylist(clickedserviceid,stylist)
+    // s1402 added code  onclik of stylist
+    console.log(stylist, clickedserviceid);
+    updateSubServiceWithStylist(clickedserviceid, stylist);
   };
 
   // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist start
@@ -424,12 +417,11 @@ const handleselectionofstylist=()=>{
         subServices: updatedSubServices,
       };
     });
-  
+
     localStorage.setItem("SelectedData", JSON.stringify(updatedData));
   };
-  
-  
-  // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist end 
+
+  // handle click by s1402 this function will add an key to the main data whare key will be styliinfo adn tha will contain the object thate is stylist end
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(products);
@@ -447,7 +439,6 @@ const handleselectionofstylist=()=>{
   useEffect(() => {
     setFilteredProducts(products);
   }, [products]);
-
 
   const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -492,29 +483,32 @@ const handleselectionofstylist=()=>{
   const handleAddProduct2 = (productId, stylistInfo) => {
     const updatedProducts = selectedProducts.map((product) => {
       if (product.id === productId) {
-        return { ...product, selectedQuantity: product.selectedQuantity + 1, stylist_info: stylistInfo };
+        return {
+          ...product,
+          selectedQuantity: product.selectedQuantity + 1,
+          stylist_info: stylistInfo,
+        };
       }
       return product;
     });
     setSelectedProducts(updatedProducts);
-  
+
     localStorage.setItem("selectedProducts", JSON.stringify(updatedProducts));
   };
 
-
-  // s1402 productclikchandler 
+  // s1402 productclikchandler
   const [clickedbyProductornot, setclickedbyProductornot] = useState(false);
   const [clickedProductid, setclickedProductid] = useState(null);
   const handleAddStylisttoproduct = (id) => {
-    setclickedbyProductornot(true)
-    setclickedProductid(id)
+    setclickedbyProductornot(true);
+    setclickedProductid(id);
     setShowStylistSlider(true);
     setIsButtonClicked(true);
     setIsSliderVisible(true);
-    console.log('all=',stylists,id);
+    console.log("all=", stylists, id);
   };
 
-  // s1402 product fun end  
+  // s1402 product fun end
 
   useEffect(() => {
     const storedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -613,15 +607,15 @@ const handleselectionofstylist=()=>{
             <button onClick={handleAddProducts}>Add Product</button>
           </div>
           {customerData && (
-          <div id="Cus" style={{ justifyContent: "space-between" }}>
-            <span id="nameContFeil">
-              {customerData.first_name} {customerData.last_name}
-            </span>
-            <span id="nameContFeil"> {customerData.contact_no}</span>
-            <span id="nameContFeil">{appointmentData?.appointment_time}</span>
-            <span id="nameContFeil">{appointmentData?.appointment_date}</span>
-          </div>
-        )}
+            <div id="Cus" style={{ justifyContent: "space-between" }}>
+              <span id="nameContFeil">
+                {customerData.first_name} {customerData.last_name}
+              </span>
+              <span id="nameContFeil"> {customerData.contact_no}</span>
+              <span id="nameContFeil">{appointmentData?.appointment_time}</span>
+              <span id="nameContFeil">{appointmentData?.appointment_date}</span>
+            </div>
+          )}
 
           <div id="toplinescheck">
             <h2 id="firsttoplinech">Item</h2>
@@ -651,7 +645,7 @@ const handleselectionofstylist=()=>{
                       <button
                         onClick={() => handleAddSubService(subService.id)}
                       >
-                        + 
+                        +
                       </button>
                     </div>
                   </div>
@@ -660,9 +654,7 @@ const handleselectionofstylist=()=>{
                   </div>
                   <div id="thtotalprice">
                     <p>
-                      {(
-                        subService.price * subService.quantity
-                      ).toFixed(2)}
+                      {(subService.price * subService.quantity).toFixed(2)}
                       /-
                     </p>
                   </div>
@@ -674,16 +666,20 @@ const handleselectionofstylist=()=>{
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                <button onClick={()=>handleAddStylist(subService.id)}>Add Stylist</button>
+                  <button onClick={() => handleAddStylist(subService.id)}>
+                    Add Stylist
+                  </button>
                   {/* <span>Stylist : {JSON.stringify(subService.stylist_info)} </span> */}
-                  {subService.stylist_info && subService.stylist_info.first_name && (
-            <span>{subService.stylist_info.first_name}{" "}{subService.stylist_info.last_name}</span>
-          )}
-                  <div id="thtotalprice02">
-                  </div>
+                  {subService.stylist_info &&
+                    subService.stylist_info.first_name && (
+                      <span>
+                        {subService.stylist_info.first_name}{" "}
+                        {subService.stylist_info.last_name}
+                      </span>
+                    )}
+                  <div id="thtotalprice02"></div>
                 </div>
               </div>
-              
             ))}
 
             {/* new fetching  */}
@@ -708,9 +704,7 @@ const handleselectionofstylist=()=>{
                   </div>
                   <div id="thtotalprice">
                     <p>
-                      {(
-                        product.price * product.qty
-                      ).toFixed(2)}
+                      {(product.price * product.qty).toFixed(2)}
                       /-
                     </p>
                   </div>
@@ -722,17 +716,22 @@ const handleselectionofstylist=()=>{
                   </div>
                 </div>
                 <div id="belowFirstrowCheck">
-                <button 
-                  onClick={()=>handleAddStylisttoproduct(product.id)}
-                  // s1402 added function to add stylist
+                  <button
+                    onClick={() => handleAddStylisttoproduct(product.id)}
+                    // s1402 added function to add stylist
                     // onClick={()=> handleAddProduct}
-                  >Add Stylist</button>
+                  >
+                    Add Stylist
+                  </button>
                   <span>
-                  {product.stylist_info && product.stylist_info.first_name && (
-            <span>{product.stylist_info.first_name}{" "}{product.stylist_info.last_name}
-            </span>
-          )}
-          </span>
+                    {product.stylist_info &&
+                      product.stylist_info.first_name && (
+                        <span>
+                          {product.stylist_info.first_name}{" "}
+                          {product.stylist_info.last_name}
+                        </span>
+                      )}
+                  </span>
                   <div id="thtotalprice02">
                     {/* <p>
                     {(
@@ -751,7 +750,7 @@ const handleselectionofstylist=()=>{
               <div id="totalwithgstF1">
                 <div>
                   <p style={{ flexBasis: "50%" }}>Sub Total</p>
-                  <p style={{ flexBasis: "50%" }}> 
+                  <p style={{ flexBasis: "50%" }}>
                     {(Math.round(
                       (parseFloat(calculateTotalPrice()) +
                         parseFloat(totalPrice)) *
@@ -787,14 +786,11 @@ const handleselectionofstylist=()=>{
                   <p>
                     <span style={{ flexBasis: "50%" }}>Total GST</span>
                     <span style={{ flexBasis: "50%" }}>
-                        
                       {(
                         selectedProducts.reduce(
                           (total, product) =>
                             total +
-                            product.price *
-                              product.qty *
-                              (product.gst / 100),
+                            product.price * product.qty * (product.gst / 100),
                           0
                         ) +
                         subServices.reduce(
@@ -874,7 +870,7 @@ const handleselectionofstylist=()=>{
                     className="book-button"
                     href="/checkout"
                     // onClick={handleAddStylist2O}
-                    
+
                     onClick={handleselectionofstylist}
                   >
                     Add Stylist
@@ -967,49 +963,95 @@ const handleselectionofstylist=()=>{
 
       {/* new data */}
 
-      
-    <div>
+      <div>
+        <div
+          id="lastbtnscheck"
+          style={{ justifyContent: "space-around", display: "flex" }}
+        >
+          {status === "Confirmed" ? (
+            <p
+              style={{
+                margin: "2rem",
+                color: "#18959e",
+                fontSize: "2rem",
+                fontWeight: "600",
+              }}
+            >
+              CONFIRMED
+            </p>
+          ) : (
+            <p style={{ display: "none" }}></p>
+          )}
+        </div>
 
-
-<div id="lastbtnscheck" style={{ justifyContent: "space-around", display: "flex" }}>
-{status === 'Confirmed' ? (
-                <p style={{ margin: "2rem", color: "#18959e", fontSize: "2rem", fontWeight: "600" }}>
-                CONFIRMED
-              </p>
-      ) : (
-        <p style={{display:"none"}}></p>
-      )}
-</div>
-
-<div id="lastbtnscheck" style={{ justifyContent: "space-around", display: "flex" }}>
-{status === 'Cancelled' ? (
-                        <p style={{ margin: "2rem", color: "#f44336", fontSize: "2rem", fontWeight: "600" }}>
-                        CANCELLED
-                      </p>
-      ) : (
-        <p style={{display:"none"}}></p>
-      )}
-      </div>
-{status === 'Not Assigned' ? (
-        <div id="lastbtnscheck" style={{ justifyContent: "space-around", display: "flex" , zIndex: 1}}>
-        <Link to={`/saved/appointment/cancel/${paramsValue}`}>
-          <button style={{ padding: "1rem 2rem", width: "100%", alignItems: "center", justifyContent: "center", display: "flex" }} id="firstbtn">
-            Cancel Appointment <AiOutlineArrowRight style={{ marginLeft: "1rem" }} />
-          </button>
-        </Link>
-        {appointmentDate === currentDate && (
-        <Link id="ReShCuDaClass" to={`/saved/appointment/confirm/${paramsValue}`}>
-          <button style={{ padding: "1rem 2rem", width: "100%", alignItems: "center", justifyContent: "center", display: "flex" }} id="firstbtn">
-            Confirm Appointment <AiOutlineArrowRight style={{ marginLeft: "1rem" }} />
-          </button>
-        </Link>
+        <div
+          id="lastbtnscheck"
+          style={{ justifyContent: "space-around", display: "flex" }}
+        >
+          {status === "Cancelled" ? (
+            <p
+              style={{
+                margin: "2rem",
+                color: "#f44336",
+                fontSize: "2rem",
+                fontWeight: "600",
+              }}
+            >
+              CANCELLED
+            </p>
+          ) : (
+            <p style={{ display: "none" }}></p>
+          )}
+        </div>
+        {status === "Not Assigned" ? (
+          <div
+            id="lastbtnscheck"
+            style={{
+              justifyContent: "space-around",
+              display: "flex",
+              zIndex: 1,
+            }}
+          >
+            <Link to={`/saved/appointment/cancel/${paramsValue}`}>
+              <button
+                style={{
+                  padding: "1rem 2rem",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  display: "flex",
+                }}
+                id="firstbtn"
+              >
+                Cancel Appointment{" "}
+                <AiOutlineArrowRight style={{ marginLeft: "1rem" }} />
+              </button>
+            </Link>
+            {appointmentDate === currentDate && (
+              <Link
+                id="ReShCuDaClass"
+                to={`/saved/appointment/confirm/${paramsValue}`}
+              >
+                <button
+                  style={{
+                    padding: "1rem 2rem",
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                  id="firstbtn"
+                >
+                  Confirm Appointment{" "}
+                  <AiOutlineArrowRight style={{ marginLeft: "1rem" }} />
+                </button>
+              </Link>
+            )}
+          </div>
+        ) : (
+          <p style={{ display: "none" }}></p>
         )}
       </div>
-      ) : (
-        <p style={{display:"none"}}></p>
-      )}
-
-    </div>
     </>
   );
 };

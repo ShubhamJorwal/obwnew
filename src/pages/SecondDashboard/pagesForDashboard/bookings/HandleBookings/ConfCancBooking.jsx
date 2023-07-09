@@ -983,13 +983,95 @@ const ConfCancBooking = () => {
       {/* new data */}
 
       <div>
-        <div id="lastbtnscheck">
-          <Link to={"/checkout/booking/processing/"}>
-            <button style={{ padding: "1rem 2rem" }} id="secondbtn">
-              Book now
-            </button>
-          </Link>
+      <div>
+        <div
+          id="lastbtnscheck"
+          style={{ justifyContent: "space-around", display: "flex" }}
+        >
+          {status === "Confirmed" ? (
+            <p
+              style={{
+                margin: "2rem",
+                color: "#18959e",
+                fontSize: "2rem",
+                fontWeight: "600",
+              }}
+            >
+              CONFIRMED
+            </p>
+          ) : (
+            <p style={{ display: "none" }}></p>
+          )}
         </div>
+
+        <div
+          id="lastbtnscheck"
+          style={{ justifyContent: "space-around", display: "flex" }}
+        >
+          {status === "Cancelled" ? (
+            <p
+              style={{
+                margin: "2rem",
+                color: "#f44336",
+                fontSize: "2rem",
+                fontWeight: "600",
+              }}
+            >
+              CANCELLED
+            </p>
+          ) : (
+            <p style={{ display: "none" }}></p>
+          )}
+        </div>
+        {status === "Not Assigned" ? (
+          <div
+            id="lastbtnscheck"
+            style={{
+              justifyContent: "space-around",
+              display: "flex",
+              zIndex: 1,
+            }}
+          >
+            <Link to={`/saved/appointment/cancel/${paramsValue}`}>
+              <button
+                style={{
+                  padding: "1rem 2rem",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  display: "flex",
+                }}
+                id="firstbtn"
+              >
+                Cancel Appointment{" "}
+                <AiOutlineArrowRight style={{ marginLeft: "1rem" }} />
+              </button>
+            </Link>
+            {appointmentDate === currentDate && (
+              <Link
+                id="ReShCuDaClass"
+                to={`/saved/appointment/confirm/${paramsValue}`}
+              >
+                <button
+                  style={{
+                    padding: "1rem 2rem",
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                  id="firstbtn"
+                >
+                  Confirm Appointment{" "}
+                  <AiOutlineArrowRight style={{ marginLeft: "1rem" }} />
+                </button>
+              </Link>
+            )}
+          </div>
+        ) : (
+          <p style={{ display: "none" }}></p>
+        )}
+      </div>
       </div>
     </>
   );

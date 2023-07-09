@@ -410,7 +410,7 @@ const HandleChildSer = () => {
 
                 <div id="lastbtnofserviceadd">
                 <Link
-  to="/home"
+  to= {`/customer/booking/${id}`}
   className="book-button"
   onClick={handleAddServices2O}
 >
