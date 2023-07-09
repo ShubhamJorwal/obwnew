@@ -3,6 +3,7 @@ import "./createbooking.scss";
 import { useNavigate } from "react-router-dom";
 
 function UserEndBooking() {
+  const {id} = useParams()
   const Navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -17,10 +18,12 @@ function UserEndBooking() {
         return;
       }
 
-      const { id } = userBookingData.customer;
+      const id  = userBookingData.customer.id;
+      const branch_id = JSON.parse(localStorage.getItem("branchName"));
       
-  
+      console.log(id, 'id from local storage');
       const existingData = localStorage.getItem("SelectedData");
+      const product = localStorage.getItem("selectedProducts");
       let allSubServices = [];
   
       const ServicesTotalprice = localStorage.getItem("TotalAmountBookOFser");
@@ -29,35 +32,83 @@ function UserEndBooking() {
       const num1 = parseInt(ServicesTotalprice);
       const num2 = parseInt(ProductsTotalprice);
       const totalAmou = num1 + num2;
-  
+      let subtotal = null;
+
       if (existingData) {
         const dataArray = JSON.parse(existingData);
-  
-        allSubServices = dataArray.reduce((accumulator, item) => {
-          const subServices = item.subServices.map((subService) => ({
-            price: parseFloat(subService.price_including_gst),
-            qty: subService.quantity,
-            service_name: subService.service_name,
-            stylist_id: subService.stylist_info.id, // Use stylist_id from subService's stylist_info
-            total: parseFloat(
-              subService.price_including_gst * subService.quantity
-            ),
+        const productArr = product ? JSON.parse(product) : null;
+        const allservicesarray = [];
+
+        dataArray.forEach((item) => {
+          item.subServices.forEach((subService) => {
+            allservicesarray.push(subService);
+          });
+        });
+      
+        console.log(productArr, 'product');
+        const subserviceArr = allservicesarray.map(obj => ({
+          service_name: obj.service_name,
+          qty: obj.quantity,
+          price: obj.price_including_gst,
+          gst: obj.gst,
+          total: obj.price_including_gst*obj.quantity,
+          stylist_id: obj.stylist_info ? obj.stylist_info.id : null,
+          date: null,
+          type: "service"
+        }));
+        
+
+        if (productArr) {
+          console.log(productArr, "product");
+          const Allproducts = productArr.map(obj => ({
+            service_name: obj.product_name,
+            qty: obj.selectedQuantity,
+            price: obj.amount_with_gst,
+            gst: obj.gst,
+            total: obj.amount_with_gst*obj.selectedQuantity,
+            stylist_id: obj.stylist_info ? obj.stylist_info.id : null,
+            date: null,
+            type: "product"
           }));
-  
-          return [...accumulator, ...subServices];
-        }, []);
+
+          const servideDataTobeposted = [...subserviceArr, ...Allproducts];
+          allSubServices = servideDataTobeposted;
+          subtotal = (
+            productArr.reduce(
+              (total, product) =>
+                total +
+                product.amount_with_gst *
+                  product.selectedQuantity *
+                  (product.gst / 100),
+              0
+            ) +
+            allservicesarray.reduce(
+              (total, subService) =>
+                total +
+                subService.price_including_gst *
+                  subService.quantity *
+                  (subService.gst / 100),
+              0
+            )
+          ).toFixed(2);
+        } else {
+          allSubServices = subserviceArr;
+        }
       }
-  
+
       // Create the booking data
       const currentDate = new Date().toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
       const bookingData = {
+        branch_id: branch_id,
         customer_id: id,
-        total_amount: totalAmou,
+        sub_total: totalAmou - subtotal,
+        discount: null,
+        total: totalAmou,
         status: "pending",
         date: currentDate,
         services: allSubServices,
       };
-      
+      console.log(bookingData, 'posted data');
   
       // Send the POST request to the API
       fetch("https://admin.obwsalon.com/api/create/bookings", {
@@ -68,7 +119,6 @@ function UserEndBooking() {
         },
         body: JSON.stringify(bookingData),
       })
-      
         .then((response) => {
           if (!response.ok) {
             throw new Error("Booking failed. Please try again."); // Throw an error if the response is not successful
@@ -103,17 +153,16 @@ function UserEndBooking() {
     handleBooking();
     removeItem();
 
-
   }, []);
   
-    // Clear session history
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = function () {
-      window.history.go(1);
-    };
+  // Clear session history
+  window.history.pushState(null, "", window.location.href);
+  window.onpopstate = function () {
+    window.history.go(1);
+  };
+
   const handleGoHome = () => {
     // Implement the logic to navigate back to the home page
-    
     localStorage.removeItem("UserBookingData");
     localStorage.removeItem("selectedProducts");
     localStorage.removeItem("SelectedData");
@@ -121,7 +170,7 @@ function UserEndBooking() {
     localStorage.removeItem("selectedStylist");
     localStorage.removeItem("TotalAmountBookOFser");
     localStorage.removeItem("TotalAmountBook");
-    Navigate("/services/women")
+    Navigate("/services/women");
   };
 
   return (
@@ -129,11 +178,11 @@ function UserEndBooking() {
       {errorMessage ? (
         <div id="concreabook">
           <p>{errorMessage}</p>
-          <button style={{margin:"1rem 0"}} id="firstbtn" onClick={handleGoHome}>Try Again</button>
+          <button style={{ margin: "1rem 0" }} id="firstbtn" onClick={handleGoHome}>Try Again</button>
         </div>
       ) : (
         <div id="concreabook">
-          <svg
+<svg
             id="successAnimation"
             className="animated"
             xmlns="http://www.w3.org/2000/svg"
@@ -149,9 +198,7 @@ function UserEndBooking() {
 </svg>
           </svg>
           <p>Booking created successfully</p>
-
-          
-          {/* <button style={{margin:"1rem 0"}} id="firstbtn" onClick={handleGoHome}>Book Again</button> */}
+          {/* <button style={{ margin: "1rem 0" }} id="firstbtn" onClick={handleGoHome}>Book Again</button> */}
         </div>
       )}
     </div>
@@ -159,3 +206,30 @@ function UserEndBooking() {
 }
 
 export default UserEndBooking;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

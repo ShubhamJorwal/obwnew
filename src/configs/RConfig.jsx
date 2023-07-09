@@ -43,6 +43,12 @@ import ApointmentSuces from "../pages/SecondDashboard/creates/CreateApt/login/Ap
 import CreateNewBooking from "../pages/SecondDashboard/creates/NewBooking/CreateNewBooking";
 import ConfCancBooking from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleBookings/ConfCancBooking";
 
+import HandleWomenSer from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/ServicesForHB/Womenser";
+import HandleMenSer from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/ServicesForHB/Menservices";
+import HandleChildSer from "../pages/SecondDashboard/pagesForDashboard/bookings/HandleCrnbok/ServicesForHB/Chilservices";
+
+
+
 
 const router = createBrowserRouter([
   {
@@ -96,11 +102,25 @@ const router = createBrowserRouter([
   {
     path: "/bookings",
     element: <Bookings />,
-  },
+  }, 
+  ///////////////////////////
   {
     path: "/customer/booking/:id",
     element: <ConfCancBooking />,
   },
+  {
+    path: "/customer/booking/services/women/:id",
+    element: <HandleWomenSer />,
+  },
+  {
+    path: "/customer/booking/services/men/:id",
+    element: <HandleMenSer />,
+  },
+  {
+    path: "/customer/booking/services/child/:id",
+    element: <HandleChildSer />,
+  },
+  ///////////////////////////
   {
     path: "/bookings/services/women",
     element: <BookWomenServices />,
